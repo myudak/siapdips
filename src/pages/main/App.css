@@ -1,0 +1,36 @@
+#root {
+  min-width: 24rem;
+  max-width: 34rem;
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.main::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.main {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* LOGO */
+
+.logo-containerNew polygon {
+  transition: all 0.5s ease-in-out;
+  transform-origin: center;
+}
+
+.logo-containerNew:hover polygon:nth-child(1) {
+  transform: rotate(360deg);
+}
+
+.logo-containerNew:hover polygon:nth-child(2) {
+  transform: rotate(-360deg);
+  transition-delay: 0.1s;
+}
+
+.logo-containerNew:hover polygon:nth-child(3) {
+  transform: rotate(360deg);
+  transition-delay: 0.2s;
+}

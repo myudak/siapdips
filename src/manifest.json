@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "SiapDipss",
+  "version": "1.0.0",
+  "description": "blok pop up SSO Undip biar gk nge spam coi",
+  "permissions": ["activeTab", "scripting","storage"],
+  "host_permissions": ["*://*.undip.ac.id/*"],
+  "action": {
+    "default_title": "SiAP DiPS",
+    "default_popup": "index.html"
+  },
+  "icons": {
+    "32": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://siap.undip.ac.id/pages/mhs/dashboard"],
+      "js": ["./content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+} 

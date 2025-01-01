@@ -1,0 +1,214 @@
+/* Base Variables */
+:root {
+  --primary-bg-color: #ffffff;
+  --primary-text-color: #000000;
+  --secondary-bg-color: #f1f1f1;
+  --secondary-text-color: #333333;
+}
+
+:root.dark-theme {
+  --primary-bg-color: #202124;
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #292a2d;
+  --secondary-text-color: #ffffff;
+}
+
+/* Blue Theme */
+:root.blue-theme {
+  --primary-bg-color: #1d4ed8; /* bg-blue-600 */
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #2563eb; /* bg-blue-500 */
+  --secondary-text-color: #ffffff;
+}
+
+/* Red Theme */
+:root.red-theme {
+  --primary-bg-color: #dc2626; /* bg-red-600 */
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #b91c1c; /* bg-red-500 */
+  --secondary-text-color: #ffffff;
+}
+
+/* Green Theme */
+:root.green-theme {
+  --primary-bg-color: #16a34a; /* bg-green-600 */
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #15803d; /* bg-green-500 */
+  --secondary-text-color: #ffffff;
+}
+
+/* Purple Theme */
+:root.purple-theme {
+  --primary-bg-color: #7c3aed; /* bg-purple-600 */
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #6b21a8; /* bg-purple-500 */
+  --secondary-text-color: #ffffff;
+}
+
+/* Indigo Theme */
+:root.indigo-theme {
+  --primary-bg-color: #4338ca; /* bg-indigo-600 */
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #3730a3; /* bg-indigo-500 */
+  --secondary-text-color: #ffffff;
+}
+
+/* Teal Theme */
+:root.teal-theme {
+  --primary-bg-color: #0d9488; /* bg-teal-600 */
+  --primary-text-color: #ffffff;
+  --secondary-bg-color: #0f766e; /* bg-teal-500 */
+  --secondary-text-color: #ffffff;
+}
+
+/* 
+    DONE VARIABLE
+*/
+
+body {
+  background-color: var(--primary-bg-color) !important;
+  color: var(--primary-text-color) !important;
+}
+
+.card,
+.card-header,
+.card-img-top,
+.navbar,
+.navbar-light,
+.table-striped tbody tr:nth-of-type(odd),
+.nav.nav-tabs,
+footer,
+tr.bg-white,
+div.card-footer,
+div.card-body,
+div.media-body,
+div.align-self-center,
+a.dropdown-item,
+.swal2-popup {
+  background-color: var(--secondary-bg-color) !important;
+  color: var(--secondary-text-color) !important;
+}
+
+div.bg-grey.bg-lighten-3,
+input,
+input.form-control {
+  background-color: var(--secondary-bg-color) !important;
+  color: var(--secondary-text-color) !important;
+}
+
+div.media-body {
+  color: var(--secondary-text-color) !important;
+}
+
+div.card-body {
+  border-radius: 10px;
+}
+
+a.web_mhs_menuitem .card {
+  border: solid 1px var(--secondary-bg-color) !important;
+}
+
+div.card-header.border-top-grey.bg-indigo.bg-lighten-5,
+span.font-small-3,
+span.font-small-3 span,
+div.bs-callout-warning p {
+  color: black !important;
+}
+
+div.bs-callout-warning a,
+h2.black,
+h4.black,
+span.black {
+  color: var(--secondary-text-color) !important;
+}
+
+#statushtml * {
+  color: var(--secondary-text-color) !important;
+}
+
+.nav.nav-tabs .nav-item .nav-link.active {
+  background-color: slategrey !important;
+  color: white !important;
+}
+
+h2.white,
+span.white {
+  color: var(--secondary-text-color) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+i,
+span,
+h3.primary,
+h4.primary,
+h5.primary,
+span.font-small-2.primary,
+i.primary.font-large-2,
+.primary,
+.card-text {
+  color: var(--secondary-text-color) !important;
+}
+
+a,
+a.nav-link.active {
+  color: slategrey !important;
+}
+
+a.nav-link.active {
+  color: slategrey !important;
+  font-weight: bold !important;
+}
+
+i.fa.fa-fw {
+  color: var(--secondary-text-color) !important;
+}
+
+div.border-primary {
+  border-color: var(--secondary-text-color) !important;
+}
+
+#user-profile .profile-with-cover .nav-link.active {
+  border-bottom: 2px solid var(--secondary-text-color) !important;
+}
+
+.header-navbar.navbar-dark.navbar-border {
+  border-bottom: 1px solid var(--secondary-bg-color) !important;
+}
+
+/* KULON2 */
+div#page,
+  /* div, */
+  div.card.bg-blue,
+  section,
+  th,
+  td,
+  div.filter-group,
+  div.border-radius,
+  body#page-my-index,
+  div#page-drawers,
+  #page.drawers .main-inner,
+  nav.navbar.fixed-top,
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+  background-color: var(--primary-bg-color) !important;
+  color: var(--primary-text-color) !important;
+}
+
+td.day:hover {
+  background-color: rgb(85, 85, 85) !important;
+}
+
+.bg-blue.bg-darken-2 {
+  background-color: #1976d2 !important;
+}
+
+small.text-muted {
+  color: var(--secondary-text-color) !important;
+}
