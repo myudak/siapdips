@@ -1,20 +1,27 @@
 {
   "manifest_version": 3,
-  "name": "SiapDipss",
+  "name": "Siap Dips",
   "version": "1.0.0",
-  "description": "blok pop up SSO Undip biar gk nge spam coi",
-  "permissions": ["activeTab", "scripting","storage"],
+  "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "homepage_url": "https://myudak.site",
+  "options_ui": {
+    "page": "option.html",
+    "open_in_tab": true
+  },
   "host_permissions": ["*://*.undip.ac.id/*"],
   "action": {
     "default_title": "SiAP DiPS",
-    "default_popup": "index.html"
+    "default_popup": "popup.html"
   },
   "icons": {
-    "32": "icon.png"
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "content_scripts": [
     {
-      "matches": ["https://siap.undip.ac.id/pages/mhs/dashboard"],
+      "matches": ["https://siap.undip.ac.id/pages/mhs/dashboard/*"],
       "js": ["./content.js"]
     }
   ],
@@ -22,4 +29,4 @@
     "service_worker": "background.js",
     "type": "module"
   }
-} 
+}

@@ -4,13 +4,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getActiveTab, sendTabMessage } from "@/lib/utils";
-import { Eye, EyeOff, HelpCircle, Pencil, RotateCcw } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  GripHorizontal,
+  HelpCircle,
+  Pencil,
+  RotateCcw,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 interface IpkData {
   value: string;
@@ -24,7 +33,15 @@ const LOADING_STATE = "Loading...";
 const ERROR_STATE = "Error";
 const NOT_FOUND_STATE = "No IPK found";
 
-const IpkStatus = ({ setIsLocalStatus }: { setIsLocalStatus: any }) => {
+const IpkStatus = ({
+  setIsLocalStatus,
+  listeners,
+  attributes,
+}: {
+  setIsLocalStatus: any;
+  listeners?: DraggableAttributes;
+  attributes?: SyntheticListenerMap;
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [ipkData, setIpkData] = useState<IpkData>({
     value: LOADING_STATE,
@@ -190,6 +207,15 @@ const IpkStatus = ({ setIsLocalStatus }: { setIsLocalStatus: any }) => {
 
   return (
     <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-full h-8 rounded-b-none border border-b-0 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+        {...attributes}
+        {...listeners}
+      >
+        <GripHorizontal className="h-4 w-4" />
+      </Button>
       <CardHeader className="py-3">
         <CardTitle className="text-lg font-bold text-center">
           IPK STATUS

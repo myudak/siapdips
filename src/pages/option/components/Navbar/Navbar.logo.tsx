@@ -53,9 +53,10 @@ const NavbarLogo = () => {
         className="h-5 w-5 logo-containerNew hover:cursor-pointer"
         onClick={linkClickMyudak}
       />
-      <span className="text-lg font-bold cursor-default">Siap Dipss</span>
+      <span className="text-lg font-bold">Siap Dipss</span>
     </div>
   );
 };
 
 export default NavbarLogo;
+export { Icons };

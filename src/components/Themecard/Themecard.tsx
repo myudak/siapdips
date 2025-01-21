@@ -9,10 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Moon, Sun, LineChart, UserCircle } from "lucide-react";
+import { Moon, Sun, LineChart, UserCircle, GripHorizontal } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { getActiveTab } from "@/lib/utils";
+import { DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 const darkModeAllowedUrls: string[] = [
   "https://siap.undip.ac.id/",
@@ -20,7 +22,13 @@ const darkModeAllowedUrls: string[] = [
   "https://kulon2.undip.ac.id/",
 ];
 
-const UndipThemeSettings = () => {
+const UndipThemeSettings = ({
+  listeners,
+  attributes,
+}: {
+  listeners?: DraggableAttributes;
+  attributes?: SyntheticListenerMap;
+}) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [mode, setMode] = useState("custom");
   const [customColor, setCustomColor] = useState("custom");
@@ -41,6 +49,8 @@ const UndipThemeSettings = () => {
     purple: "text-purple-600",
     indigo: "text-indigo-600",
     teal: "text-teal-600",
+    dark: "text-gray-600",
+    light: "text-gray-600",
   };
 
   const onClickEnableSwitch = async (value: boolean) => {
@@ -57,7 +67,7 @@ const UndipThemeSettings = () => {
     if (value) {
       await chrome.scripting
         .insertCSS({
-          files: ["mode.css"],
+          files: ["mode.min.css"],
           target: { tabId: tabId },
         })
         .catch((error: unknown) => {
@@ -67,7 +77,7 @@ const UndipThemeSettings = () => {
     if (!value) {
       await chrome.scripting
         .removeCSS({
-          files: ["mode.css"],
+          files: ["mode.min.css"],
           target: { tabId: tabId },
         })
         .catch((error: unknown) => {
@@ -152,6 +162,15 @@ const UndipThemeSettings = () => {
 
   return (
     <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-full h-8 rounded-b-none border border-b-0 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+        {...attributes}
+        {...listeners}
+      >
+        <GripHorizontal className="h-4 w-4" />
+      </Button>
       <CardHeader>
         <CardTitle className="text-xl font-bold">
           Undip Theme Settings
@@ -169,7 +188,7 @@ const UndipThemeSettings = () => {
         </div>
         {/* Mode Selection */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Choose Theme Mode</label>
+          <label className="text-sm font-medium">Theme Mode</label>
           <Tabs value={mode} onValueChange={setModeTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger
@@ -233,7 +252,9 @@ const UndipThemeSettings = () => {
                     />
                   </div>
                   <div className="mb-2 text-white">
-                    <h2 className="text-xl font-bold">myudak</h2>
+                    <h2 className="text-xl font-bold">
+                      MUCHAMMAD YUDA TRI ANANDA
+                    </h2>
                     <p className="text-sm opacity-90">
                       NIM: 24012345610169 | Informatika S1
                     </p>
@@ -243,12 +264,18 @@ const UndipThemeSettings = () => {
             </div>
 
             {/* Navigation Bar */}
-            <div className="border-t bg-white p-2">
+            <div
+              className={`border-t ${
+                ["dark"].includes(mode) ? "bg-black" : "bg-white"
+              } p-2`}
+            >
               <div className="flex gap-4">
                 <Button
                   variant="ghost"
                   disabled={!isEnabled}
-                  className={`${textColors[customColor]} text-sm`}
+                  className={`${
+                    textColors[customColor] || textColors[mode]
+                  } text-sm`}
                 >
                   <LineChart className="mr-2 h-4 w-4" />
                   Dasbor
@@ -256,7 +283,9 @@ const UndipThemeSettings = () => {
                 <Button
                   disabled={!isEnabled}
                   variant="ghost"
-                  className={`${textColors[customColor]} text-sm`}
+                  className={`${
+                    textColors[customColor] || textColors[mode]
+                  } text-sm`}
                 >
                   <UserCircle className="mr-2 h-4 w-4" />
                   Biodata

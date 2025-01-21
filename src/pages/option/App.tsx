@@ -1,0 +1,99 @@
+import { ThemeProvider } from "@/components/theme-provider";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Nromal from "./components/Normal";
+import SiteFooter from "./components/Footer";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Code2, Laptop, Rocket } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Icons } from "./components/Navbar/Navbar.logo";
+import { Toaster } from "@/components/ui/sonner";
+
+const LandingPage = () => {
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <Navbar />
+      <div className="main">
+        <section className="h-[calc(100dvh-3.6rem)]  flex items-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <div className="flex justify-center mb-8">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full"></div>
+                  <Icons.logoSiapDips className="h-28 w-28 text-primary relative animate-pulse" />
+                  {/* <Zap className="h-24 w-24 text-primary relative animate-pulse" /> */}
+                </div>
+              </div>
+              <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+                <span className="text-primary">SiAp DiPS</span>
+              </h1>
+              <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
+                Extension for better Undip experience. ~&gt; Created by myudakk.
+                ヽ（≧□≦）ノ
+              </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <Button size="lg" className="gap-2">
+                  Tutorial <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    chrome.tabs.create({
+                      url: "https://siap.undip.ac.id/sso/login",
+                    });
+                  }}
+                >
+                  Goto~ Undip
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="min-h-screen bg-muted/50 flex items-center">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold">Fitur</h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Everything you need to build modern applications
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Card className="p-6">
+                <Rocket className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
+                <p className="text-muted-foreground">
+                  Built for speed and performance, deploy your applications in
+                  seconds.
+                </p>
+              </Card>
+              <Card className="p-6">
+                <Code2 className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Developer First</h3>
+                <p className="text-muted-foreground">
+                  Best-in-class developer experience with intuitive APIs and
+                  tools.
+                </p>
+              </Card>
+              <Card className="p-6">
+                <Laptop className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Modern Stack</h3>
+                <p className="text-muted-foreground">
+                  Built with the latest technologies and best practices in mind.
+                </p>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        <Nromal />
+      </div>
+      <SiteFooter />
+      <Toaster />
+    </ThemeProvider>
+  );
+};
+
+export default LandingPage;

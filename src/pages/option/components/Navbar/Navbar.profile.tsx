@@ -87,15 +87,8 @@ const NavbarProfile = () => {
             <Copy className="mr-2 h-4 w-4" /> {prodi}
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem
-          className="hover:cursor-pointer"
-          onClick={() => {
-            chrome.tabs.create({
-              url: chrome.runtime.getURL("option.html#sect1"),
-            });
-          }}
-        >
-          ⚙️ Settings
+        <DropdownMenuItem className="hover:cursor-pointer">
+          <a href="#">Edit Profile</a>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
