@@ -22,7 +22,6 @@ import {
 } from "@dnd-kit/sortable";
 
 import {
-  Settings,
   Github,
   GripVertical,
   RotateCcw,
@@ -34,6 +33,10 @@ import {
   Palette,
   Quote,
   LucideProps,
+  BookOpen,
+  Briefcase,
+  Code,
+  LucideChartNoAxesGantt,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -124,14 +127,7 @@ const SettingcardAwal = () => {
             </SortableContext>
           </DndContext>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button
-            variant="outline"
-            className="dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
+        <CardFooter className="flex justify-end">
           <Button variant={"destructive"}>
             {" "}
             <RotateCcw /> Reset
@@ -150,16 +146,25 @@ const SettingcardAwal = () => {
           <CardContent>
             <ul className="space-y-2 text-slate-600 dark:text-slate-300 text-base">
               <li className="flex items-center gap-2">
+                - Quick Navigation Undip
+              </li>
+              <li className="flex items-center gap-2">
                 - Block Pop-ups on SSO
               </li>
               <li className="flex items-center gap-2">
-                - Automate PBM evaluation form
+                - Custom Automate PBM evaluation form
               </li>
-              <li className="flex items-center gap-2">- Hide user's IPK</li>
-
               <li className="flex items-center gap-2">
-                - Dark Mode for SSO/SIAP/Kulon
+                - Hide / Edit user's IPK
               </li>
+              <li className="flex items-center gap-2">
+                - Dark / Dark Mode for SSO/SIAP/Kulon
+              </li>
+              <li className="flex items-center gap-2">
+                - Enable Right Click, Copy, Inspect etc
+              </li>
+              <li className="flex items-center gap-2">- Custom Profile</li>
+              <li className="flex items-center gap-2">- And many many More!</li>
             </ul>
           </CardContent>
         </Card>
@@ -175,6 +180,45 @@ const SettingcardAwal = () => {
               <Button
                 variant="outline"
                 className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                onClick={() =>
+                  chrome.tabs.create({
+                    url: "https://github.com/myudak/belajarUndip",
+                  })
+                }
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Belajar Dips
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                onClick={() =>
+                  chrome.tabs.create({
+                    url: "https://myudak.site/projects/DMW",
+                  })
+                }
+              >
+                <Briefcase className="w-4 h-4 mr-2" />
+                Project DMW
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                onClick={() =>
+                  chrome.tabs.create({
+                    url: "https://github.com/myudak/learnSocial-hack",
+                  })
+                }
+              >
+                <Code className="w-4 h-4 mr-2" />
+                LearnSocial Hack
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                onClick={() =>
+                  chrome.tabs.create({ url: "https://github.com/myudak" })
+                }
               >
                 <Github className="w-4 h-4 mr-2" />
                 View on GitHub
@@ -182,9 +226,14 @@ const SettingcardAwal = () => {
               <Button
                 variant="outline"
                 className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                onClick={() =>
+                  chrome.tabs.create({
+                    url: "https://myudak.site",
+                  })
+                }
               >
-                <Settings className="w-4 h-4 mr-2" />
-                Advanced Settings
+                <LucideChartNoAxesGantt className="w-4 h-4 mr-2" />
+                My Website
               </Button>
             </div>
           </CardContent>

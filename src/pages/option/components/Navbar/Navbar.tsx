@@ -9,10 +9,18 @@ const Navbar = () => {
         <NavbarLogo />
 
         <div className="flex items-center gap-2">
-          <a href="#sect1">Settings</a>
-          <a href="#sect1">Settings</a>
-          <a href="#sect1">Settings</a>
-          <a href="#sect1">Settings</a>
+          <a className="hover:underline" href="#Tutorials">
+            Tutorial
+          </a>
+          <a className="hover:underline" href="#sect1">
+            Settings
+          </a>
+          <a className="hover:underline" href="#TemplatePBM">
+            Template PBM
+          </a>
+          <a className="hover:underline" href="#profileSettings">
+            Profile
+          </a>
         </div>
 
         {/* Right side icons */}

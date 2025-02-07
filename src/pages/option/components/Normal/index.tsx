@@ -21,6 +21,7 @@ const Nromal = () => {
       </>
       <>
         <h1
+          id="TemplatePBM"
           ref={PBMTableRef}
           className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
         >
@@ -30,7 +31,7 @@ const Nromal = () => {
       </>
       <>
         <h1 className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center">
-          Profilee ~~
+          ~~ Profilee ~~
         </h1>
         <SettingcardProfile />
       </>

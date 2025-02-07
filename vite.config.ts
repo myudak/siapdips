@@ -44,6 +44,11 @@ export default defineConfig(() => {
             if (chunkInfo.name === "background") return "background.js";
             return "assets/[name]-[hash].js";
           },
+          banner: `/*!
+ * Your Project Name v1.0.0
+ * Copyright (c) ${new Date().getFullYear()} Your Name or Company
+ * Licensed under the MIT License
+ */`,
         },
       },
     },

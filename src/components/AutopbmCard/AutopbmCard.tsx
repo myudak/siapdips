@@ -5,6 +5,7 @@ import {
   BotMessageSquare,
   GripHorizontal,
   HelpCircle,
+  Link2,
   SettingsIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -69,8 +70,13 @@ const AutopbmCard = ({
                   <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  berlaku di
-                  https://siap.undip.ac.id/evaluasi_perkuliahan/mhs/evaluasi
+                  <video
+                    src="/vid-pbm.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    className="max-w-xs cursor-pointer"
+                  />
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -102,6 +108,7 @@ const AutopbmCard = ({
               })
             }
           >
+            <Link2 className="w-4 h-4 mr-2" />
             Goto PBM ~&gt;
           </Button>
         </CardContent>

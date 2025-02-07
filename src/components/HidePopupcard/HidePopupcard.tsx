@@ -7,11 +7,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { GripHorizontal, HelpCircle } from "lucide-react";
+import { GripHorizontal, HelpCircle, SettingsIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Button } from "../ui/button";
+import { getActiveTab } from "@/lib/utils";
 
 const HidePopupcard = ({
   listeners,
@@ -22,23 +23,27 @@ const HidePopupcard = ({
 }) => {
   const [hidePopup, setHidePopup] = useState(false);
   const [enableCopy, setEnableCopy] = useState(false);
+  const [blurDosenWali, setBlurDosenWali] = useState(false);
 
   useEffect(() => {
-    const getLocalChrome = async () => {
-      const localChrome = await chrome.storage.local.get([
+    (async () => {
+      const {
+        hidePopup,
+        disableCtrlC = true,
+        isBlurredDosenWali,
+      } = await chrome.storage.local.get([
         "hidePopup",
         "disableCtrlC",
+        "isBlurredDosenWali",
       ]);
-      if (localChrome.disableCtrlC === undefined) {
-        chrome.storage.local.set({ disableCtrlC: true });
-        setEnableCopy(true);
-      } else {
-        setEnableCopy(localChrome.disableCtrlC);
-      }
-      if (localChrome.hidePopup === undefined) return;
-      setHidePopup(localChrome.hidePopup);
-    };
-    getLocalChrome();
+
+      chrome.storage.local.set({ disableCtrlC });
+      setEnableCopy(disableCtrlC);
+
+      if (hidePopup !== undefined) setHidePopup(hidePopup);
+      if (isBlurredDosenWali !== undefined)
+        setBlurDosenWali(isBlurredDosenWali);
+    })();
   }, []);
 
   const onclick = async () => {
@@ -146,11 +151,94 @@ const HidePopupcard = ({
                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2" />
               </TooltipTrigger>
               <TooltipContent>
+                <video
+                  src="/vid-klikKanan.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  className="max-w-xs cursor-pointer"
+                />
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="flex items-center m-4 p-0">
+          <Switch
+            onCheckedChange={() => {
+              (async () => {
+                if (!blurDosenWali) {
+                  const tabId = await getActiveTab();
+                  chrome.scripting.executeScript({
+                    target: { tabId: tabId },
+                    func: () => {
+                      const blurElements = [
+                        "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
+                      ];
+
+                      blurElements.forEach((selector) => {
+                        const element = document.querySelector(selector);
+                        if (element) {
+                          (element as HTMLElement).style.filter = "blur(5px)";
+                        }
+                      });
+                    },
+                  });
+                } else {
+                  const tabId = await getActiveTab();
+                  chrome.scripting.executeScript({
+                    target: { tabId: tabId },
+                    func: () => {
+                      const blurElements = [
+                        "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
+                      ];
+
+                      blurElements.forEach((selector) => {
+                        const element = document.querySelector(selector);
+                        if (element) {
+                          (element as HTMLElement).style.filter = "none";
+                        }
+                      });
+                    },
+                  });
+                }
+                await chrome.storage.local.set({
+                  isBlurredDosenWali: !blurDosenWali,
+                });
+              })();
+
+              setBlurDosenWali(!blurDosenWali);
+            }}
+            id="hide-popup"
+          />
+          <Label
+            htmlFor="hide-popup"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ml-2"
+          >
+            Blur Dosen Wali
+          </Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2" />
+              </TooltipTrigger>
+              <TooltipContent>
                 berlaku di https://sso.undip.ac.id/pages/dashboard
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
+
+        <Button
+          className="m-4 p-0"
+          onClick={() => {
+            chrome.tabs.create({
+              url: chrome.runtime.getURL("option.html#sect1"),
+            });
+          }}
+        >
+          <SettingsIcon className="w-4 h-4 mr-2" />
+          Advanced Settings
+        </Button>
       </CardContent>
     </Card>
   );
@@ -281,6 +369,15 @@ function enableCtrlC() {
     // Observe DOM changes and re-apply if necessary
     const observer = new MutationObserver(unblockActions);
     observer.observe(document, { childList: true, subtree: true });
+
+    // @ts-ignore
+    Toastify({
+      text: "SiAp DiPS ~> Enable Klik kanan",
+      duration: 1000,
+      close: true,
+      gravity: "top",
+      position: "left",
+    }).showToast();
   })();
 }
 

@@ -6,7 +6,10 @@ const darkModeAllowedUrls: string[] = [
   "https://kulon2.undip.ac.id/",
 ];
 
-// Listen to tab updates
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.runtime.openOptionsPage();
+});
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.url === undefined) return;
 
@@ -16,6 +19,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     tab.url &&
     darkModeAllowedUrls.some((url) => tab.url?.includes(url))
   ) {
+    // TOASTIFY
+    chrome.scripting.executeScript({
+      target: { tabId },
+      files: ["libs/toastify.js"],
+    });
+    chrome.scripting.insertCSS({
+      target: { tabId },
+      files: ["libs/toastify.css"],
+    });
+    // TOASTIFY
+
     // CUSTOM THEME DARK MODE ETC
     chrome.storage.local.get("undipCustomTheme", (data) => {
       if (!data.undipCustomTheme || data.undipCustomTheme === "no") return;
@@ -61,6 +75,146 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         }
       }
     );
+
+    // BLUR USERNAME PROFILE NIM PRODI
+    chrome.storage.local.get(
+      [
+        "isBlurredUsername",
+        "isBlurredNim",
+        "isBlurredProdi",
+        "isBlurredAvatar",
+        "isBlurredDosenWali",
+        "isBlurred",
+      ],
+      (data) => {
+        if (data.isBlurredUsername) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            func: () => {
+              const blurElements = [
+                "#user-profile > div > div.card.profile-with-cover > div.media.profil-cover-details.w-100 > div.media-body.pt-3.px-2 > div > div:nth-child(1) > h3",
+                "#navbar-mobile > ul.nav.navbar-nav.float-right > li.dropdown.dropdown-user.nav-item > a > span.user-name",
+                "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(1) > tbody > tr:nth-child(1) > th",
+                "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(1) > tbody > tr:nth-child(2) > th",
+              ];
+
+              blurElements.forEach((selector) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                  (element as HTMLElement).style.filter = "blur(5px)";
+                }
+              });
+            },
+          });
+        }
+        if (data.isBlurredNim) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            func: () => {
+              const blurNim = [
+                "#user-profile > div > div.card.profile-with-cover > div:nth-child(3) > span",
+              ];
+
+              blurNim.forEach((selector) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                  (element as HTMLElement).style.filter = "blur(5px)";
+                }
+              });
+            },
+          });
+        }
+        if (data.isBlurredAvatar) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            func: () => {
+              const blurSelectors = [
+                ".profile-image", // Parent element that contains the avatar
+                "#navbar-mobile > ul.nav.navbar-nav.float-right > li.dropdown.dropdown-user.nav-item > a > span.avatar._avatar-online > div",
+              ];
+
+              blurSelectors.forEach((selector) => {
+                const element = document.querySelector<HTMLElement>(selector);
+
+                if (element) {
+                  if (
+                    selector === ".profile-image" &&
+                    element.childNodes.length > 1
+                  ) {
+                    const avatarChild = element.childNodes[1] as HTMLElement;
+                    avatarChild.style.filter = "blur(5px)";
+                  } else {
+                    element.style.filter = "blur(5px)";
+                  }
+                }
+              });
+            },
+          });
+        }
+        if (data.isBlurredDosenWali) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            func: () => {
+              const blurElements = [
+                "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
+              ];
+
+              blurElements.forEach((selector) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                  (element as HTMLElement).style.filter = "blur(5px)";
+                }
+              });
+            },
+          });
+        }
+        // IPK BLUR
+        if (data.isBlurred) {
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id! },
+            func: () => {
+              const blurElements = [
+                "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(3) > tbody > tr:nth-child(4) > td:nth-child(3)",
+                "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(3) > tbody > tr:nth-child(5) > td:nth-child(3)",
+              ];
+
+              blurElements.forEach((selector) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                  (element as HTMLElement).style.filter = "blur(5px)";
+                }
+              });
+            },
+          });
+        }
+      }
+    );
+
+    // CHANGE PROFILE
+    chrome.storage.local.get("profileImageLocal", (data) => {
+      if (data.profileImageLocal) {
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id! },
+          args: [data],
+          func: (data) => {
+            const profileImages = [
+              document.querySelector(
+                "#user-profile > div > div.card.profile-with-cover > div.media.profil-cover-details.w-100 > div.media-left.pl-2.pt-2 > a > div"
+              ) as HTMLElement,
+              document.querySelector(
+                "#navbar-mobile > ul.nav.navbar-nav.float-right > li.dropdown.dropdown-user.nav-item > a > span.avatar._avatar-online > div"
+              ) as HTMLElement,
+            ];
+
+            profileImages.forEach((image) => {
+              if (image) {
+                image.style.backgroundImage = `url(${data.profileImageLocal})`;
+              }
+            });
+          },
+        });
+      }
+    });
   }
 
   // HIDE POP UP
@@ -364,7 +518,7 @@ function PBM() {
 
     // Event listener for the button
     const button = document.createElement("button");
-    button.className = "btn btn-primary ml-2";
+    button.className = "btn btn-secondary ml-2";
     button.textContent = "~Auto This~";
     button.addEventListener("click", () => {
       const autoSubmit = autoSubmitCheckbox.checked;
@@ -380,6 +534,15 @@ function PBM() {
       };
       getSettingsPBM();
       console.log("CLICKED");
+      //@ts-ignore
+      Toastify({
+        text: "Done ~> Auto This PBM",
+        duration: 1000,
+        close: true,
+        gravity: "top",
+        position: "left",
+        // ... other Toastify options ...
+      }).showToast();
     });
 
     const buttonAll = document.createElement("button");
@@ -406,12 +569,44 @@ function PBM() {
       };
       getSettingsPBM();
       console.log("CLICKED");
+      //@ts-ignore
+      Toastify({
+        text: "Done ~> Auto All PBM",
+        duration: 1000,
+        close: true,
+        gravity: "top",
+        position: "left",
+        // ... other Toastify options ...
+      }).showToast();
       // automateTableResponses(defaultSettingsPBM);
+    });
+
+    const buttonEmpty = document.createElement("button");
+    buttonEmpty.className = "btn btn-danger ml-2";
+    buttonEmpty.textContent = "Clear";
+    buttonEmpty.addEventListener("click", () => {
+      const radioInputs: NodeListOf<HTMLInputElement> =
+        document.querySelectorAll('.table input[type="radio"]');
+
+      // Iterate through each radio input and uncheck it
+      radioInputs.forEach((input: HTMLInputElement) => {
+        input.checked = false;
+      });
+
+      //@ts-ignore
+      Toastify({
+        text: "Cleared",
+        duration: 1000,
+        close: true,
+        gravity: "top",
+        position: "left",
+        // ... other Toastify options ...
+      }).showToast();
     });
 
     const txt = document.createElement("p");
     txt.className = "bg-info text-white mr-2";
-    txt.textContent = "myudakk ~> automate eval PBM 〜(￣▽￣〜)";
+    txt.textContent = "SiAp DiPS ~> automate eval PBM 〜(￣▽￣〜)";
 
     // selectAllDosenCheckbox.addEventListener("change", function () {
     //   autoSubmitCheckbox.checked = this.checked;
@@ -426,6 +621,8 @@ function PBM() {
     container.appendChild(button);
 
     container.appendChild(buttonAll);
+
+    container.appendChild(buttonEmpty);
 
     // Append the container to the header
     headerElement.appendChild(container);

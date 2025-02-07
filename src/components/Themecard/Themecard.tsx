@@ -2,19 +2,35 @@ import { SetStateAction, useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Moon, Sun, LineChart, UserCircle, GripHorizontal } from "lucide-react";
+  Moon,
+  Sun,
+  LineChart,
+  UserCircle,
+  GripHorizontal,
+  HelpCircle,
+} from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { getActiveTab } from "@/lib/utils";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const darkModeAllowedUrls: string[] = [
   "https://siap.undip.ac.id/",
@@ -29,9 +45,19 @@ const UndipThemeSettings = ({
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
 }) => {
+  const [openCustomValue, setOpenCustomValue] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const [mode, setMode] = useState("custom");
   const [customColor, setCustomColor] = useState("custom");
+  const [profile, setProfile] = useState({
+    avatarUrl: null,
+    username: null,
+    nim: null,
+    prodi: null,
+    blurUsername: false,
+    blurNim: false,
+    blurProdi: false,
+  });
 
   const colors: Record<string, string> = {
     blue: "bg-blue-600",
@@ -103,6 +129,28 @@ const UndipThemeSettings = ({
       if (localStorage.undipCustomTheme === undefined) return;
       setIsEnabled(localStorage.undipCustomTheme);
     };
+    const getProfile = async () => {
+      const result = await chrome.storage.local.get([
+        "profileImageLocal",
+        "profileNameLocal",
+        "profileNim",
+        "profileProdi",
+        "isBlurredUsername",
+        "isBlurredNim",
+        "isBlurredProdi",
+      ]);
+      console.log(result);
+      setProfile({
+        avatarUrl: result.profileImageLocal,
+        username: result.profileNameLocal,
+        nim: result.profileNim,
+        prodi: result.profileProdi,
+        blurUsername: result.isBlurredUsername,
+        blurNim: result.isBlurredNim,
+        blurProdi: result.isBlurredProdi,
+      });
+    };
+    getProfile();
     getLocalStorage();
   }, []);
 
@@ -112,6 +160,7 @@ const UndipThemeSettings = ({
   };
 
   const setCustomColorTab = (args: SetStateAction<string>) => {
+    console.log("setCustomColorTab", args);
     setCustomColor(args);
     setMode("custom");
   };
@@ -174,6 +223,22 @@ const UndipThemeSettings = ({
       <CardHeader>
         <CardTitle className="text-xl font-bold">
           Undip Theme Settings
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <video
+                  src="/vid-theme.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  className="max-w-xs cursor-pointer"
+                />
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -215,8 +280,15 @@ const UndipThemeSettings = ({
         <div className="space-y-2">
           <label className="text-sm font-medium">Custom Color</label>
           <Select value={customColor} onValueChange={setCustomColorTab}>
-            <SelectTrigger disabled={!isEnabled} className="w-full">
-              <SelectValue placeholder="Select a color" />
+            <SelectTrigger
+              disabled={!isEnabled}
+              className="w-full"
+              title="Custom Color"
+            >
+              <SelectValue
+                onClick={(e) => e.stopPropagation()}
+                placeholder="Select a color"
+              />
             </SelectTrigger>
             <SelectContent>
               {Object.entries(colors).map(([name, bgClass]) => (
@@ -246,17 +318,24 @@ const UndipThemeSettings = ({
                 <div className="flex items-end space-x-4">
                   <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-white bg-white">
                     <img
-                      src="https://github.com/shadcn.png"
+                      src={profile.avatarUrl || "https://github.com/shadcn.png"}
                       alt="Profile"
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="mb-2 text-white">
-                    <h2 className="text-xl font-bold">
-                      MUCHAMMAD YUDA TRI ANANDA
+                    <h2
+                      className={`text-xl font-bold ${
+                        profile.blurUsername ? "blur-sm" : ""
+                      }`}
+                    >
+                      {profile.username || "NAMA"}
                     </h2>
                     <p className="text-sm opacity-90">
-                      NIM: 24012345610169 | Informatika S1
+                      <span className={`${profile.blurNim ? "blur-sm" : ""}`}>
+                        NIM: {profile.nim || "NIM"}
+                      </span>{" "}
+                      | {profile.prodi || "PRODI"}
                     </p>
                   </div>
                 </div>
@@ -274,7 +353,9 @@ const UndipThemeSettings = ({
                   variant="ghost"
                   disabled={!isEnabled}
                   className={`${
-                    textColors[customColor] || textColors[mode]
+                    textColors[customColor] ||
+                    textColors[mode] ||
+                    "text-gray-500"
                   } text-sm`}
                 >
                   <LineChart className="mr-2 h-4 w-4" />
@@ -284,7 +365,9 @@ const UndipThemeSettings = ({
                   disabled={!isEnabled}
                   variant="ghost"
                   className={`${
-                    textColors[customColor] || textColors[mode]
+                    textColors[customColor] ||
+                    textColors[mode] ||
+                    "text-gray-500"
                   } text-sm`}
                 >
                   <UserCircle className="mr-2 h-4 w-4" />

@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -11,6 +17,7 @@ import {
   HelpCircle,
   Pencil,
   RotateCcw,
+  ShieldAlert,
 } from "lucide-react";
 import {
   Tooltip,
@@ -225,7 +232,13 @@ const IpkStatus = ({
                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
               </TooltipTrigger>
               <TooltipContent>
-                berlaku di https://siap.undip.ac.id/pages/mhs/dashboard
+                <video
+                  src="/vid-ipk.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  className="max-w-xs cursor-pointer"
+                />
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -234,56 +247,59 @@ const IpkStatus = ({
       <CardContent className="pb-4">
         <div className="space-y-4">
           {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription className="text-sm">
-                {error === "Failed to fetch IPK from page" ? (
-                  <>
-                    Coba ke{" "}
-                    <a
-                      href="https://siap.undip.ac.id/pages/mhs/dashboard"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline"
-                    >
-                      SIAP UNDIP Dashboard
-                    </a>{" "}
-                    ato tunggu web ny selese loding
-                  </>
-                ) : (
-                  error
-                )}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-              Your IPK
-            </p>
-            <div className="relative">
-              {isEditing ? (
-                <Input
-                  type="text"
-                  value={ipkData.value}
-                  onChange={handleIpkChange}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && handleSave(ipkData.value)
+            <Card className="w-full bg-gray-100 dark:bg-gray-900 max-w-md mx-auto">
+              <CardHeader className="flex flex-col items-center justify-center space-y-2">
+                <ShieldAlert className="h-12 w-12 text-red-500" />
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-gray-500 text-base">
+                  Ipk not been added, go to Undip to add it
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-center">
+                <Button
+                  className="w-full max-w-xs"
+                  onClick={() =>
+                    chrome.tabs.create({
+                      url: "https://siap.undip.ac.id/sso/login",
+                    })
                   }
-                  className="text-center text-xl font-bold w-32 mx-auto"
-                  autoFocus
-                  onBlur={(e) => handleSave(e.target.value)}
-                />
-              ) : (
-                <div
-                  className={`text-2xl font-bold transition-all duration-300 ${
-                    ipkData.isBlurred ? "blur-sm" : ""
-                  }`}
                 >
-                  {ipkData.value}
-                </div>
-              )}
+                  Go to Undip
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+          {!error && (
+            <div className="text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                Your IPK
+              </p>
+              <div className="relative">
+                {isEditing ? (
+                  <Input
+                    type="text"
+                    value={ipkData.value}
+                    onChange={handleIpkChange}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleSave(ipkData.value)
+                    }
+                    className="text-center text-xl font-bold w-32 mx-auto"
+                    autoFocus
+                    onBlur={(e) => handleSave(e.target.value)}
+                  />
+                ) : (
+                  <div
+                    className={`text-2xl font-bold transition-all duration-300 ${
+                      ipkData.isBlurred ? "blur-sm" : ""
+                    }`}
+                  >
+                    {ipkData.value}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {isIpkLoaded && (
             <div className="flex gap-2">

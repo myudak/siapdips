@@ -43,17 +43,14 @@ const NavbarLogo = () => {
   return (
     <div className="flex items-center gap-2">
       {/* <Gem className="h-5 w-5 text-blue-600" /> */}
-      <Icons.logoSiapDips
-        className="h-5 w-5 logo-wrapper hover:cursor-pointer"
-        onClick={() => {
-          chrome.runtime.openOptionsPage();
-        }}
-      />
+      <a href="#">
+        <Icons.logoSiapDips className="h-5 w-5 logo-wrapper hover:cursor-pointer" />
+      </a>
       <Icons.logoMyudak
         className="h-5 w-5 logo-containerNew hover:cursor-pointer"
         onClick={linkClickMyudak}
       />
-      <span className="text-lg font-bold">Siap Dipss</span>
+      <span className="text-lg font-bold cursor-default">Siap Dipss</span>
     </div>
   );
 };

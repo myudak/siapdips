@@ -20,13 +20,13 @@ const NavbarProfile = () => {
   useEffect(() => {
     const getProfile = async () => {
       const result = await chrome.storage.local.get([
-        "profileImage",
+        "profileImageLocal",
         "profileName",
         "profileNim",
         "profileProdi",
       ]);
       console.log(result);
-      setAvatarUrl(result.profileImage);
+      setAvatarUrl(result.profileImageLocal);
       setUsername(result.profileName);
       setNim(result.profileNim);
       setProdi(result.profileProdi);
