@@ -12,12 +12,9 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.url === undefined) return;
-
-  // DARK MODE
   if (
     changeInfo.status === "complete" &&
-    tab.url &&
-    darkModeAllowedUrls.some((url) => tab.url?.includes(url))
+    tab.url === "https://undip.learnsocial.online/"
   ) {
     // TOASTIFY
     chrome.scripting.executeScript({
@@ -28,6 +25,48 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       target: { tabId },
       files: ["libs/toastify.css"],
     });
+    // TOASTIFY
+  }
+  // DARK MODE
+  if (
+    changeInfo.status === "complete" &&
+    tab.url &&
+    darkModeAllowedUrls.some((url) => tab.url?.includes(url))
+  ) {
+    // TOASTIFY
+    Promise.all([
+      chrome.scripting.executeScript({
+        target: { tabId },
+        files: ["libs/toastify.js"],
+      }),
+      chrome.scripting.insertCSS({
+        target: { tabId },
+        files: ["libs/toastify.css"],
+      }),
+    ])
+      .then(() => {
+        chrome.scripting.executeScript({
+          target: { tabId },
+          func: () => {
+            // @ts-ignore
+            if (typeof Toastify !== "undefined") {
+              // @ts-ignore
+              Toastify({
+                text: "SiAp DiPS ~> Welcome ヽ（≧□≦）ノ",
+                duration: 3000,
+                close: true,
+                position: "right",
+                // ... other Toastify options ...
+              }).showToast();
+            } else {
+              console.error("❌ Toastify is not loaded!");
+            }
+          },
+        });
+      })
+      .catch((error) => {
+        console.error("❌ Failed to load Toastify:", error);
+      });
     // TOASTIFY
 
     // CUSTOM THEME DARK MODE ETC

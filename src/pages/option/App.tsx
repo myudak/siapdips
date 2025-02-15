@@ -8,19 +8,50 @@ import { ArrowRight, Code2, Laptop, Rocket } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Icons } from "./components/Navbar/Navbar.logo";
 import { Toaster } from "@/components/ui/sonner";
-
-const tutorials = [
-  { id: 1, title: "Ipk Status", videoSrc: "vid-ipk.mp4" },
-  { id: 2, title: "Theme", videoSrc: "vid-theme.mp4" },
-  { id: 3, title: "Auto PBM", videoSrc: "vid-pbm.mp4" },
-  {
-    id: 4,
-    title: "Enable Click Kanan",
-    videoSrc: "vid-klikKanan.mp4",
-  },
-];
+import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
+import { useRef } from "react";
 
 const LandingPage = () => {
+  const tutorialIpk = useRef<null | HTMLDivElement>(null);
+  const tutorialTheme = useRef<null | HTMLDivElement>(null);
+  const tutorialAutopbm = useRef<null | HTMLDivElement>(null);
+  const tutorialEnableClickKanan = useRef<null | HTMLDivElement>(null);
+
+  const tutorials = [
+    {
+      id: 1,
+      title: "Ipk Status",
+      videoSrc: "vid-ipk.mp4",
+      hash: "IpkStatus",
+      ref: tutorialIpk,
+    },
+    {
+      id: 2,
+      title: "Theme",
+      videoSrc: "Vid-Theme.webm",
+      hash: "Theme",
+      ref: tutorialTheme,
+    },
+    {
+      id: 3,
+      title: "Auto PBM",
+      videoSrc: "Vid-Pbm.webm",
+      hash: "Autopbm",
+      ref: tutorialAutopbm,
+    },
+    {
+      id: 4,
+      title: "Enable Click Kanan",
+      videoSrc: "vid-klikKanan.mp4",
+      hash: "EnableClickKanan",
+      ref: tutorialEnableClickKanan,
+    },
+  ];
+
+  useScrollToHashSection("IpkStatus", tutorialIpk);
+  useScrollToHashSection("Theme", tutorialTheme);
+  useScrollToHashSection("Autopbm", tutorialAutopbm);
+  useScrollToHashSection("EnableClickKanan", tutorialEnableClickKanan);
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -118,6 +149,8 @@ const LandingPage = () => {
                   <div
                     key={tutorial.id}
                     className="w-full flex flex-col items-center"
+                    id={tutorial.hash}
+                    ref={tutorial.ref}
                   >
                     <h3 className="text-2xl font-semibold mb-6">
                       {tutorial.title}

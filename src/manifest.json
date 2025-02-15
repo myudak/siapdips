@@ -9,7 +9,10 @@
     "page": "option.html",
     "open_in_tab": true
   },
-  "host_permissions": ["*://*.undip.ac.id/*"],
+  "host_permissions": [
+    "*://*.undip.ac.id/*",
+    "https://undip.learnsocial.online/*"
+  ],
   "action": {
     "default_title": "SiAP DiPS",
     "default_popup": "popup.html"
@@ -23,6 +26,11 @@
     {
       "matches": ["https://siap.undip.ac.id/pages/mhs/dashboard/*"],
       "js": ["./content.js"]
+    },
+    {
+      "matches": ["https://undip.learnsocial.online/*"],
+      "js": ["libs/toastify.js", "./content-undiplearn.js"],
+      "css": ["libs/toastify.css"]
     }
   ],
   "background": {

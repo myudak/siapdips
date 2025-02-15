@@ -231,7 +231,12 @@ const IpkStatus = ({
               <TooltipTrigger asChild>
                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent
+                onClick={() =>
+                  chrome.tabs.create({ url: "option.html#IpkStatus" })
+                }
+                title="Tutorial Ipk"
+              >
                 <video
                   src="/vid-ipk.mp4"
                   autoPlay

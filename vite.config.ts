@@ -36,17 +36,23 @@ export default defineConfig(() => {
           popup: path.resolve(__dirname, "src/pages/main/popup.html"),
           nested: path.resolve(__dirname, "src/pages/option/option.html"),
           content: path.resolve(__dirname, "src/content.js"),
+          contentUndiplearn: path.resolve(
+            __dirname,
+            "src/content-undiplearn.js"
+          ),
           background: path.resolve(__dirname, "src/background.ts"),
         },
         output: {
           entryFileNames: (chunkInfo) => {
             if (chunkInfo.name === "content") return "content.js";
             if (chunkInfo.name === "background") return "background.js";
+            if (chunkInfo.name === "contentUndiplearn")
+              return "content-undiplearn.js";
             return "assets/[name]-[hash].js";
           },
           banner: `/*!
- * Your Project Name v1.0.0
- * Copyright (c) ${new Date().getFullYear()} Your Name or Company
+ * myudakk/SiapDips v1.0.0
+ * Copyright (c) ${new Date().getFullYear()} myyudak
  * Licensed under the MIT License
  */`,
         },

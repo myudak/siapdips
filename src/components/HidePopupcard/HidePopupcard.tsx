@@ -150,7 +150,12 @@ const HidePopupcard = ({
               <TooltipTrigger asChild>
                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2" />
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent
+                onClick={() =>
+                  chrome.tabs.create({ url: "option.html#EnableClickKanan" })
+                }
+                title="Tutorial Enable klikakan"
+              >
                 <video
                   src="/vid-klikKanan.mp4"
                   autoPlay

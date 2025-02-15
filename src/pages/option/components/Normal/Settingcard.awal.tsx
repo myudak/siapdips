@@ -284,12 +284,7 @@ function SortableItem({
         <GripVertical className="h-4 w-4" />
       </Button>
       <span className={`flex-1 text-base flex-wrap select-none `}>{Nama}</span>
-      <Button
-        variant="ghost"
-        size="icon"
-        title="hapus todo"
-        className="h-8 w-8  "
-      >
+      <Button variant="ghost" size="icon" className="h-8 w-8  ">
         {/* @ts-ignore */}
         {Emot}
       </Button>

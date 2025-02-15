@@ -69,9 +69,14 @@ const AutopbmCard = ({
                 <TooltipTrigger asChild>
                   <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent
+                  onClick={() =>
+                    chrome.tabs.create({ url: "option.html#Autopbm" })
+                  }
+                  title="Tutorial PBM"
+                >
                   <video
-                    src="/vid-pbm.mp4"
+                    src="/Vid-Pbm.webm"
                     autoPlay
                     loop
                     muted

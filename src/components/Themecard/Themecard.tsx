@@ -228,9 +228,12 @@ const UndipThemeSettings = ({
               <TooltipTrigger asChild>
                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent
+                onClick={() => chrome.tabs.create({ url: "option.html#Theme" })}
+                title="Tutorial Theme"
+              >
                 <video
-                  src="/vid-theme.mp4"
+                  src="/Vid-Theme.webm"
                   autoPlay
                   loop
                   muted
@@ -318,7 +321,7 @@ const UndipThemeSettings = ({
                 <div className="flex items-end space-x-4">
                   <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-white bg-white">
                     <img
-                      src={profile.avatarUrl || "https://github.com/shadcn.png"}
+                      src={profile.avatarUrl || "profile.webp"}
                       alt="Profile"
                       className="h-full w-full object-cover"
                     />

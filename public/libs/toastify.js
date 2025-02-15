@@ -278,11 +278,3 @@
   );
 });
 //# sourceMappingURL=/sm/e1ebbfe1bf0b0061f0726ebc83434e1c2f8308e6354c415fd05ecccdaad47617.map
-
-Toastify({
-  text: "SiAp DiPS ~> Welcome ヽ（≧□≦）ノ",
-  duration: 3000,
-  close: true,
-  position: "right",
-  // ... other Toastify options ...
-}).showToast();
