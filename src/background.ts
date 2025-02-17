@@ -69,6 +69,21 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       });
     // TOASTIFY
 
+    // PROGRESS BAR
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id! },
+      func: () => {
+        const progressBar = document.querySelectorAll(
+          ".progress-bar"
+        ) as NodeListOf<HTMLElement>;
+        if (progressBar.length > 0) {
+          progressBar.forEach((e) => {
+            e.style.width = "100%";
+          });
+        }
+      },
+    });
+
     // CUSTOM THEME DARK MODE ETC
     chrome.storage.local.get("undipCustomTheme", (data) => {
       if (!data.undipCustomTheme || data.undipCustomTheme === "no") return;
