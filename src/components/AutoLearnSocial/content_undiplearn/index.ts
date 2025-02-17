@@ -292,16 +292,15 @@ function injectGlobalStyles() {
   document.head.appendChild(style);
 }
 
-export function createHelperDefault(message?: string) {
-  if (message) {
-    // @ts-ignore
-    Toastify({
-      text: message,
-      duration: 3000,
-      close: true,
-      position: "left",
-    }).showToast();
-  }
-  injectGlobalStyles();
-  createHelper();
+export function createHelperDefault() {
+  // @ts-ignore
+  Toastify({
+    text: "KONTOL",
+    duration: 3000,
+    close: true,
+    position: "left",
+  }).showToast();
+
+  injectGlobalStyles(); // Inject global styles
+  createHelper(); // Create helper
 }

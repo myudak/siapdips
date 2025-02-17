@@ -38,11 +38,17 @@ export default defineConfig(() => {
           content: path.resolve(__dirname, "src/content.js"),
           contentUndiplearn: path.resolve(
             __dirname,
-            "src/content-undiplearn.js"
+            "src/content-undiplearn.ts"
           ),
           background: path.resolve(__dirname, "src/background.ts"),
         },
         output: {
+          // manualChunks(id) {
+          //   if (id.includes("src/content-undiplearn.ts")) {
+          //     return "content-undiplearn";
+          //   }
+          // },
+
           entryFileNames: (chunkInfo) => {
             if (chunkInfo.name === "content") return "content.js";
             if (chunkInfo.name === "background") return "background.js";

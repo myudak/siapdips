@@ -135,6 +135,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 "#navbar-mobile > ul.nav.navbar-nav.float-right > li.dropdown.dropdown-user.nav-item > a > span.user-name",
                 "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(1) > tbody > tr:nth-child(1) > th",
                 "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(1) > tbody > tr:nth-child(2) > th",
+                "body > div.rootPanelStyle > div.screenTableStyle > div.menuTdScreenStyle > div > div > div.navbarMenuOuter > div:nth-child(4) > div > div.userStatusText",
               ];
 
               blurElements.forEach((selector) => {

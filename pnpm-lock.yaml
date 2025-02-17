@@ -150,6 +150,9 @@ importers:
       vite-plugin-javascript-obfuscator:
         specifier: ^3.1.0
         version: 3.1.0
+      vite-plugin-singlefile:
+        specifier: ^2.1.0
+        version: 2.1.0(rollup@4.34.4)(vite@6.1.0(@types/node@22.10.2)(jiti@1.21.7)(yaml@2.7.0))
 
 packages:
 
@@ -2240,6 +2243,13 @@ packages:
 
   vite-plugin-javascript-obfuscator@3.1.0:
     resolution: {integrity: sha512-sf4JFlG1iUPl7bLXHGOy+bKWOQUFyXzJFWa+n2S2xMMvyfM+V9R40HhpZoIF1eAjifArM1SF7fbSFIaTuUIbPA==}
+
+  vite-plugin-singlefile@2.1.0:
+    resolution: {integrity: sha512-7tJo+UgZABlKpY/nubth/wxJ4+pUGREPnEwNOknxwl2MM0zTvF14KTU4Ln1lc140gjLLV5mjDrvuoquU7OZqCg==}
+    engines: {node: '>18.0.0'}
+    peerDependencies:
+      rollup: ^4.28.1
+      vite: ^5.4.11 || ^6.0.0
 
   vite@6.1.0:
     resolution: {integrity: sha512-RjjMipCKVoR4hVfPY6GQTgveinjNuyLw+qruksLDvA5ktI1150VmcMBKmQaEWJhg/j6Uaf6dNCNA0AfdzUb/hQ==}
@@ -4398,6 +4408,12 @@ snapshots:
     dependencies:
       anymatch: 3.1.3
       javascript-obfuscator: 4.1.1
+
+  vite-plugin-singlefile@2.1.0(rollup@4.34.4)(vite@6.1.0(@types/node@22.10.2)(jiti@1.21.7)(yaml@2.7.0)):
+    dependencies:
+      micromatch: 4.0.8
+      rollup: 4.34.4
+      vite: 6.1.0(@types/node@22.10.2)(jiti@1.21.7)(yaml@2.7.0)
 
   vite@6.1.0(@types/node@22.10.2)(jiti@1.21.7)(yaml@2.7.0):
     dependencies:

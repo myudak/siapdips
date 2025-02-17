@@ -1,5 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { BotMessageSquare, GripHorizontal, HelpCircle } from "lucide-react";
+import {
+  BotMessageSquare,
+  GripHorizontal,
+  HelpCircle,
+  Link2Off,
+  LinkIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
@@ -9,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { createHelperDefault } from "@/lib/content_undiplearn";
 
 const AutoLearnSocial = ({
   listeners,
@@ -30,17 +37,19 @@ const AutoLearnSocial = ({
       </Button>
       <CardHeader className="py-2">
         <CardTitle className="text-lg font-bold">
-          Auto PBM
+          Auto Learn Social
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2 inline" />
               </TooltipTrigger>
               <TooltipContent
-                onClick={() =>
-                  chrome.tabs.create({ url: "option.html#Autopbm" })
-                }
                 title="Tutorial PBM"
+                onClick={() =>
+                  chrome.tabs.create({
+                    url: "option.html#Autopbm",
+                  })
+                }
               >
                 <video
                   src="/Vid-Pbm.webm"
@@ -55,9 +64,71 @@ const AutoLearnSocial = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1 flex flex-col">
-        <Button className="w-full">
+        <Button
+          className="w-full"
+          onClick={async () => {
+            const [tab] = await chrome.tabs.query({
+              active: true,
+              currentWindow: true,
+            });
+            if (!tab?.id) return;
+            if (!tab.url?.includes("https://undip.learnsocial.online")) {
+              await chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ["libs/toastify.js"],
+              });
+              await chrome.scripting.insertCSS({
+                target: { tabId: tab.id },
+                files: ["libs/toastify.css"],
+              });
+              await chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                  // @ts-ignore
+                  Toastify({
+                    text: "Siap DIps ~~> BUKAN LEARNSOCIAL `(*>﹏<*)′",
+                    duration: 3000,
+                    close: true,
+                    position: "left",
+                  }).showToast();
+                },
+              });
+              return;
+            }
+
+            await chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              args: ["Siap DiPS ~> Auto Learn Social (●ˇ∀ˇ●)"],
+              func: createHelperDefault,
+            });
+          }}
+        >
           <BotMessageSquare className="w-4 h-4 mr-2" />
-          ~Auto This~
+          ~Add~
+        </Button>
+        <Button
+          className="w-full"
+          variant={"secondary"}
+          onClick={() =>
+            chrome.tabs.create({
+              url: "https://github.com/myudak/learnSocial-hack",
+            })
+          }
+        >
+          <LinkIcon className="w-4 h-4 mr-2" />
+          Learn Social "hack" {"<Old Version>"}
+        </Button>
+        <Button
+          className="w-full"
+          variant={"secondary"}
+          onClick={() =>
+            chrome.tabs.create({
+              url: "https://undip.learnsocial.online",
+            })
+          }
+        >
+          <Link2Off className="w-4 h-4 mr-2" />
+          Goto Undip Learn Social
         </Button>
       </CardContent>
     </Card>
