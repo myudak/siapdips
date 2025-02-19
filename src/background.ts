@@ -4,6 +4,7 @@ const darkModeAllowedUrls: string[] = [
   "https://siap.undip.ac.id/",
   "https://sso.undip.ac.id/",
   "https://kulon2.undip.ac.id/",
+  "https://undip.learnsocial.online",
 ];
 
 chrome.runtime.onInstalled.addListener(() => {

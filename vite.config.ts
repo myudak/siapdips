@@ -63,7 +63,7 @@ export default defineConfig(() => {
  */`,
         },
       },
-      emptyOutDir: false,
+      emptyOutDir: true,
     },
   };
 });

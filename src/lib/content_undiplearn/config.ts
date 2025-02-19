@@ -21,10 +21,14 @@ function klikElement(e: Element) {
 
 const BUTTONS: ButtonConfig[] = [
   {
+    text: "AUTO THIS",
+    icon: "🔥",
+    primary: true,
+  },
+  {
     text: "Pilgan",
     icon: "🅰️",
     action: TogglePilganFull(),
-    primary: true,
   },
   {
     text: "Dropdown",
@@ -54,7 +58,11 @@ const BUTTONS: ButtonConfig[] = [
   {
     text: "Item Bank Drag & Drop",
     icon: "👾",
-    action: ToggleItemBankDragDrop(),
+    action: ToggleWeb(
+      ToggleItemBankDragDrop(),
+      ".dndSentenceItem",
+      "Item Bank Drag & Drop"
+    ),
   },
   {
     text: "DUMMY",
@@ -588,21 +596,7 @@ function TogglePairKiriKananFull(): () => void {
 }
 
 function ToggleItemBankDragDrop(): () => void {
-  let observing = false;
-  const observer = new MutationObserver((_mutations) => {
-    if (!document.querySelector(".dndSentenceItem")) {
-      observer.disconnect();
-      observing = false;
-      console.log("✅ Disconnected from the MutationObserver.");
-      //   @ts-ignore
-      Toastify({
-        text: "ERROR ~> Gk ketemu",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-      return;
-    }
+  return () => {
     // MAIN
     console.log("✅ Found ITEM BANCK!");
 
@@ -645,6 +639,29 @@ function ToggleItemBankDragDrop(): () => void {
     klikClass(".check");
     klikClass("#navbarRightButton");
     // MAIN
+  };
+}
+
+function ToggleWeb(f: () => void, classAwal: string, name: string) {
+  let observing = false;
+  const observer = new MutationObserver((_mutations) => {
+    if (!document.querySelector(classAwal)) {
+      observer.disconnect();
+      observing = false;
+      console.log("✅ Disconnected from the MutationObserver.");
+      //   @ts-ignore
+      Toastify({
+        text: "ERROR ~> Gk ketemu",
+        duration: 3000,
+        close: true,
+        position: "right",
+      }).showToast();
+      return;
+    }
+
+    // MAIN
+    f();
+    // MAIN
 
     if (document.querySelector(".scoringPageBackground")) {
       observer.disconnect();
@@ -652,7 +669,7 @@ function ToggleItemBankDragDrop(): () => void {
       console.log("✅ Disconnected from the MutationObserver.");
       //   @ts-ignore
       Toastify({
-        text: "DONE ~> AUTO ItembNak",
+        text: `DONE ~> AUTO ${name}`,
         duration: 3000,
         close: true,
         position: "right",
@@ -664,7 +681,7 @@ function ToggleItemBankDragDrop(): () => void {
     if (!observing) {
       // @ts-ignore
       Toastify({
-        text: "AUTO pairKananKiri FULL",
+        text: `AUTO ${name}`,
         duration: 3000,
         close: true,
         position: "right",

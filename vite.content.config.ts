@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
         format: "iife", // Chrome Extensions require IIFE format
       },
     },
-    outDir: "dist", // Output directory
+    outDir: "public", // Output directory
     emptyOutDir: false, // Prevent clearing the dist folder (so main build files remain)
   },
 }));

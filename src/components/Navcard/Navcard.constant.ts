@@ -55,7 +55,7 @@ export const navLinks: NavLinksItem[] = [
   {
     icon: SquareTerminal,
     title: "Learn Social",
-    subtitle: "basing",
+    subtitle: "Basing",
     tooltip: "Basing",
     href: "https://undip.learnsocial.online",
   },

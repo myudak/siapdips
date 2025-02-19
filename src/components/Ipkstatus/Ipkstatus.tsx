@@ -78,7 +78,7 @@ const IpkStatus = ({
       setIpkData((prev) => ({ ...prev, value: value }));
       setError(null);
     } catch (err) {
-      setError("Failed to save IPK");
+      // setError("Failed to save IPK");
       console.error(err);
     }
     setIsEditing(false);

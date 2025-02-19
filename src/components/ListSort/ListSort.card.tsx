@@ -24,7 +24,7 @@ export const cardComponents = {
   NavigationCard,
   Ipkstatus,
   Themecard,
-  HidePopupcard,
+  HidePopupcard, // Lainnya
   QuoteCard,
   TodoList,
   AutopbmCard,
