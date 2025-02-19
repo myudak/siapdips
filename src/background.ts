@@ -49,39 +49,41 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     darkModeAllowedUrls.some((url) => tab.url?.includes(url))
   ) {
     // TOASTIFY
-    Promise.all([
-      chrome.scripting.executeScript({
-        target: { tabId },
-        files: ["libs/toastify.js"],
-      }),
-      chrome.scripting.insertCSS({
-        target: { tabId },
-        files: ["libs/toastify.css"],
-      }),
-    ])
-      .then(() => {
+    if (!tab.url.includes("https://undip.learnsocial.online/")) {
+      Promise.all([
         chrome.scripting.executeScript({
           target: { tabId },
-          func: () => {
-            // @ts-ignore
-            if (typeof Toastify !== "undefined") {
+          files: ["libs/toastify.js"],
+        }),
+        chrome.scripting.insertCSS({
+          target: { tabId },
+          files: ["libs/toastify.css"],
+        }),
+      ])
+        .then(() => {
+          chrome.scripting.executeScript({
+            target: { tabId },
+            func: () => {
               // @ts-ignore
-              Toastify({
-                text: "SiAp DiPS ~> Welcome ヽ（≧□≦）ノ",
-                duration: 3000,
-                close: true,
-                position: "right",
-                // ... other Toastify options ...
-              }).showToast();
-            } else {
-              console.error("❌ Toastify is not loaded!");
-            }
-          },
+              if (typeof Toastify !== "undefined") {
+                // @ts-ignore
+                Toastify({
+                  text: "SiAp DiPS ~> Welcome ヽ（≧□≦）ノ",
+                  duration: 3000,
+                  close: true,
+                  position: "right",
+                  // ... other Toastify options ...
+                }).showToast();
+              } else {
+                console.error("❌ Toastify is not loaded!");
+              }
+            },
+          });
+        })
+        .catch((error) => {
+          console.error("❌ Failed to load Toastify:", error);
         });
-      })
-      .catch((error) => {
-        console.error("❌ Failed to load Toastify:", error);
-      });
+    }
     // TOASTIFY
 
     // PROGRESS BAR

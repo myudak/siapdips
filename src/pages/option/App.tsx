@@ -16,6 +16,8 @@ const LandingPage = () => {
   const tutorialTheme = useRef<null | HTMLDivElement>(null);
   const tutorialAutopbm = useRef<null | HTMLDivElement>(null);
   const tutorialEnableClickKanan = useRef<null | HTMLDivElement>(null);
+  const AutoLearnSocialRef = useRef<null | HTMLDivElement>(null);
+  const AutoLearnSocialoldRef = useRef<null | HTMLDivElement>(null);
 
   const tutorials = [
     {
@@ -45,6 +47,20 @@ const LandingPage = () => {
       videoSrc: "vid-klikKanan.mp4",
       hash: "EnableClickKanan",
       ref: tutorialEnableClickKanan,
+    },
+    {
+      id: 5,
+      title: "Auto Learn Social",
+      videoSrc: "vid-learnsocial.mp4",
+      hash: "autolearnsocial",
+      ref: AutoLearnSocialRef,
+    },
+    {
+      id: 6,
+      title: "Auto Learn Social {old}",
+      videoSrc: "vid-learnsocialold.mp4",
+      hash: "autolearnsocialold",
+      ref: AutoLearnSocialoldRef,
     },
   ];
 

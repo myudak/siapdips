@@ -22,28 +22,28 @@ import {
 
 export const cardComponents = {
   NavigationCard,
+  JadwalCard,
   Ipkstatus,
   Themecard,
-  HidePopupcard, // Lainnya
-  QuoteCard,
   TodoList,
+  QuoteCard,
   AutopbmCard,
   AutoLearnSocial,
-  JadwalCard,
+  HidePopupcard, // Lainnya
 } as const;
 
 export const cardComponentsOption: {
   [key: string]: [string, LucideIcon];
 } = {
   NavigationCard: ["Navigation Card", Navigation],
+  JadwalCard: ["Jadwal Card", ScanHeart],
   Ipkstatus: ["IPK Status", BarChart],
   Themecard: ["Theme Card", Palette],
-  HidePopupcard: ["Lainnya", MoreHorizontal],
-  QuoteCard: ["Quotes", Quote],
   TodoList: ["Todo List", CheckSquare],
+  QuoteCard: ["Quotes", Quote],
   AutopbmCard: ["PBM Auto", Calendar],
   AutoLearnSocial: ["Auto Learn Social", LeafyGreen],
-  JadwalCard: ["Jadwal Card", ScanHeart],
+  HidePopupcard: ["Lainnya", MoreHorizontal], // etc
 };
 
 export type CardComponentsType = typeof cardComponents;
