@@ -12,9 +12,11 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.url === undefined) return;
+
+  // LEARN SOCIAL
   if (
     changeInfo.status === "complete" &&
-    tab.url === "https://undip.learnsocial.online/"
+    tab.url.includes("https://undip.learnsocial.online/")
   ) {
     // TOASTIFY
     chrome.scripting.executeScript({
@@ -27,6 +29,18 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     });
     // TOASTIFY
   }
+
+  // JADWAL
+  if (
+    changeInfo.status === "complete" &&
+    tab.url.includes("https://siap.undip.ac.id/jadwal_mahasiswa/mhs/jadwal/")
+  ) {
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: parseTableToJsonAndSave,
+    });
+  }
+
   // DARK MODE
   if (
     changeInfo.status === "complete" &&
@@ -755,4 +769,109 @@ function disableCtrlC() {
     const observer = new MutationObserver(unblockActions);
     observer.observe(document, { childList: true, subtree: true });
   })();
+}
+
+interface Course {
+  mataKuliah: string;
+  ruang: string;
+  waktuMulai: string;
+  waktuSelesai: string;
+  sks: number;
+}
+
+interface DayObject {
+  [dayName: string]: Course[];
+}
+
+function parseTableToJsonAndSave(): DayObject | null {
+  const table = document.querySelector(".table") as HTMLTableElement | null;
+  if (!table) {
+    console.error("Elemen tabel tidak ditemukan.");
+    return null;
+  }
+
+  const tbody = table.querySelector("tbody") as HTMLTableSectionElement | null;
+  if (!tbody) {
+    console.error("Body tabel (tbody) tidak ditemukan.");
+    return null;
+  }
+
+  const rows: HTMLTableRowElement[] = Array.from(
+    tbody.querySelectorAll("tr")
+  ) as HTMLTableRowElement[];
+  if (!rows || rows.length === 0) {
+    console.warn("Tidak ada baris tabel yang ditemukan di tbody.");
+    return {}; // Kembalikan objek kosong jika tidak ada baris
+  }
+
+  const daysSchedule: DayObject = {}; // Inisialisasi sebagai objek tunggal
+  let currentDay: string | null = null;
+  let dayCourses: Course[] = [];
+
+  rows.forEach((row) => {
+    const cells: HTMLElement[] = Array.from(
+      row.querySelectorAll("td")
+    ) as HTMLElement[];
+
+    if (cells.length >= 8) {
+      // const rowNumber = cells[0].textContent?.trim() || "";
+      const day = cells[1].textContent?.trim() || "";
+      const mataKuliah = cells[2].textContent?.trim() || "";
+      const ruang = cells[3].textContent?.trim() || "";
+      const waktuText = cells[4].textContent?.trim() || "";
+      const sksText = cells[5].textContent?.trim() || "";
+      // cells[6] diabaikan ('Hadir')
+      // cells[7] diabaikan ('Aksi')
+
+      if (day) {
+        if (day !== currentDay) {
+          if (currentDay) {
+            daysSchedule[currentDay] = dayCourses; // Langsung menetapkan array kursus ke hari sebagai key
+          }
+          currentDay = day;
+          dayCourses = [];
+        }
+
+        const waktuParts = waktuText.split(" s/d ");
+        const waktuMulai = waktuParts[0];
+        const waktuSelesai = waktuParts[1];
+
+        const sks = parseFloat(sksText);
+
+        dayCourses.push({
+          mataKuliah: mataKuliah,
+          ruang: ruang,
+          waktuMulai: waktuMulai,
+          waktuSelesai: waktuSelesai,
+          sks: sks,
+        });
+      }
+    }
+  });
+
+  // Menambahkan kursus hari terakhir
+  if (currentDay) {
+    daysSchedule[currentDay] = dayCourses; // Langsung menetapkan array kursus ke hari terakhir
+  }
+
+  // Simpan ke Chrome Local Storage
+  chrome.storage.local.set({ scheduleData: daysSchedule }, function () {
+    if (chrome.runtime.lastError) {
+      console.error(
+        "Error menyimpan ke Chrome local storage:",
+        chrome.runtime.lastError
+      );
+    } else {
+      // console.log("Data jadwal disimpan ke Chrome local storage.");
+      // Verifikasi data yang disimpan (opsional)
+      chrome.storage.local.get(["scheduleData"], function (result) {
+        // console.log(
+        //   "Data yang diambil dari Chrome local storage:",
+        //   result.scheduleData
+        // );
+      });
+    }
+  });
+
+  return daysSchedule; // Mengembalikan objek tunggal
 }

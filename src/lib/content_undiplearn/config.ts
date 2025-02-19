@@ -6,44 +6,55 @@ interface ButtonConfig {
   action?: () => Promise<void> | void;
 }
 
-function klik(e: string) {
+function klikClass(e: string) {
   const el = document.querySelector(e);
   el?.dispatchEvent(new Event("mousedown", { bubbles: true }));
   el?.dispatchEvent(new Event("pointerdown", { bubbles: true }));
   el?.dispatchEvent(new Event("mouseup", { bubbles: true }));
 }
 
+function klikElement(e: Element) {
+  e.dispatchEvent(new Event("mousedown", { bubbles: true }));
+  e.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+  e.dispatchEvent(new Event("mouseup", { bubbles: true }));
+}
+
 const BUTTONS: ButtonConfig[] = [
   {
-    text: "Pilgan Full",
+    text: "Pilgan",
     icon: "🅰️",
     action: TogglePilganFull(),
     primary: true,
   },
   {
-    text: "Dropdown FULL",
+    text: "Dropdown",
     icon: "🦖",
     action: ToggleDropdownFull(),
   },
   {
-    text: "SelectWord FULL",
+    text: "SelectWord",
     icon: "🔍",
     action: ToggleSelectWordFull(),
   },
   {
-    text: "Word Gap / true false FULL",
+    text: "Word Gap / true false",
     icon: "🙏",
     action: ToggleWordGapFull(),
   },
   {
-    text: "IsianTextBOx FULL",
+    text: "IsianTextBOx",
     icon: "📝",
     action: ToggleIsianTextBoxFull(),
   },
   {
-    text: "Pair Kanan Kiri FULL",
+    text: "Pair Kanan Kiri",
     icon: "🔗",
     action: TogglePairKiriKananFull(),
+  },
+  {
+    text: "Item Bank Drag & Drop",
+    icon: "👾",
+    action: ToggleItemBankDragDrop(),
   },
   {
     text: "DUMMY",
@@ -76,12 +87,12 @@ function TogglePilganFull(): () => void {
 
     console.log("ABCD~~~");
 
-    klik(".mcqItemStyle");
-    klik(".check");
+    klikClass(".mcqItemStyle");
+    klikClass(".check");
 
-    klik("#resetButton");
+    klikClass("#resetButton");
 
-    klik(".reveal");
+    klikClass(".reveal");
 
     const selectableElements = document.querySelectorAll(
       ".mcqItemStyle-selected"
@@ -93,13 +104,13 @@ function TogglePilganFull(): () => void {
         return `[data-unique="${uniqueDataAttribute}"]`;
       }
     );
-    klik(".reset");
+    klikClass(".reset");
     for (const selector of uniqueSelectors) {
-      klik(selector);
+      klikClass(selector);
     }
 
-    klik(".check");
-    klik("#navbarRightButton");
+    klikClass(".check");
+    klikClass("#navbarRightButton");
     if (document.querySelector(".scoringPageBackground")) {
       observer.disconnect();
       observing = false;
@@ -160,8 +171,8 @@ function ToggleDropdownFull(): () => void {
       document.querySelectorAll(".option")[1] as HTMLInputElement
     ).value;
 
-    klik(".check");
-    klik(".reveal");
+    klikClass(".check");
+    klikClass(".reveal");
 
     const dropdowns = document.querySelectorAll(
       ".dropDownBox"
@@ -174,7 +185,7 @@ function ToggleDropdownFull(): () => void {
     });
     console.log(jawaban);
 
-    klik(".reset");
+    klikClass(".reset");
 
     const dropdownsBaru = document.querySelectorAll(
       ".dropDownBox"
@@ -183,8 +194,8 @@ function ToggleDropdownFull(): () => void {
       dropdownsBaru[i].value = jawaban[i];
     }
 
-    klik(".check");
-    klik("#navbarRightButton");
+    klikClass(".check");
+    klikClass("#navbarRightButton");
     // MAIN
 
     if (document.querySelector(".scoringPageBackground")) {
@@ -243,9 +254,9 @@ function ToggleSelectWordFull(): () => void {
     // MAIN
     console.log("✅ Found SelectWord FULL!");
 
-    klik(".wordSelect-Selectable");
-    klik(".check");
-    klik(".reveal");
+    klikClass(".wordSelect-Selectable");
+    klikClass(".check");
+    klikClass(".reveal");
 
     const selectableElements = document.querySelectorAll(
       ".wordSelect-Selectable"
@@ -267,14 +278,14 @@ function ToggleSelectWordFull(): () => void {
       return `[data-unique="${uniqueDataAttribute}"]`;
     });
 
-    klik(".reset");
+    klikClass(".reset");
 
     for (const selector of uniqueSelectors) {
-      klik(selector);
+      klikClass(selector);
     }
 
-    klik(".check");
-    klik("#navbarRightButton");
+    klikClass(".check");
+    klikClass("#navbarRightButton");
     // MAIN
 
     if (document.querySelector(".scoringPageBackground")) {
@@ -343,10 +354,10 @@ function ToggleWordGapFull(): () => void {
     if (document.querySelector(".mcqAlignedItem"))
       itemAligned = ".mcqAlignedItem";
 
-    klik(itemAligned);
+    klikClass(itemAligned);
 
-    klik(".check");
-    klik(".reveal");
+    klikClass(".check");
+    klikClass(".reveal");
 
     const selectableElements = document.querySelectorAll(
       `${itemAligned}-selected`
@@ -360,14 +371,14 @@ function ToggleWordGapFull(): () => void {
       }
     );
 
-    klik(".reset");
+    klikClass(".reset");
 
     for (const selector of uniqueSelectors) {
-      klik(selector);
+      klikClass(selector);
     }
 
-    klik(".check");
-    klik("#navbarRightButton");
+    klikClass(".check");
+    klikClass("#navbarRightButton");
     // MAIN
 
     if (document.querySelector(".scoringPageBackground")) {
@@ -426,12 +437,12 @@ function ToggleIsianTextBoxFull(): () => void {
     // MAIN
     console.log("✅ Found IsianTextBOx FULL!");
 
-    klik(".textEntry-textBox");
+    klikClass(".textEntry-textBox");
     (document.querySelector(".textEntry-textBox") as HTMLInputElement).value =
       "myudak";
 
-    klik(".check");
-    klik(".reveal");
+    klikClass(".check");
+    klikClass(".reveal");
 
     const textBoxes = document.querySelectorAll(
       ".textEntry-textBox"
@@ -445,7 +456,7 @@ function ToggleIsianTextBoxFull(): () => void {
 
     console.log(jawaban);
 
-    klik(".reset");
+    klikClass(".reset");
 
     const textBoxesBaru = document.querySelectorAll(
       ".textEntry-textBox"
@@ -454,8 +465,8 @@ function ToggleIsianTextBoxFull(): () => void {
       textBoxesBaru[i].value = jawaban[i];
     }
 
-    klik(".check");
-    klik("#navbarRightButton");
+    klikClass(".check");
+    klikClass("#navbarRightButton");
     // MAIN
 
     if (document.querySelector(".scoringPageBackground")) {
@@ -532,11 +543,11 @@ function TogglePairKiriKananFull(): () => void {
     console.log("JAWABANN ~~>", a);
 
     for (const selector of a) {
-      klik(selector);
+      klikClass(selector);
     }
 
-    klik(".check");
-    klik("#navbarRightButton");
+    klikClass(".check");
+    klikClass("#navbarRightButton");
     // MAIN
 
     if (document.querySelector(".scoringPageBackground")) {
@@ -546,6 +557,102 @@ function TogglePairKiriKananFull(): () => void {
       //   @ts-ignore
       Toastify({
         text: "DONE ~> AUTO pairKananKiri FULL",
+        duration: 3000,
+        close: true,
+        position: "right",
+      }).showToast();
+    }
+  });
+
+  return () => {
+    if (!observing) {
+      // @ts-ignore
+      Toastify({
+        text: "AUTO pairKananKiri FULL",
+        duration: 3000,
+        close: true,
+        position: "right",
+      }).showToast();
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+      observing = true;
+      console.log("🔍 MutationObserver started.");
+    } else {
+      observer.disconnect();
+      observing = false;
+      console.log("❌ MutationObserver stopped.");
+    }
+  };
+}
+
+function ToggleItemBankDragDrop(): () => void {
+  let observing = false;
+  const observer = new MutationObserver((_mutations) => {
+    if (!document.querySelector(".dndSentenceItem")) {
+      observer.disconnect();
+      observing = false;
+      console.log("✅ Disconnected from the MutationObserver.");
+      //   @ts-ignore
+      Toastify({
+        text: "ERROR ~> Gk ketemu",
+        duration: 3000,
+        close: true,
+        position: "right",
+      }).showToast();
+      return;
+    }
+    // MAIN
+    console.log("✅ Found ITEM BANCK!");
+
+    const AllDrop = document.querySelectorAll(
+      ".dndDropSentencePanel.dragdrop-dropTarget"
+    );
+
+    klikClass(".dndSentenceItem");
+    klikClass(".dndDropSentencePanel.dragdrop-dropTarget");
+    klikClass(".check");
+    klikClass(".reveal");
+
+    const AllJawabanElement = document.querySelectorAll(
+      ".dndSentenceItem.dndSentenceItem-dndSentenceItemDropped"
+    );
+
+    let AllJawaban: string[] = [];
+
+    AllJawabanElement.forEach((item) => {
+      AllJawaban.push(item.textContent || "");
+    });
+
+    klikClass(".reset");
+
+    console.log("AllJawaban", AllJawaban);
+    console.log("AllDrop", AllDrop);
+
+    AllJawaban.forEach((item, i) => {
+      const elements = document.querySelectorAll(
+        ".dndSentenceItem"
+      ) as NodeListOf<HTMLElement>;
+      const targetElement = Array.from(elements).find(
+        (el) => el.innerText.trim() === item
+      );
+      if (!targetElement) return;
+      klikElement(targetElement);
+      klikElement(AllDrop[i]);
+    });
+
+    klikClass(".check");
+    klikClass("#navbarRightButton");
+    // MAIN
+
+    if (document.querySelector(".scoringPageBackground")) {
+      observer.disconnect();
+      observing = false;
+      console.log("✅ Disconnected from the MutationObserver.");
+      //   @ts-ignore
+      Toastify({
+        text: "DONE ~> AUTO ItembNak",
         duration: 3000,
         close: true,
         position: "right",
@@ -599,9 +706,9 @@ function ResetAllFull(): () => void {
       return;
     }
     if (document.querySelector(".reset")) {
-      klik(".reset");
+      klikClass(".reset");
     }
-    klik("#navbarRightButton");
+    klikClass("#navbarRightButton");
     // MAIN
 
     // MAIN
