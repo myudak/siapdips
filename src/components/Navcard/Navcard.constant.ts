@@ -54,9 +54,9 @@ export const navLinks: NavLinksItem[] = [
   },
   {
     icon: SquareTerminal,
-    title: "LearnSocial",
-    subtitle: "LearnSocial Hack",
-    tooltip: "isn't exactly a 'hack' in the traditional sense&mdash;",
-    href: "https://github.com/myudak/learnSocial-hack",
+    title: "Learn Social",
+    subtitle: "basing",
+    tooltip: "Basing",
+    href: "https://undip.learnsocial.online",
   },
 ];

@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:content": "vite build --config vite.content.config.ts",
     "watch:vite": "vite build --watch",
+    "watch:content": "vite build --watch --config vite.content.config.ts",
+    "watch:full": "concurrently \"npm run watch:vite\" \"npm run watch:content\"",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -48,6 +51,7 @@
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",

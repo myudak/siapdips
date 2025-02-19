@@ -41,8 +41,10 @@ const HidePopupcard = ({
       setEnableCopy(disableCtrlC);
 
       if (hidePopup !== undefined) setHidePopup(hidePopup);
-      if (isBlurredDosenWali !== undefined)
+      if (isBlurredDosenWali !== undefined) {
+        console.log("isBlurredDosenWali", isBlurredDosenWali);
         setBlurDosenWali(isBlurredDosenWali);
+      }
     })();
   }, []);
 
@@ -169,6 +171,7 @@ const HidePopupcard = ({
         </div>
         <div className="flex items-center m-4 p-0">
           <Switch
+            checked={blurDosenWali}
             onCheckedChange={() => {
               (async () => {
                 if (!blurDosenWali) {

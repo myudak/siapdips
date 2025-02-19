@@ -37,6 +37,8 @@ import {
   Briefcase,
   Code,
   LucideChartNoAxesGantt,
+  LeafyGreen,
+  ScanHeart,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -52,6 +54,8 @@ const cardComponents: {
   QuoteCard: ["Quotes", <Quote />],
   TodoList: ["Todo List", <CheckSquare />],
   AutopbmCard: ["PBM Auto", <Calendar />],
+  AutoLearnSocial: ["Auto Learn Social", <LeafyGreen />],
+  JadwalCard: ["Jadwal Card", <ScanHeart />],
 };
 
 const initialCards = Object.keys(cardComponents);

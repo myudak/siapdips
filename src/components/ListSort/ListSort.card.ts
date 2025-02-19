@@ -6,6 +6,7 @@ import Themecard from "@/components/Themecard";
 import TodoList from "@/components/Todocard";
 import AutopbmCard from "../AutopbmCard";
 import { AutoLearnSocial } from "../AutoLearnSocial";
+import JadwalCard from "../Jadwalcard";
 
 export const cardComponents = {
   NavigationCard,
@@ -16,6 +17,7 @@ export const cardComponents = {
   TodoList,
   AutopbmCard,
   AutoLearnSocial,
+  JadwalCard,
 } as const;
 
 export type CardComponentsType = typeof cardComponents;

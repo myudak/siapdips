@@ -4,10 +4,10 @@ import { createHelperDefault } from "@/lib/content_undiplearn";
 
 // @ts-ignore
 Toastify({
-  text: "SiAp DiPS ~> Welcome ヽ（≧□≦）ノ",
+  text: "Siap DiPS ~> Auto Learn Social (●ˇ∀ˇ●)",
   duration: 3000,
   close: true,
-  position: "right",
+  position: "left",
 }).showToast();
 
 console.log("Hello Undiplearn");
@@ -15,6 +15,6 @@ console.log("Hello Undiplearn");
 // START
 
 //  ++++++++++++++++++++++++++++++++++++++++++++++++
-window.addEventListener("load", () => {
-  createHelperDefault();
-});
+// window.addEventListener("load", () => {
+createHelperDefault();
+// });

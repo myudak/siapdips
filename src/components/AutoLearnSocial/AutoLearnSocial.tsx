@@ -15,7 +15,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { createHelperDefault } from "@/lib/content_undiplearn";
 
 const AutoLearnSocial = ({
   listeners,
@@ -98,8 +97,7 @@ const AutoLearnSocial = ({
 
             await chrome.scripting.executeScript({
               target: { tabId: tab.id },
-              args: ["Siap DiPS ~> Auto Learn Social (●ˇ∀ˇ●)"],
-              func: createHelperDefault,
+              files: ["content-undiplearn.js"],
             });
           }}
         >
