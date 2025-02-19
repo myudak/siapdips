@@ -25,40 +25,18 @@ import {
   Github,
   GripVertical,
   RotateCcw,
-  Navigation,
-  BarChart,
-  Calendar,
-  CheckSquare,
-  MoreHorizontal,
-  Palette,
-  Quote,
-  LucideProps,
   BookOpen,
   Briefcase,
   Code,
   LucideChartNoAxesGantt,
-  LeafyGreen,
-  ScanHeart,
+  LucideIcon,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { CSS } from "@dnd-kit/utilities";
+import { cardComponentsOption } from "@/components/ListSort/ListSort.card";
 
-const cardComponents: {
-  [key: string]: [string, LucideProps];
-} = {
-  NavigationCard: ["Navigation Card", <Navigation />],
-  Ipkstatus: ["IPK Status", <BarChart />],
-  Themecard: ["Theme Card", <Palette />],
-  HidePopupcard: ["Lainnya", <MoreHorizontal />],
-  QuoteCard: ["Quotes", <Quote />],
-  TodoList: ["Todo List", <CheckSquare />],
-  AutopbmCard: ["PBM Auto", <Calendar />],
-  AutoLearnSocial: ["Auto Learn Social", <LeafyGreen />],
-  JadwalCard: ["Jadwal Card", <ScanHeart />],
-};
-
-const initialCards = Object.keys(cardComponents);
+const initialCards = Object.keys(cardComponentsOption);
 const LOCAL_STORAGE_KEY = "sortableCards";
 
 const SettingcardAwal = () => {
@@ -124,8 +102,8 @@ const SettingcardAwal = () => {
                   key={id}
                   id={id}
                   // @ts-ignore
-                  Nama={cardComponents[id][0]}
-                  Emot={cardComponents[id][1]}
+                  Nama={cardComponentsOption[id][0]}
+                  Emot={cardComponentsOption[id][1]}
                 />
               ))}
             </SortableContext>
@@ -254,7 +232,7 @@ function SortableItem({
 }: {
   id: string;
   Nama: String;
-  Emot: LucideProps;
+  Emot: LucideIcon;
 }) {
   const {
     attributes,
@@ -290,7 +268,7 @@ function SortableItem({
       <span className={`flex-1 text-base flex-wrap select-none `}>{Nama}</span>
       <Button variant="ghost" size="icon" className="h-8 w-8  ">
         {/* @ts-ignore */}
-        {Emot}
+        {<Emot />}
       </Button>
     </div>
   );
