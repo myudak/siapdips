@@ -194,7 +194,7 @@ const SettingcardAwal = () => {
                 }
               >
                 <Code className="w-4 h-4 mr-2" />
-                LearnSocial Hack {"{old}"}
+                LearnSocial "Auto" {"{old}"}
               </Button>
               <Button
                 variant="outline"
