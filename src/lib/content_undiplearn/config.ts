@@ -24,6 +24,7 @@ const BUTTONS: ButtonConfig[] = [
     text: "AUTO THIS",
     icon: "🔥",
     primary: true,
+    action: ToggleAll(),
   },
   {
     text: "Pilgan",
@@ -48,12 +49,20 @@ const BUTTONS: ButtonConfig[] = [
   {
     text: "IsianTextBOx",
     icon: "📝",
-    action: ToggleIsianTextBoxFull(),
+    action: ToggleWeb(
+      ToggleIsianTextBoxFull(),
+      ".textEntry-textBox",
+      "Isian Text Box"
+    ),
   },
   {
     text: "Pair Kanan Kiri",
     icon: "🔗",
-    action: TogglePairKiriKananFull(),
+    action: ToggleWeb(
+      TogglePairKiriKananFull(),
+      ".pendingPair",
+      "Pair Kanan Kiri"
+    ),
   },
   {
     text: "Item Bank Drag & Drop",
@@ -427,21 +436,7 @@ function ToggleWordGapFull(): () => void {
 }
 
 function ToggleIsianTextBoxFull(): () => void {
-  let observing = false;
-  const observer = new MutationObserver((_mutations) => {
-    if (!document.querySelector(".textEntry-textBox")) {
-      observer.disconnect();
-      observing = false;
-      console.log("✅ Disconnected from the MutationObserver.");
-      //   @ts-ignore
-      Toastify({
-        text: "ERROR ~> Gk ketemu",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-      return;
-    }
+  return () => {
     // MAIN
     console.log("✅ Found IsianTextBOx FULL!");
 
@@ -476,60 +471,11 @@ function ToggleIsianTextBoxFull(): () => void {
     klikClass(".check");
     klikClass("#navbarRightButton");
     // MAIN
-
-    if (document.querySelector(".scoringPageBackground")) {
-      observer.disconnect();
-      observing = false;
-      console.log("✅ Disconnected from the MutationObserver.");
-      //   @ts-ignore
-      Toastify({
-        text: "DONE ~> AUTO IsianTextBOx FULL",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-    }
-  });
-
-  return () => {
-    if (!observing) {
-      // @ts-ignore
-      Toastify({
-        text: "AUTO IsianTextBOx FULL",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-      observing = true;
-      console.log("🔍 MutationObserver started.");
-    } else {
-      observer.disconnect();
-      observing = false;
-      console.log("❌ MutationObserver stopped.");
-    }
   };
 }
 
 function TogglePairKiriKananFull(): () => void {
-  let observing = false;
-  const observer = new MutationObserver((_mutations) => {
-    if (!document.querySelector(".pendingPair")) {
-      observer.disconnect();
-      observing = false;
-      console.log("✅ Disconnected from the MutationObserver.");
-      //   @ts-ignore
-      Toastify({
-        text: "ERROR ~> Gk ketemu",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-      return;
-    }
+  return () => {
     // MAIN
     console.log("✅ Found pairKananKiri FULL!");
 
@@ -557,41 +503,6 @@ function TogglePairKiriKananFull(): () => void {
     klikClass(".check");
     klikClass("#navbarRightButton");
     // MAIN
-
-    if (document.querySelector(".scoringPageBackground")) {
-      observer.disconnect();
-      observing = false;
-      console.log("✅ Disconnected from the MutationObserver.");
-      //   @ts-ignore
-      Toastify({
-        text: "DONE ~> AUTO pairKananKiri FULL",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-    }
-  });
-
-  return () => {
-    if (!observing) {
-      // @ts-ignore
-      Toastify({
-        text: "AUTO pairKananKiri FULL",
-        duration: 3000,
-        close: true,
-        position: "right",
-      }).showToast();
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-      observing = true;
-      console.log("🔍 MutationObserver started.");
-    } else {
-      observer.disconnect();
-      observing = false;
-      console.log("❌ MutationObserver stopped.");
-    }
   };
 }
 
@@ -755,4 +666,15 @@ function ResetAllFull(): () => void {
   };
 }
 
+function ToggleAll() {
+  return () => {
+    // @ts-ignore
+    Toastify({
+      text: "blm buat",
+      duration: 3000,
+      close: true,
+      position: "right",
+    }).showToast();
+  };
+}
 export { BUTTONS, TogglePilganFull };

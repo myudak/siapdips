@@ -51,7 +51,7 @@ const AutoLearnSocial = ({
                 }
               >
                 <video
-                  src="/Vid-Pbm.webm"
+                  src="/vid-learnsocial.mp4"
                   autoPlay
                   loop
                   muted
@@ -127,6 +127,14 @@ const AutoLearnSocial = ({
         >
           <Link2Icon className="w-4 h-4 mr-2" />
           Goto Undip Learn Social
+        </Button>
+        <Button
+          className="w-full"
+          onClick={() => {
+            chrome.tabs.create({ url: "option.html#autolearnsocial" });
+          }}
+        >
+          Tutorial
         </Button>
       </CardContent>
     </Card>

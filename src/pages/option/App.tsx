@@ -1,73 +1,73 @@
-import { ThemeProvider } from "@/components/theme-provider";
 import "./App.css";
+
+import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "./components/Navbar";
 import Nromal from "./components/Normal";
 import SiteFooter from "./components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Code2, Laptop, Rocket } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
 import { Icons } from "./components/Navbar/Navbar.logo";
 import { Toaster } from "@/components/ui/sonner";
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
+
+type Tutorial = {
+  id: number;
+  title: string;
+  videoSrc: string;
+  hash: string;
+  ref?: React.RefObject<HTMLDivElement>;
+};
 
 const LandingPage = () => {
-  const tutorialIpk = useRef<null | HTMLDivElement>(null);
-  const tutorialTheme = useRef<null | HTMLDivElement>(null);
-  const tutorialAutopbm = useRef<null | HTMLDivElement>(null);
-  const tutorialEnableClickKanan = useRef<null | HTMLDivElement>(null);
-  const AutoLearnSocialRef = useRef<null | HTMLDivElement>(null);
-  const AutoLearnSocialoldRef = useRef<null | HTMLDivElement>(null);
+  const tutorialRefs = useMemo(() => {
+    return {
+      IpkStatus: useRef<HTMLDivElement>(null),
+      Theme: useRef<HTMLDivElement>(null),
+      Autopbm: useRef<HTMLDivElement>(null),
+      EnableClickKanan: useRef<HTMLDivElement>(null),
+      tutorialJadwal: useRef<HTMLDivElement>(null),
+      autolearnsocial: useRef<HTMLDivElement>(null),
+      autolearnsocialold: useRef<HTMLDivElement>(null),
+    };
+  }, []);
 
-  const tutorials = [
-    {
-      id: 1,
-      title: "Ipk Status",
-      videoSrc: "vid-ipk.mp4",
-      hash: "IpkStatus",
-      ref: tutorialIpk,
-    },
-    {
-      id: 2,
-      title: "Theme",
-      videoSrc: "Vid-Theme.webm",
-      hash: "Theme",
-      ref: tutorialTheme,
-    },
-    {
-      id: 3,
-      title: "Auto PBM",
-      videoSrc: "Vid-Pbm.webm",
-      hash: "Autopbm",
-      ref: tutorialAutopbm,
-    },
+  const tutorials: Tutorial[] = [
+    { id: 1, title: "Ipk Status", videoSrc: "vid-ipk.mp4", hash: "IpkStatus" },
+    { id: 2, title: "Theme", videoSrc: "Vid-Theme.mp4", hash: "Theme" },
+    { id: 3, title: "Auto PBM", videoSrc: "Vid-Pbm.mp4", hash: "Autopbm" },
     {
       id: 4,
       title: "Enable Click Kanan",
       videoSrc: "vid-klikKanan.mp4",
       hash: "EnableClickKanan",
-      ref: tutorialEnableClickKanan,
     },
     {
       id: 5,
-      title: "Auto Learn Social",
-      videoSrc: "vid-learnsocial.mp4",
-      hash: "autolearnsocial",
-      ref: AutoLearnSocialRef,
+      title: "Jadwal Dips",
+      videoSrc: "vid-jadwal.mp4",
+      hash: "tutorialJadwal",
     },
     {
       id: 6,
+      title: "Auto Learn Social",
+      videoSrc: "vid-learnsocial.mp4",
+      hash: "autolearnsocial",
+    },
+    {
+      id: 7,
       title: "Auto Learn Social {old}",
       videoSrc: "vid-learnsocialold.mp4",
       hash: "autolearnsocialold",
-      ref: AutoLearnSocialoldRef,
     },
-  ];
+  ].map((tutorial) => {
+    const ref = tutorialRefs[tutorial.hash as keyof typeof tutorialRefs];
 
-  useScrollToHashSection("IpkStatus", tutorialIpk);
-  useScrollToHashSection("Theme", tutorialTheme);
-  useScrollToHashSection("Autopbm", tutorialAutopbm);
-  useScrollToHashSection("EnableClickKanan", tutorialEnableClickKanan);
+    useScrollToHashSection(tutorial.hash, ref);
+
+    return { ...tutorial, ref };
+  });
+
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

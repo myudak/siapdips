@@ -233,7 +233,7 @@ const UndipThemeSettings = ({
                 title="Tutorial Theme"
               >
                 <video
-                  src="/Vid-Theme.webm"
+                  src="/Vid-Theme.mp4"
                   autoPlay
                   loop
                   muted

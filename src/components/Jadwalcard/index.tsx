@@ -28,7 +28,7 @@ type jadwalHariIni = {
 };
 
 const days = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
-const today = days[new Date().getDay()];
+const initialDayIndex = new Date().getDay();
 
 type jadwalMinggu = {
   [key: string]: jadwalHariIni[];
@@ -45,85 +45,100 @@ const JadwalCard = ({
   const [activeJadwal, setActiveJadwal] = useState<jadwalHariIni | null>(null);
   const [jadwalHariIni, setJadwalHariIni] = useState<jadwalHariIni[]>([]);
   const [isJadwal, setIsJadwal] = useState(true);
+  const [currentDayIndex, setCurrentDayIndex] = useState(initialDayIndex);
+  const [jadwalMingguIni, setJadwalMingguIni] = useState<jadwalMinggu>({});
 
   useEffect(() => {
     (async () => {
       const result = await chrome.storage.local.get(["scheduleData"]);
-      const jadwalMingguIni: jadwalMinggu =
+      const jadwalData: jadwalMinggu =
         result.scheduleData ?? ({} as jadwalMinggu);
+      // EXAMPLE JADWAL MINGGU INI
+      // {"jumat":[{"mataKuliah":"Bahasa Inggris II","ruang":"A302","sks":1,"waktuMulai":"10:40:00","waktuSelesai":"11:30:00"},{"mataKuliah":"Organisasi dan Arsitektur Komputer","ruang":"A302","sks":3,"waktuMulai":"13:00:00","waktuSelesai":"15:30:00"}],"kamis":[{"mataKuliah":"Pendidikan Agama Islam","ruang":"A301","sks":2,"waktuMulai":"15:40:00","waktuSelesai":"17:20:00"}],"rabu":[{"mataKuliah":"Metode Numerik","ruang":"A301","sks":3,"waktuMulai":"13:00:00","waktuSelesai":"15:30:00"}],"selasa":[{"mataKuliah":"Kewarganegaraan","ruang":"A302","sks":2,"waktuMulai":"10:40:00","waktuSelesai":"12:20:00"},{"mataKuliah":"Algoritma dan Pemrograman","ruang":"A302","sks":4,"waktuMulai":"13:00:00","waktuSelesai":"16:20:00"}],"senin":[{"mataKuliah":"Statistika","ruang":"A301","sks":2,"waktuMulai":"08:50:00","waktuSelesai":"10:30:00"},{"mataKuliah":"Matematika II","ruang":"A301","sks":2,"waktuMulai":"13:00:00","waktuSelesai":"14:40:00"},{"mataKuliah":"Olahraga","ruang":"Lapangan Stadion UNDIP Tembalang","sks":1,"waktuMulai":"16:40:00","waktuSelesai":"17:30:00"}]}
 
-      if (Object.keys(jadwalMingguIni).length === 0) {
+      if (Object.keys(jadwalData).length === 0) {
         setIsJadwal(false);
         return;
       }
 
-      const hariIni = jadwalMingguIni[today] ?? [];
-
-      setJadwalHariIni(hariIni);
+      setJadwalMingguIni(jadwalData);
+      updateCurrentDayJadwal(currentDayIndex, jadwalData);
     })();
   }, []);
 
-  // const jadwalHariIni = [
-  //   {
-  //     mataKuliah: "Basis Data",
-  //     ruang: "A301",
-  //     waktuMulai: "09:00:00",
-  //     waktuSelesai: "11:30:00",
-  //     sks: 3.0,
-  //   },
-  //   {
-  //     mataKuliah: "Algoritma dan Pemrograman",
-  //     ruang: "A302",
-  //     waktuMulai: "13:00:00",
-  //     waktuSelesai: "16:20:00",
-  //     sks: 4.0,
-  //   },
-  //   {
-  //     mataKuliah: "Matematika Diskrit",
-  //     ruang: "B201",
-  //     waktuMulai: "16:30:00",
-  //     waktuSelesai: "18:20:00",
-  //     sks: 2.0,
-  //   },
-  // ];
+  useEffect(() => {
+    if (Object.keys(jadwalMingguIni).length > 0) {
+      updateCurrentDayJadwal(currentDayIndex, jadwalMingguIni);
+    }
+  }, [currentDayIndex]);
+
+  const updateCurrentDayJadwal = (
+    dayIndex: number,
+    jadwalData: jadwalMinggu
+  ) => {
+    const currentDay = days[dayIndex];
+    const daySchedule = jadwalData[currentDay] ?? [];
+    setJadwalHariIni(daySchedule);
+    setCurrentIndex(0); // Reset course index when changing days
+  };
 
   useEffect(() => {
     const checkJadwalStatus = () => {
       const now = new Date();
       const currentTime = now.toLocaleTimeString(undefined, { hour12: false });
-      console.log(currentTime);
       const jadwal = jadwalHariIni[currentIndex];
+      const isToday = currentDayIndex === initialDayIndex;
 
       if (jadwal) {
         if (
+          isToday &&
           currentTime >= jadwal.waktuMulai &&
           currentTime <= jadwal.waktuSelesai
         ) {
           setActiveJadwal({ ...jadwal, status: "active" });
-        } else if (currentTime < jadwal.waktuSelesai) {
+        } else if (isToday && currentTime < jadwal.waktuMulai) {
+          setActiveJadwal({ ...jadwal, status: "upcoming" });
+        } else if (isToday && currentTime > jadwal.waktuSelesai) {
+          setActiveJadwal({ ...jadwal, status: "past" });
+        } else if (currentDayIndex > initialDayIndex) {
+          // Future day
           setActiveJadwal({ ...jadwal, status: "upcoming" });
         } else {
+          // Past day
           setActiveJadwal({ ...jadwal, status: "past" });
         }
+      } else {
+        setActiveJadwal(null);
       }
     };
 
     checkJadwalStatus();
     const interval = setInterval(checkJadwalStatus, 60000);
     return () => clearInterval(interval);
-  }, [currentIndex, jadwalHariIni]);
+  }, [currentIndex, jadwalHariIni, currentDayIndex]);
 
-  const handlePrevious = () => {
+  const handlePreviousCourse = () => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));
   };
 
-  const handleNext = () => {
+  const handleNextCourse = () => {
     setCurrentIndex((prev) => Math.min(jadwalHariIni.length - 1, prev + 1));
   };
 
-  // if (!activeJadwal) {
-  //   return null;
-  // }
+  const handlePreviousDay = () => {
+    setCurrentDayIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNextDay = () => {
+    setCurrentDayIndex((prev) => Math.min(6, prev + 1));
+  };
+
+  const getCurrentDayName = () => {
+    const dayName = days[currentDayIndex];
+    return dayName.charAt(0).toUpperCase() + dayName.slice(1);
+  };
+
+  const isCurrentDay = currentDayIndex === initialDayIndex;
 
   return (
     <Card
@@ -145,38 +160,81 @@ const JadwalCard = ({
       >
         <GripHorizontal className="h-4 w-4" />
       </Button>
+
+      {/* Day Navigation */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handlePreviousDay}
+          disabled={currentDayIndex === 0}
+          className="px-2"
+        >
+          <ChevronLeft className="h-4 w-4 " />
+          <span className="text-xs">Kemarin</span>
+        </Button>
+
+        <span
+          className={`text-sm font-medium ${
+            isCurrentDay ? "text-blue-600 dark:text-blue-400" : ""
+          }`}
+        >
+          {getCurrentDayName()} {isCurrentDay ? "(Hari Ini)" : ""}
+        </span>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleNextDay}
+          disabled={currentDayIndex === 6}
+          className="px-2"
+        >
+          <span className="text-xs">Besok</span>
+          <ChevronRight className="h-4 w-4 ml-1" />
+        </Button>
+      </div>
+
       <CardHeader className="pb-2">
         {isJadwal && (
           <>
             <CardTitle className="flex justify-between items-center">
               <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Jadwal Hari Ini ({currentIndex + 1}/{jadwalHariIni.length})
+                {jadwalHariIni.length > 0 ? (
+                  <>
+                    Jadwal ({currentIndex + 1}/{jadwalHariIni.length})
+                  </>
+                ) : (
+                  <>Gak Ada Jadwal</>
+                )}
               </span>
-              <span
-                className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  activeJadwal?.status === "active"
-                    ? "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+              {activeJadwal && (
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    activeJadwal?.status === "active"
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+                      : activeJadwal?.status === "upcoming"
+                      ? "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
+                      : "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+                  }`}
+                >
+                  {activeJadwal?.status === "active"
+                    ? "Sedang Berlangsung"
                     : activeJadwal?.status === "upcoming"
-                    ? "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
-                    : "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
-                }`}
-              >
-                {activeJadwal?.status === "active"
-                  ? "Sedang Berlangsung"
-                  : activeJadwal?.status === "upcoming"
-                  ? "Akan Dimulai"
-                  : "Selesai"}
-              </span>
+                    ? "Akan Dimulai"
+                    : "Selesai"}
+                </span>
+              )}
             </CardTitle>
           </>
         )}
         {!isJadwal && (
           <CardTitle className="text-lg font-bold text-center">
-            <span className="text-lg  text-center">JADWAL DIPS</span>
+            <span className="text-lg text-center">JADWAL DIPS</span>
           </CardTitle>
         )}
       </CardHeader>
-      {isJadwal && (
+
+      {isJadwal && jadwalHariIni.length > 0 && (
         <>
           <CardContent>
             <div className="space-y-4">
@@ -197,9 +255,6 @@ const JadwalCard = ({
                   <span className="px-2 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded">
                     Ruang {activeJadwal?.ruang}
                   </span>
-                  <span className="px-2 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded">
-                    {today.charAt(0).toUpperCase() + today.slice(1)}
-                  </span>
                 </div>
                 <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {activeJadwal?.sks} SKS
@@ -210,10 +265,12 @@ const JadwalCard = ({
           <CardFooter className="flex justify-between items-center">
             <Button
               disabled={currentIndex === 0}
-              onClick={handlePrevious}
-              aria-label="Previous"
+              onClick={handlePreviousCourse}
+              aria-label="Previous Course"
+              variant="outline"
+              size="lg"
             >
-              <ChevronLeft className="w-6 h-6 text-gray-600" />
+              <ChevronLeft className="w-4 h-4" />
             </Button>
             <Button
               onClick={() => {
@@ -221,20 +278,38 @@ const JadwalCard = ({
                   url: "https://siap.undip.ac.id/jadwal_mahasiswa/mhs/jadwal/",
                 });
               }}
-              className="w-1/3"
+              size="sm"
             >
               Jadwal Full
             </Button>
             <Button
               disabled={currentIndex === jadwalHariIni.length - 1}
-              onClick={handleNext}
-              aria-label="Next"
+              onClick={handleNextCourse}
+              aria-label="Next Course"
+              variant="outline"
+              size="lg"
             >
-              <ChevronRight className="w-6 h-6 text-gray-600" />
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </CardFooter>
         </>
       )}
+
+      {isJadwal && jadwalHariIni.length === 0 && (
+        <CardContent>
+          <Card className="w-full bg-gray-100 dark:bg-gray-900 max-w-md mx-auto">
+            <CardHeader className="flex flex-col items-center justify-center space-y-2 pb-2">
+              <CalendarCogIcon className="h-8 w-8 text-yellow-500" />
+            </CardHeader>
+            <CardContent className="text-center py-2">
+              <p className="text-gray-500 text-sm">
+                Gak ada jadwal untuk hari {getCurrentDayName()}
+              </p>
+            </CardContent>
+          </Card>
+        </CardContent>
+      )}
+
       {!isJadwal && (
         <CardContent>
           <Card className="w-full bg-gray-100 dark:bg-gray-900 max-w-md mx-auto">
