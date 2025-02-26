@@ -24,6 +24,7 @@ type jadwalHariIni = {
   waktuMulai: string;
   waktuSelesai: string;
   sks: number;
+  msTeams: string;
   status?: string;
 };
 
@@ -252,10 +253,18 @@ const JadwalCard = ({
 
               <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex items-center space-x-2">
-                  <span className="px-2 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded">
+                  <span className="cursor-default px-2 py-1 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded">
                     Ruang {activeJadwal?.ruang}
                   </span>
+                  {activeJadwal?.msTeams && (
+                    <span className="px-2 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-700 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-600 cursor-pointer">
+                      <a href={activeJadwal?.msTeams} target="_blank">
+                        MS Teams
+                      </a>
+                    </span>
+                  )}
                 </div>
+
                 <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {activeJadwal?.sks} SKS
                 </div>

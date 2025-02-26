@@ -780,6 +780,7 @@ interface Course {
   waktuMulai: string;
   waktuSelesai: string;
   sks: number;
+  msTeams: string;
 }
 
 interface DayObject {
@@ -825,6 +826,8 @@ function parseTableToJsonAndSave(): DayObject | null {
       const sksText = cells[5].textContent?.trim() || "";
       // cells[6] diabaikan ('Hadir')
       // cells[7] diabaikan ('Aksi')
+      const msTeams =
+        (cells[7]?.children?.[1] as HTMLAnchorElement)?.href || "";
 
       if (day) {
         if (day !== currentDay) {
@@ -847,6 +850,7 @@ function parseTableToJsonAndSave(): DayObject | null {
           waktuMulai: waktuMulai,
           waktuSelesai: waktuSelesai,
           sks: sks,
+          msTeams: msTeams,
         });
       }
     }
