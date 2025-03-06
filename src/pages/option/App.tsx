@@ -10,6 +10,7 @@ import { Icons } from "./components/Navbar/Navbar.logo";
 import { Toaster } from "@/components/ui/sonner";
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import { useMemo, useRef } from "react";
+import ChangelogPage from "./components/Changelog";
 
 type Tutorial = {
   id: number;
@@ -183,6 +184,9 @@ const LandingPage = () => {
                 ))}
               </div>
             </div>
+          </section>
+          <section className=" mt-6 py-12">
+            <ChangelogPage />
           </section>
         </div>
         <SiteFooter />

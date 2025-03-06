@@ -3,6 +3,7 @@ import EvaluationTable from "./Settingcard.PBMtable";
 import SettingcardAwal from "./Settingcard.awal";
 import SettingcardProfile from "./Settingcard.profile";
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
+import LokasiFoodTruk from "./Settingcard.ft";
 
 const Nromal = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
@@ -34,6 +35,12 @@ const Nromal = () => {
           ~~ Profilee ~~
         </h1>
         <SettingcardProfile />
+      </>
+      <>
+        <h1 className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center">
+          Auto Food TRUK Settings
+        </h1>
+        <LokasiFoodTruk />
       </>
     </div>
   );

@@ -31,6 +31,11 @@
       "matches": ["https://undip.learnsocial.online/*"],
       "js": ["libs/toastify.js", "./content-undiplearn.js"],
       "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://form.undip.ac.id/makanansehat/*"],
+      "js": ["libs/toastify.js", "./content-ft.js"],
+      "css": ["libs/toastify.css"]
     }
   ],
   "background": {

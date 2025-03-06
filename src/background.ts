@@ -5,6 +5,7 @@ const darkModeAllowedUrls: string[] = [
   "https://sso.undip.ac.id/",
   "https://kulon2.undip.ac.id/",
   "https://undip.learnsocial.online",
+  "https://form.undip.ac.id/",
 ];
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -49,7 +50,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     darkModeAllowedUrls.some((url) => tab.url?.includes(url))
   ) {
     // TOASTIFY
-    if (!tab.url.includes("https://undip.learnsocial.online/")) {
+    if (
+      !tab.url.includes("https://undip.learnsocial.online/") &&
+      !tab.url.includes("https://form.undip.ac.id/")
+    ) {
       Promise.all([
         chrome.scripting.executeScript({
           target: { tabId },
@@ -168,6 +172,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(1) > tbody > tr:nth-child(1) > th",
                 "#irs_left_sidebar > div > div > div.bg-grey.bg-lighten-3.p-1.border-grey.mt-1 > table:nth-child(1) > tbody > tr:nth-child(2) > th",
                 "body > div.rootPanelStyle > div.screenTableStyle > div.menuTdScreenStyle > div > div > div.navbarMenuOuter > div:nth-child(4) > div > div.userStatusText",
+                "#nama",
               ];
 
               blurElements.forEach((selector) => {
@@ -185,6 +190,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             func: () => {
               const blurNim = [
                 "#user-profile > div > div.card.profile-with-cover > div:nth-child(3) > span",
+                "#identity",
               ];
 
               blurNim.forEach((selector) => {
@@ -283,6 +289,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 image.style.backgroundImage = `url(${data.profileImageLocal})`;
               }
             });
+
+            // FORM UNDIP FOOD TRUK
+            const profileImage = document.querySelector(
+              "#navbar-mobile > ul.nav.navbar-nav.float-right > li > a > span.avatar.avatar-online > img"
+            ) as HTMLImageElement;
+            if (profileImage) {
+              profileImage.src = data.profileImageLocal;
+            }
           },
         });
       }
@@ -310,6 +324,61 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     chrome.scripting.executeScript({
       target: { tabId },
       func: PBM,
+    });
+  }
+
+  // FOOD TRUK
+  if (
+    changeInfo.status === "complete" &&
+    tab.url.includes("https://form.undip.ac.id/makanansehat/pendaftaran")
+  ) {
+    chrome.storage.local.get(["selectedLokasiFT"], function (result) {
+      if (result.selectedLokasiFT) {
+        chrome.scripting.executeScript({
+          target: { tabId },
+          args: [result.selectedLokasiFT],
+          func: (selectedLokasiFT: string) => {
+            console.log(selectedLokasiFT);
+
+            const selectElement = document.getElementById(
+              "tanggal"
+            ) as HTMLSelectElement | null;
+            if (!selectElement) {
+              console.warn("not found.");
+              return;
+            }
+
+            const trimmedLokasi = selectedLokasiFT.trim();
+
+            for (const option of selectElement.options) {
+              if (option.textContent?.trim().includes(trimmedLokasi)) {
+                selectElement.value = option.value;
+                // @ts-ignore
+                Toastify({
+                  text: "Siap DIps ~~> FT Auto Select",
+                  duration: 3000,
+                  close: true,
+                  position: "left",
+                }).showToast();
+                if (option.disabled) {
+                  // @ts-ignore
+                  Toastify({
+                    text: "Siap DIps ~~> FT Option disabled",
+                    duration: 3000,
+                    close: true,
+                    position: "left",
+                  }).showToast();
+                }
+
+                selectElement.dispatchEvent(
+                  new Event("change", { bubbles: true, cancelable: true })
+                );
+                break;
+              }
+            }
+          },
+        });
+      }
     });
   }
 });

@@ -18,7 +18,9 @@ import {
   LeafyGreen,
   ScanHeart,
   LucideIcon,
+  SaladIcon,
 } from "lucide-react";
+import AutoFoodTruk from "../AutoFoodTruck";
 
 export const cardComponents = {
   NavigationCard,
@@ -29,6 +31,7 @@ export const cardComponents = {
   QuoteCard,
   AutopbmCard,
   AutoLearnSocial,
+  AutoFoodTruk,
   HidePopupcard, // Lainnya
 } as const;
 
@@ -43,6 +46,7 @@ export const cardComponentsOption: {
   QuoteCard: ["Quotes", Quote],
   AutopbmCard: ["PBM Auto", Calendar],
   AutoLearnSocial: ["Auto Learn Social", LeafyGreen],
+  AutoFoodTruk: ["Auto Food Truk", SaladIcon],
   HidePopupcard: ["Lainnya", MoreHorizontal], // etc
 };
 
