@@ -177,7 +177,7 @@ const SettingcardAwal = () => {
                 className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 onClick={() =>
                   chrome.tabs.create({
-                    url: "https://myudak.site/projects/DMW",
+                    url: "https://myudak.com/projects/DMW",
                   })
                 }
               >
@@ -211,7 +211,7 @@ const SettingcardAwal = () => {
                 className="w-full justify-start dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 onClick={() =>
                   chrome.tabs.create({
-                    url: "https://myudak.site",
+                    url: "https://myudak.com",
                   })
                 }
               >

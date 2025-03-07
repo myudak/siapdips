@@ -38,7 +38,7 @@ const Icons = {
 const NavbarLogo = () => {
   const linkClickMyudak = (e: React.MouseEvent) => {
     e.preventDefault();
-    chrome.tabs.create({ url: "https://myudak.site" });
+    chrome.tabs.create({ url: "https://myudak.com" });
   };
   return (
     <div className="flex items-center gap-2">

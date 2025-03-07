@@ -4,7 +4,7 @@
   "version": "1.1.1",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": ["activeTab", "scripting", "storage"],
-  "homepage_url": "https://myudak.site",
+  "homepage_url": "https://myudak.com",
   "options_ui": {
     "page": "option.html",
     "open_in_tab": true

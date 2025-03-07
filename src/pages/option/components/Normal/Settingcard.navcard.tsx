@@ -380,7 +380,7 @@ function NavCardSetting() {
                 </span>
               </h2>
               <SortableContext items={includedButtons.map((b) => b.id)}>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {includedButtons.map((button) => (
                     <SortableButton key={button.id} button={button} />
                   ))}
@@ -389,10 +389,10 @@ function NavCardSetting() {
             </div>
             <div className="border-t pt-8">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                Excluded Items
+                Lainnya
                 <span className="text-sm font-normal text-muted-foreground">
                   {includedButtons.length >= MAX_INCLUDED_ITEMS &&
-                    "(Included items at max capacity)"}
+                    "{NavCard maks 6}"}
                 </span>
               </h2>
               <SortableContext items={excludedButtons.map((b) => b.id)}>
