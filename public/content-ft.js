@@ -104,6 +104,14 @@ function createHelper() {
     return `${timeString}.${ms}`;
   }
 
+  const infoText = document.createElement("div");
+  infoText.textContent =
+    "This clock is local and may not accurate, use time.is for accurate time";
+  infoText.style.fontSize = "14px";
+  infoText.style.color = "#555";
+  infoText.style.textAlign = "center";
+  content.appendChild(infoText);
+
   // Live clock display in 24-hour format with milliseconds.
   const liveClock = document.createElement("div");
   Object.assign(liveClock.style, {

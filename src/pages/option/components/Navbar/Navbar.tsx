@@ -21,6 +21,9 @@ const Navbar = () => {
           <a className="hover:underline" href="#profileSettings">
             Profile
           </a>
+          <a className="hover:underline" href="#foodTruk">
+            FoodTruk
+          </a>
         </div>
 
         {/* Right side icons */}

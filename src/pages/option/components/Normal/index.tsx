@@ -4,6 +4,7 @@ import SettingcardAwal from "./Settingcard.awal";
 import SettingcardProfile from "./Settingcard.profile";
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import LokasiFoodTruk from "./Settingcard.ft";
+import NavCardSetting from "./Settingcard.navcard";
 
 const Nromal = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
@@ -21,6 +22,13 @@ const Nromal = () => {
         <SettingcardAwal />
       </>
       <>
+        <h1 className="text-2xl pt-20 font-bold text-slate-900 dark:text-white text-center">
+          NavCard
+        </h1>
+        <NavCardSetting />
+      </>
+
+      <>
         <h1
           id="TemplatePBM"
           ref={PBMTableRef}
@@ -37,8 +45,11 @@ const Nromal = () => {
         <SettingcardProfile />
       </>
       <>
-        <h1 className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center">
-          Auto Food TRUK Settings
+        <h1
+          id="foodTruk"
+          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+        >
+          Auto Food TRUK {"{Helper}"} Settings
         </h1>
         <LokasiFoodTruk />
       </>

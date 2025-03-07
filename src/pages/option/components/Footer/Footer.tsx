@@ -12,9 +12,9 @@ export function SiteFooter() {
         >
           {"myudakk"} | made with ❤️ \(￣︶￣*\))
         </div>
-        <span className="line-through">
-          Buat yang mau reach out untuk kritik, saran, request fitur, atau
-          bahkan joki IRS bisa DM ke
+        <span className="text-sm text-muted-foreground ">
+          remember the helpers is just that- a helper, dont use it for any
+          system abuse etc, i dont responsible for any
         </span>
       </div>
     </footer>

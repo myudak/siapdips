@@ -14,7 +14,11 @@ const changelogEntries: ChangelogEntry[] = [
     version: "v1.2.0",
     date: "March 7, 2025",
     type: "feature",
-    changes: ["Auto Food Truk Helper", "Quality of Life improvements"],
+    changes: [
+      "Auto Food Truk Helper",
+      "Navcard setting",
+      "Quality of Life improvements",
+    ],
   },
   {
     version: "v1.1.1",

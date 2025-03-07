@@ -132,24 +132,26 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     });
 
     // ENABLE CTRL C
-    chrome.storage.local.get(
-      "disableCtrlC",
-      (data: { disableCtrlC?: boolean }) => {
-        if (data.disableCtrlC === true) {
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id! },
-            func: disableCtrlC,
-          });
+    if (!tab.url?.includes("https://form.undip.ac.id/makanansehat")) {
+      chrome.storage.local.get(
+        "disableCtrlC",
+        (data: { disableCtrlC?: boolean }) => {
+          if (data.disableCtrlC === true) {
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id! },
+              func: disableCtrlC,
+            });
+          }
+          if (data.disableCtrlC === undefined) {
+            chrome.storage.local.set({ disableCtrlC: true });
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id! },
+              func: disableCtrlC,
+            });
+          }
         }
-        if (data.disableCtrlC === undefined) {
-          chrome.storage.local.set({ disableCtrlC: true });
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id! },
-            func: disableCtrlC,
-          });
-        }
-      }
-    );
+      );
+    }
 
     // BLUR USERNAME PROFILE NIM PRODI
     chrome.storage.local.get(

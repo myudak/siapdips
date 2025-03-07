@@ -36,7 +36,7 @@ const AutoLearnSocial = ({
       </Button>
       <CardHeader className="py-2">
         <CardTitle className="text-lg font-bold">
-          Auto Learn Social
+          Auto Learn Social {"{Helper}"}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
