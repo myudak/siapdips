@@ -97,17 +97,26 @@ function createHelper() {
     alignItems: "center",
   });
 
-  // Live clock display in 24-hour format (with seconds).
+  // Helper function to format a Date to HH:MM:SS.mmm (24h format)
+  function formatTimeWithMilliseconds(date) {
+    const timeString = date.toLocaleTimeString("en-GB", { hour12: false });
+    const ms = date.getMilliseconds().toString().padStart(3, "0");
+    return `${timeString}.${ms}`;
+  }
+
+  // Live clock display in 24-hour format with milliseconds.
   const liveClock = document.createElement("div");
   Object.assign(liveClock.style, {
     fontSize: "24px",
     fontWeight: "bold",
     textAlign: "center",
   });
-  liveClock.textContent = new Date().toLocaleTimeString("en-GB");
+  // Initial display:
+  liveClock.textContent = formatTimeWithMilliseconds(new Date());
+  // Update every 50ms for smooth millisecond display.
   setInterval(() => {
-    liveClock.textContent = new Date().toLocaleTimeString("en-GB");
-  }, 1000);
+    liveClock.textContent = formatTimeWithMilliseconds(new Date());
+  }, 50);
   content.appendChild(liveClock);
 
   // Container for scheduling auto-refresh.
@@ -120,18 +129,12 @@ function createHelper() {
     width: "100%",
   });
 
-  // Label for the time input.
-  //   const inputLabel = document.createElement("label");
-  //   inputLabel.textContent = "Auto Refresh Time (24h format, HH:MM:SS):";
-  //   inputLabel.style.fontSize = "14px";
-  //   inputLabel.style.fontWeight = "bold";
-  //   scheduleContainer.appendChild(inputLabel);
-
-  // Enhanced time input allowing seconds, default "10:00:00".
+  // Enhanced time input allowing milliseconds, default "10:00:00.000".
   const timeInput = document.createElement("input");
   timeInput.type = "time";
-  timeInput.value = "10:00:00";
-  timeInput.step = "1";
+  timeInput.value = "10:00:00.000";
+  // Set step to 0.001 to allow millisecond precision.
+  timeInput.step = "0.001";
   Object.assign(timeInput.style, {
     fontSize: "16px",
     padding: "4px",
@@ -168,21 +171,31 @@ function createHelper() {
     scheduleButton.style.backgroundColor = "#28a745";
   });
   scheduleButton.addEventListener("click", () => {
-    // Parse the time from the input (expects "HH:MM:SS" in 24h format).
-    const [inputHour, inputMinute, inputSecond = 0] = timeInput.value
-      .split(":")
-      .map(Number);
+    // Parse the time from the input (expects "HH:MM:SS.mmm" in 24h format).
+    const parts = timeInput.value.split(":");
+    const inputHour = Number(parts[0]);
+    const inputMinute = Number(parts[1]);
+    let inputSecond = 0,
+      inputMillisecond = 0;
+    if (parts[2].includes(".")) {
+      const secParts = parts[2].split(".");
+      inputSecond = Number(secParts[0]);
+      inputMillisecond = Number(secParts[1]);
+    } else {
+      inputSecond = Number(parts[2]);
+    }
+
     const now = new Date();
     const target = new Date();
-    target.setHours(inputHour, inputMinute, inputSecond, 0); // Set target time today.
+    target.setHours(inputHour, inputMinute, inputSecond, inputMillisecond); // Set target time today.
     // If the target time is earlier than now, schedule for tomorrow.
     if (now >= target) {
       target.setDate(target.getDate() + 1);
     }
     const delay = target - now;
-    // Update the indicator with the scheduled time.
-    scheduleIndicator.textContent = `Auto refresh jam ${target.toLocaleTimeString(
-      "en-GB"
+    // Update the indicator with the scheduled time (with milliseconds).
+    scheduleIndicator.textContent = `Auto refresh jam ${formatTimeWithMilliseconds(
+      target
     )}`;
     // Schedule the auto refresh.
     setTimeout(() => {
@@ -224,6 +237,31 @@ function createHelper() {
   });
   content.appendChild(refreshNowButton);
 
+  //  button.
+  const TimeIsButton = document.createElement("button");
+  TimeIsButton.textContent = "Time.is {More Accurate time}";
+  Object.assign(TimeIsButton.style, {
+    padding: "8px 12px",
+    fontSize: "16px",
+    cursor: "pointer",
+    border: "none",
+    borderRadius: "6px",
+    backgroundColor: "#6f9efe",
+    color: "#ffffff",
+    transition: "background-color 0.3s ease",
+    width: "100%",
+  });
+  TimeIsButton.addEventListener("mouseenter", () => {
+    TimeIsButton.style.backgroundColor = "#3C7CFE";
+  });
+  TimeIsButton.addEventListener("mouseleave", () => {
+    TimeIsButton.style.backgroundColor = "#6F9EFE";
+  });
+  TimeIsButton.addEventListener("click", () => {
+    window.open("https://time.is", "_blank", "noopener,noreferrer");
+  });
+  content.appendChild(TimeIsButton);
+
   // Assemble the helper card.
   helper.appendChild(content);
   document.body.appendChild(helper);
@@ -232,7 +270,6 @@ function createHelper() {
   new Draggable({ element: helper, handle: header });
   return helper;
 }
-
 function createLogoSiapDips() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");

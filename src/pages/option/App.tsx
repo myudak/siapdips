@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import { useMemo, useRef } from "react";
 import ChangelogPage from "./components/Changelog";
+import { Badge } from "@/components/ui/badge";
 
 type Tutorial = {
   id: number;
@@ -19,6 +20,9 @@ type Tutorial = {
   hash: string;
   ref?: React.RefObject<HTMLDivElement>;
 };
+
+const VERSION = "1.2.0";
+const LAST_UPDATE = "March 7, 2025";
 
 const LandingPage = () => {
   const tutorialRefs = useMemo(() => {
@@ -74,15 +78,16 @@ const LandingPage = () => {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Navbar />
         <div className="main">
-          <section className="h-[calc(100dvh-3.6rem)]  flex items-center">
+          <section className="h-[calc(100dvh-3.6rem)] flex items-center">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center">
-                <div className="flex justify-center mb-8">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full"></div>
-                    <Icons.logoSiapDips className="h-28 w-28 text-primary relative animate-pulse" />
-                    {/* <Zap className="h-24 w-24 text-primary relative animate-pulse" /> */}
-                  </div>
+                <div className="flex justify-center mb-8 relative">
+                  <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full"></div>
+                  <Icons.logoSiapDips className="h-28 w-28 text-primary relative animate-pulse" />
+                  {/* Version badge positioned near the logo */}
+                  <Badge className="absolute -right-6 top-0  text-xs px-2 py-1 rounded-full font-medium">
+                    v{VERSION}
+                  </Badge>
                 </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
                   <span className="text-primary">SiAp DiPS</span>
@@ -90,6 +95,13 @@ const LandingPage = () => {
                 <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
                   Extension for better Undip experience. ~&gt; Created by
                   myudakk. ヽ（≧□≦）ノ
+                </p>
+                {/* Version info line */}
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Latest update: {LAST_UPDATE} •{" "}
+                  <a href="#changelog" className="text-primary hover:underline">
+                    See whats new
+                  </a>
                 </p>
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <Button
@@ -115,7 +127,6 @@ const LandingPage = () => {
               </div>
             </div>
           </section>
-
           {/* <section className="min-h-screen bg-muted/50 flex items-center">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="text-center mb-16">

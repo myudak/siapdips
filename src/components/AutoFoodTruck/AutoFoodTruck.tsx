@@ -56,7 +56,7 @@ const AutoFoodTruk = ({
       </Button>
       <CardHeader className="py-2 text-center">
         <CardTitle className="text-lg font-bold">
-          Auto FoodTruk
+          Auto FoodTruk {"{Helper}"}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

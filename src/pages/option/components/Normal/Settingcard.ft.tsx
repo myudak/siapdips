@@ -38,6 +38,10 @@ const LokasiFoodTruk = () => {
       value: "Halaman Parkir Gedung SA-MWA",
       label: "Halaman Parkir Gedung SA-MWA",
     },
+    {
+      value: "ART Center",
+      label: "Gedung ART Center",
+    },
   ];
 
   return (

@@ -380,6 +380,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         });
       }
     });
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      func: () => {
+        const nomorHp = document.querySelector("#mobile_phone") as HTMLElement;
+        if (nomorHp) {
+          nomorHp.style.filter = "blur(5px)";
+        }
+      },
+    });
   }
 });
 

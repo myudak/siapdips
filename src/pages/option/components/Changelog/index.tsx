@@ -11,6 +11,12 @@ interface ChangelogEntry {
 
 const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.2.0",
+    date: "March 7, 2025",
+    type: "feature",
+    changes: ["Auto Food Truk Helper", "Quality of Life improvements"],
+  },
+  {
     version: "v1.1.1",
     date: "February 27, 2025",
     type: "patch",
@@ -53,7 +59,7 @@ const getBadgeVariant = (
 
 const ChangelogPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div id="changelog" className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex items-center mb-8 space-x-3">
         <GitCommitHorizontal className="w-8 h-8 text-primary dark:text-primary-light" />
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">

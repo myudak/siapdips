@@ -12,6 +12,10 @@ export function SiteFooter() {
         >
           {"myudakk"} | made with ❤️ \(￣︶￣*\))
         </div>
+        <span className="line-through">
+          Buat yang mau reach out untuk kritik, saran, request fitur, atau
+          bahkan joki IRS bisa DM ke
+        </span>
       </div>
     </footer>
   );

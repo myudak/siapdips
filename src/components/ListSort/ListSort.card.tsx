@@ -45,8 +45,8 @@ export const cardComponentsOption: {
   TodoList: ["Todo List", CheckSquare],
   QuoteCard: ["Quotes", Quote],
   AutopbmCard: ["PBM Auto", Calendar],
-  AutoLearnSocial: ["Auto Learn Social", LeafyGreen],
-  AutoFoodTruk: ["Auto Food Truk", SaladIcon],
+  AutoLearnSocial: ["Auto Learn Social {Helper}", LeafyGreen],
+  AutoFoodTruk: ["Auto Food Truk {Helper}", SaladIcon],
   HidePopupcard: ["Lainnya", MoreHorizontal], // etc
 };
 
