@@ -1,4 +1,4 @@
-name: Deploy Chrome Extensions
+name: Deploy Chrome Extension
 
 on:
   push:
@@ -8,25 +8,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[deploy]') # Run only if commit message contains '[deploy]'
+    if: contains(github.event.head_commit.message, '[deploy]') # Only runs if commit message contains '[deploy]'
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Install webstore CLI
-        run: npm install -g chrome-webstore-upload-cli
-
-      - name: NPM BUILD
+      - name: Install Dependencies & Build
         run: |
-          npm run build
+          echo "Installing dependencies..."
+          npm install
+          echo "Building extension..."
+          NODE_ENV=production npm run build
+
+      - name: Install Chrome Web Store CLI
+        run: npm install -g chrome-webstore-upload-cli
 
       - name: Upload to Chrome Web Store
         run: |
+          echo "Uploading extension..."
           chrome-webstore-upload upload --source dist \
             --extension-id ${{ secrets.EXTENSION_ID }} \
             --client-id ${{ secrets.CLIENT_ID }} \
@@ -35,6 +40,7 @@ jobs:
 
       - name: Publish Extension
         run: |
+          echo "Publishing extension..."
           chrome-webstore-upload publish \
             --extension-id ${{ secrets.EXTENSION_ID }} \
             --client-id ${{ secrets.CLIENT_ID }} \
