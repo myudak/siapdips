@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import {
   DraggableButton,
   DraggableButtonSerialized,
+  EXCLUDED_AWAL,
   ICON_MAP,
   INCLUDED_AWAL,
   INCLUDED_AWAL_SERIALIZABLE,
@@ -29,7 +30,12 @@ const NavigationCard = ({
         includedNavCard?: DraggableButtonSerialized[];
         excludedNavCard?: DraggableButtonSerialized[];
       }) => {
-        if (result.includedNavCard) {
+        if (
+          result.includedNavCard &&
+          result.excludedNavCard &&
+          result.includedNavCard.length + result.excludedNavCard.length ===
+            INCLUDED_AWAL.length + EXCLUDED_AWAL.length
+        ) {
           setLinkNav(
             result.includedNavCard.map(({ iconName, ...rest }) => ({
               ...rest,

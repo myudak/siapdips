@@ -141,30 +141,32 @@ function NavCardSetting() {
         includedNavCard?: DraggableButtonSerialized[];
         excludedNavCard?: DraggableButtonSerialized[];
       }) => {
-        if (result.includedNavCard) {
+        if (
+          result.includedNavCard &&
+          result.excludedNavCard &&
+          result.includedNavCard.length + result.excludedNavCard.length ===
+            INCLUDED_AWAL.length + EXCLUDED_AWAL.length
+        ) {
           setIncludedButtons(
             result.includedNavCard.map(({ iconName, ...rest }) => ({
               ...rest,
               icon: ICON_MAP[iconName],
             }))
           );
-        }
-        if (result.excludedNavCard) {
           setExcludedButtons(
             result.excludedNavCard.map(({ iconName, ...rest }) => ({
               ...rest,
               icon: ICON_MAP[iconName],
             }))
           );
+          return;
         }
-        if (!result.includedNavCard && !result.excludedNavCard) {
-          chrome.storage.local.set({
-            includedNavCard: INCLUDED_AWAL_SERIALIZABLE,
-            excludedNavCard: EXCLUDED_AWAL_SERIALIZABLE,
-          });
-          setIncludedButtons(INCLUDED_AWAL);
-          setExcludedButtons(EXCLUDED_AWAL);
-        }
+        chrome.storage.local.set({
+          includedNavCard: INCLUDED_AWAL_SERIALIZABLE,
+          excludedNavCard: EXCLUDED_AWAL_SERIALIZABLE,
+        });
+        setIncludedButtons(INCLUDED_AWAL);
+        setExcludedButtons(EXCLUDED_AWAL);
       }
     );
   }, []);

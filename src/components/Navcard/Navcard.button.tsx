@@ -35,7 +35,7 @@ const NavButton = ({
           >
             <Icon className="h-6 w-6 mb-1" />
             <div className="text-sm font-medium">{title}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 w-full">
+            <div className="text-center text-xs text-gray-500 dark:text-gray-400 w-full">
               {subtitle}
             </div>
           </Button>

@@ -8,6 +8,9 @@ import {
   MonitorPlay,
   Headphones,
   SquareTerminal,
+  FilePenIcon,
+  MailIcon,
+  School2Icon,
 } from "lucide-react";
 
 // Define allowed icon names as a union type.
@@ -17,7 +20,10 @@ type IconName =
   | "ScanLine"
   | "MonitorPlay"
   | "Headphones"
-  | "SquareTerminal";
+  | "SquareTerminal"
+  | "FilePenIcon"
+  | "MailIcon"
+  | "School2Icon";
 
 // Map icon names to their corresponding Lucide React components.
 const ICON_MAP: Record<IconName, LucideIcon> = {
@@ -27,6 +33,9 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   MonitorPlay,
   Headphones,
   SquareTerminal,
+  FilePenIcon,
+  MailIcon,
+  School2Icon,
 };
 
 // Helper to retrieve the icon name from a component.
@@ -111,12 +120,27 @@ const INCLUDED_AWAL: DraggableButton[] = [
 const EXCLUDED_AWAL: DraggableButton[] = [
   {
     id: "7",
-    title: "SSO",
-    icon: KeyRound,
-    subtitle: "SSO UNDIP",
-    tooltip:
-      "SSO adalah sistem terintegrasi yang menghubungkan seluruh civitas akademika Undip.",
-    href: "https://sso.undip.ac.id/pages/dashboard",
+    title: "FORM",
+    icon: FilePenIcon,
+    subtitle: "FORM UNDIP",
+    tooltip: "SSO UNDIP Form, {e-votes, news, food truk, etc}",
+    href: "https://form.undip.ac.id/sso/auth",
+  },
+  {
+    id: "8",
+    title: "E-MAIL",
+    icon: MailIcon,
+    subtitle: "EMAIL UNDIP",
+    tooltip: "UNDIP OFFICIAL EMAIL",
+    href: "https://outlook.office.com",
+  },
+  {
+    id: "9",
+    title: "BEASISWA",
+    icon: School2Icon,
+    subtitle: "Beasiswa Dips",
+    tooltip: "SCHOLARSHIP UNDIP",
+    href: "https://beasiswa.undip.ac.id/sso/auth",
   },
 ];
 
@@ -142,3 +166,31 @@ export {
 };
 
 export type { DraggableButton, DraggableButtonSerialized };
+
+[
+  "https://sso.undip.id/sso/auth",
+  "https://sso.undip.ac.id/news/page",
+  "https://form.undip.ac.id/sso/auth?redirect=bmV3cy93ZWVrbHk%3D",
+  "https://www.undip.ac.id/newsletter",
+  "https://www.undip.ac.id/buku-annual-report-undip",
+  "https://radioonline.co.id/pro-alma",
+  "https://play.google.com/store/apps/dev?id=8488992061002379339&hl=id",
+  "https://outlook.office.com",
+  "https://www.office.com/?auth=2",
+  "https://undipmail-my.sharepoint.com/_layouts/15/MySite.aspx?MySiteRedirect=AllDocuments",
+  'https://teams.microsoft.com/l/entity/fe4a8eba-2a31-4737-8e33-e5fae6fee194/tasklist123?webUrl=https://sso.undip.ac.id/999&label=Task List 999&context={"channelId": "19:cbe3683f25094106b826c9cada3afbe0@thread.skype"}',
+  "https://siap.undip.ac.id/sso/login",
+  "https://kulon2.undip.ac.id/auth/oidc/",
+  null,
+  "https://ejournal.undip.ac.id/",
+  "https://lib.undip.ac.id/index.php?p=member",
+  "https://accessmedicine.mhmedical.com/",
+  "https://halo.undip.ac.id/",
+  "https://pendaftaranblog.undip.ac.id/",
+  "https://form.undip.ac.id/sso/auth",
+  "https://pkm.apps.undip.ac.id/sso/login",
+  "https://event.bak.undip.ac.id/sso/login",
+  "https://beasiswa.undip.ac.id/sso/auth",
+  "https://form.undip.ac.id/sso/auth?redirect=dm90ZWJlbS92b3Rpbmcvc3RhcnQ%3D",
+  "https://siasat.apps.undip.ac.id/sso/auth",
+];
