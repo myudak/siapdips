@@ -6,7 +6,7 @@ import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import LokasiFoodTruk from "./Settingcard.ft";
 import NavCardSetting from "./Settingcard.navcard";
 
-const Nromal = () => {
+const SettingsSection = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
   const PBMTableRef = useRef<null | HTMLDivElement>(null);
 
@@ -57,4 +57,4 @@ const Nromal = () => {
   );
 };
 
-export default Nromal;
+export default SettingsSection;

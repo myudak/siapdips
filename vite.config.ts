@@ -36,10 +36,7 @@ export default defineConfig(() => {
           popup: path.resolve(__dirname, "src/pages/main/popup.html"),
           nested: path.resolve(__dirname, "src/pages/option/option.html"),
           content: path.resolve(__dirname, "src/content.js"),
-          // contentUndiplearn: path.resolve(
-          //   __dirname,
-          //   "src/content-undiplearn.ts"
-          // ),
+          contentFt: path.resolve(__dirname, "src/content-ft.js"),
           background: path.resolve(__dirname, "src/background.ts"),
         },
         output: {
@@ -52,8 +49,7 @@ export default defineConfig(() => {
           entryFileNames: (chunkInfo) => {
             if (chunkInfo.name === "content") return "content.js";
             if (chunkInfo.name === "background") return "background.js";
-            // if (chunkInfo.name === "contentUndiplearn")
-            //   return "content-undiplearn.js";
+            if (chunkInfo.name === "contentFt") return "content-ft.js";
             return "assets/[name]-[hash].js";
           },
           banner: `/*!

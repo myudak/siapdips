@@ -42,6 +42,10 @@ const LokasiFoodTruk = () => {
       value: "ART Center",
       label: "Gedung ART Center",
     },
+    {
+      value: "NONE",
+      label: "- Pilih Lokasi -",
+    },
   ];
 
   return (

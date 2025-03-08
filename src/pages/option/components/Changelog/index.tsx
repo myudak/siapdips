@@ -61,52 +61,54 @@ const getBadgeVariant = (
   }
 };
 
-const ChangelogPage = () => {
+const ChangelogSection = () => {
   return (
-    <div id="changelog" className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="flex items-center mb-8 space-x-3">
-        <GitCommitHorizontal className="w-8 h-8 text-primary dark:text-primary-light" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          Changelog {"{Whats new}"}
-        </h1>
-      </div>
+    <section className=" mt-6 py-12">
+      <div id="changelog" className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="flex items-center mb-8 space-x-3">
+          <GitCommitHorizontal className="w-8 h-8 text-primary dark:text-primary-light" />
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Changelog {"{Whats new}"}
+          </h1>
+        </div>
 
-      <div className="space-y-6">
-        {changelogEntries.map((entry, index) => (
-          <Card
-            key={index}
-            className="w-full bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-300"
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="flex items-center space-x-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                  {entry.version}
-                </h2>
-                <Badge variant={getBadgeVariant(entry.type)}>
-                  {entry.type}
-                </Badge>
-              </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {entry.date}
-              </span>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 pl-4 border-l-2 border-primary/20 dark:border-primary/40">
-                {entry.changes.map((change, changeIndex) => (
-                  <li
-                    key={changeIndex}
-                    className="pl-4 relative text-gray-800 dark:text-gray-300 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-primary before:rounded-full"
-                  >
-                    {change}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        ))}
+        <div className="space-y-6">
+          {changelogEntries.map((entry, index) => (
+            <Card
+              key={index}
+              className="w-full bg-white dark:bg-gray-900 hover:shadow-lg transition-shadow duration-300"
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="flex items-center space-x-4">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    {entry.version}
+                  </h2>
+                  <Badge variant={getBadgeVariant(entry.type)}>
+                    {entry.type}
+                  </Badge>
+                </div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  {entry.date}
+                </span>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 pl-4 border-l-2 border-primary/20 dark:border-primary/40">
+                  {entry.changes.map((change, changeIndex) => (
+                    <li
+                      key={changeIndex}
+                      className="pl-4 relative text-gray-800 dark:text-gray-300 before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:bg-primary before:rounded-full"
+                    >
+                      {change}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default ChangelogPage;
+export default ChangelogSection;
