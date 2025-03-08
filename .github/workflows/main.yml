@@ -22,7 +22,7 @@ jobs:
       - name: Install Dependencies & Build
         run: |
           echo "Installing dependencies..."
-          npm install
+          npm install --legacy-peer-deps
           echo "Building extension..."
           NODE_ENV=production npm run build
 
