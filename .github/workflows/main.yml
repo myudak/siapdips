@@ -38,11 +38,11 @@ jobs:
             --client-secret ${{ secrets.CLIENT_SECRET }} \
             --refresh-token ${{ secrets.REFRESH_TOKEN }}
 
-      - name: Publish Extension
-        run: |
-          echo "Publishing extension..."
-          chrome-webstore-upload publish \
-            --extension-id ${{ secrets.EXTENSION_ID }} \
-            --client-id ${{ secrets.CLIENT_ID }} \
-            --client-secret ${{ secrets.CLIENT_SECRET }} \
-            --refresh-token ${{ secrets.REFRESH_TOKEN }}
+      # - name: Publish Extension
+      #   run: |
+      #     echo "Publishing extension..."
+      #     chrome-webstore-upload publish \
+      #       --extension-id ${{ secrets.EXTENSION_ID }} \
+      #       --client-id ${{ secrets.CLIENT_ID }} \
+      #       --client-secret ${{ secrets.CLIENT_SECRET }} \
+      #       --refresh-token ${{ secrets.REFRESH_TOKEN }}

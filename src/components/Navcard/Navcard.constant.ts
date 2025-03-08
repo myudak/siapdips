@@ -122,7 +122,7 @@ const EXCLUDED_AWAL: DraggableButton[] = [
     id: "7",
     title: "FORM",
     icon: FilePenIcon,
-    subtitle: "FORM UNDIP",
+    subtitle: "Form Undip",
     tooltip: "SSO UNDIP Form, {e-votes, news, food truk, etc}",
     href: "https://form.undip.ac.id/sso/auth",
   },
@@ -136,11 +136,19 @@ const EXCLUDED_AWAL: DraggableButton[] = [
   },
   {
     id: "9",
-    title: "BEASISWA",
+    title: "Beasiswa",
     icon: School2Icon,
     subtitle: "Beasiswa Dips",
     tooltip: "SCHOLARSHIP UNDIP",
     href: "https://beasiswa.undip.ac.id/sso/auth",
+  },
+  {
+    id: "10",
+    title: "Drive",
+    icon: School2Icon,
+    subtitle: "Onedrive Undip",
+    tooltip: "Penyimpanan Online OneDrive",
+    href: "https://undipmail-my.sharepoint.com/_layouts/15/MySite.aspx?MySiteRedirect=AllDocuments",
   },
 ];
 
