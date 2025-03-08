@@ -6,6 +6,7 @@ import { copy } from "vite-plugin-copy";
 import fs from "fs";
 import CleanCSS from "clean-css";
 import flattenOutput from "vite-plugin-flatten-output";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig(() => {
   // MINIFIED mode CSS ========
@@ -19,7 +20,9 @@ export default defineConfig(() => {
   return {
     plugins: [
       react(),
-      copy([{ src: "src/manifest.json", dest: "dist" }]),
+      viteStaticCopy({
+        targets: [{ src: "src/manifest.json", dest: "." }],
+      }),
       flattenOutput({
         removeDirs: ["src/pages/main", "src/pages/option"],
         filePattern: ".html",
