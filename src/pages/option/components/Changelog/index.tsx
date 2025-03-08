@@ -17,7 +17,7 @@ const changelogEntries: ChangelogEntry[] = [
     changes: [
       "Auto Food Truk Helper",
       "Navcard setting",
-      "Quality of Life improvements",
+      "Patch Learn Social Helper",
     ],
   },
   {

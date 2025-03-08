@@ -56,6 +56,15 @@ const BUTTONS: ButtonConfig[] = [
     ),
   },
   {
+    text: "IsianTextArea",
+    icon: "👽",
+    action: ToggleWeb(
+      ToggleIsianTextArea(),
+      ".textEntry-textArea",
+      "Isian Text Area"
+    ),
+  },
+  {
     text: "Pair Kanan Kiri",
     icon: "🔗",
     action: ToggleWeb(
@@ -78,7 +87,7 @@ const BUTTONS: ButtonConfig[] = [
     icon: "👻",
   },
   {
-    text: "RESET",
+    text: "RESET THIS",
     icon: "🔄",
     action: ResetAllFull(),
   },
@@ -553,6 +562,52 @@ function ToggleItemBankDragDrop(): () => void {
   };
 }
 
+function ToggleIsianTextArea(): () => void {
+  return () => {
+    // MAIN
+    console.log("✅ Found ITEM BANK!");
+
+    type TextAreaElement = HTMLTextAreaElement;
+
+    const setTextAreaValue = (selector: string, value: string): void => {
+      const textArea = document.querySelector<TextAreaElement>(selector);
+      if (textArea) {
+        textArea.value = value;
+        textArea.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    };
+
+    setTextAreaValue(".textEntry-textArea", "myudak");
+
+    klikClass(".check");
+    klikClass(".reveal");
+
+    const textAreas = Array.from(
+      document.querySelectorAll<HTMLTextAreaElement>(".textEntry-textArea")
+    );
+    const values = textAreas.map((textArea) => textArea.value);
+
+    console.log("CONSOLE OUTPUT -> JAWABANN ==>:", values);
+
+    klikClass(".reset");
+
+    const updatedTextAreas = document.querySelectorAll<HTMLTextAreaElement>(
+      ".textEntry-textArea"
+    );
+    updatedTextAreas.forEach((textArea, index) => {
+      if (values[index] !== undefined) {
+        textArea.value = values[index];
+        textArea.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+
+    klikClass(".check");
+    klikClass("#navbarRightButton");
+
+    // MAIN
+  };
+}
+
 function ToggleWeb(f: () => void, classAwal: string, name: string) {
   let observing = false;
   const observer = new MutationObserver((_mutations) => {
@@ -613,16 +668,11 @@ function ToggleWeb(f: () => void, classAwal: string, name: string) {
 
 function ResetAllFull(): () => void {
   let observing = false;
-  let kaliGkKetemu = 0;
   const observer = new MutationObserver((_mutations) => {
     console.log(document.querySelector(".reset"));
     if (!document.querySelector(".reset")) {
-      kaliGkKetemu++;
-    }
-    if (kaliGkKetemu > 10) {
       observer.disconnect();
       observing = false;
-      kaliGkKetemu = 0;
       console.log("✅ Disconnected from the MutationObserver.");
       //   @ts-ignore
       Toastify({
@@ -660,7 +710,6 @@ function ResetAllFull(): () => void {
     } else {
       observer.disconnect();
       observing = false;
-      kaliGkKetemu = 0;
       console.log("❌ MutationObserver stopped.");
     }
   };
@@ -677,4 +726,5 @@ function ToggleAll() {
     }).showToast();
   };
 }
+
 export { BUTTONS, TogglePilganFull };
