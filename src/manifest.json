@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Siap Dips",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": ["activeTab", "scripting", "storage"],
   "homepage_url": "https://myudak.com",
