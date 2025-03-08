@@ -3,7 +3,7 @@ name: Deploy Chrome Extension
 on:
   push:
     branches:
-      - main  # Adjust if needed
+      - main # Adjust if needed
 
 jobs:
   deploy:
@@ -21,13 +21,13 @@ jobs:
       - name: Install webstore CLI
         run: npm install -g chrome-webstore-upload-cli
 
-      - name: Zip extension
+      - name: NPM BUILD
         run: |
-          zip -r extension.zip * -x "*.git*"
+          npm run build
 
       - name: Upload to Chrome Web Store
         run: |
-          chrome-webstore-upload upload --source extension.zip \
+          chrome-webstore-upload upload --source dist \
             --extension-id ${{ secrets.EXTENSION_ID }} \
             --client-id ${{ secrets.CLIENT_ID }} \
             --client-secret ${{ secrets.CLIENT_SECRET }} \
