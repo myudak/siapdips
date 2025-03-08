@@ -954,10 +954,7 @@ function parseTableToJsonAndSave(): DayObject | null {
       // console.log("Data jadwal disimpan ke Chrome local storage.");
       // Verifikasi data yang disimpan (opsional)
       chrome.storage.local.get(["scheduleData"], function (result) {
-        // console.log(
-        //   "Data yang diambil dari Chrome local storage:",
-        //   result.scheduleData
-        // );
+        console.log("data Chrome local storage:", result.scheduleData);
       });
     }
   });

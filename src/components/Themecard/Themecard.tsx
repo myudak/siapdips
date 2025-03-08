@@ -25,9 +25,7 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
@@ -45,7 +43,7 @@ const UndipThemeSettings = ({
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
 }) => {
-  const [openCustomValue, setOpenCustomValue] = useState(false);
+  // const [openCustomValue, setOpenCustomValue] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const [mode, setMode] = useState("custom");
   const [customColor, setCustomColor] = useState("custom");

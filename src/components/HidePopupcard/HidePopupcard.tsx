@@ -351,15 +351,15 @@ function enableCtrlC() {
         el.addEventListener("mouseup", bringBackDefault, true);
       }
 
-      function restoreRightClick(el: Document) {
-        el || (el = document);
-        el.removeEventListener("contextmenu", bringBackDefault, true);
-        el.removeEventListener("dragstart", bringBackDefault, true);
-        el.removeEventListener("selectstart", bringBackDefault, true);
-        el.removeEventListener("click", bringBackDefault, true);
-        el.removeEventListener("mousedown", bringBackDefault, true);
-        el.removeEventListener("mouseup", bringBackDefault, true);
-      }
+      // function restoreRightClick(el: Document) {
+      //   el || (el = document);
+      //   el.removeEventListener("contextmenu", bringBackDefault, true);
+      //   el.removeEventListener("dragstart", bringBackDefault, true);
+      //   el.removeEventListener("selectstart", bringBackDefault, true);
+      //   el.removeEventListener("click", bringBackDefault, true);
+      //   el.removeEventListener("mousedown", bringBackDefault, true);
+      //   el.removeEventListener("mouseup", bringBackDefault, true);
+      // }
       function bringBackDefault(event: any) {
         event.returnValue = true;
         typeof event.stopPropagation === "function" && event.stopPropagation();
@@ -389,31 +389,31 @@ function enableCtrlC() {
   })();
 }
 
-function disableCtrlC() {
-  (() => {
-    // Restore MutationObserver
-    MutationObserver.prototype.observe = function () {
-      console.log("MutationObserver disabled.");
-    };
+// function disableCtrlC() {
+//   (() => {
+//     // Restore MutationObserver
+//     MutationObserver.prototype.observe = function () {
+//       console.log("MutationObserver disabled.");
+//     };
 
-    // Restore addEventListener
-    // @ts-ignore
-    delete Element.prototype.addEventListener;
+//     // Restore addEventListener
+//     // @ts-ignore
+//     delete Element.prototype.addEventListener;
 
-    // Remove key event listeners
-    // @ts-ignore
-    document.removeEventListener("keydown", null, true);
-    // @ts-ignore
-    document.removeEventListener("keyup", null, true);
+//     // Remove key event listeners
+//     // @ts-ignore
+//     document.removeEventListener("keydown", null, true);
+//     // @ts-ignore
+//     document.removeEventListener("keyup", null, true);
 
-    // Clear inline handlers
-    document.querySelectorAll("*").forEach((el) => {
-      // @ts-ignore
-      el.onkeydown = null;
-      // @ts-ignore
-      el.onkeyup = null;
-    });
+//     // Clear inline handlers
+//     document.querySelectorAll("*").forEach((el) => {
+//       // @ts-ignore
+//       el.onkeydown = null;
+//       // @ts-ignore
+//       el.onkeyup = null;
+//     });
 
-    console.log("Custom unblock behaviors have been disabled.");
-  })();
-}
+//     console.log("Custom unblock behaviors have been disabled.");
+//   })();
+// }
