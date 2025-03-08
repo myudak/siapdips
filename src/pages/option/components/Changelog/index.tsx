@@ -15,7 +15,7 @@ const changelogEntries: ChangelogEntry[] = [
     date: "March 7, 2025",
     type: "feature",
     changes: [
-      "Auto Food Truk Helper",
+      "Auto Food Truk Helper {beta}",
       "Navcard setting",
       "Patch Learn Social Helper",
     ],
