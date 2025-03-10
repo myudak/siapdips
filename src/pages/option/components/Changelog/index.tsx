@@ -15,7 +15,7 @@ const changelogEntries: ChangelogEntry[] = [
     date: "March 7, 2025",
     type: "feature",
     changes: [
-      "Auto Food Truk Helper {beta}",
+      "Food Truk Helper {beta}",
       "Navcard setting",
       "Patch Learn Social Helper",
     ],
@@ -83,7 +83,10 @@ const ChangelogSection = () => {
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                     {entry.version}
                   </h2>
-                  <Badge variant={getBadgeVariant(entry.type)}>
+                  <Badge
+                    className="cursor-default"
+                    variant={getBadgeVariant(entry.type)}
+                  >
                     {entry.type}
                   </Badge>
                 </div>

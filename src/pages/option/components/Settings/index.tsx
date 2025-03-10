@@ -49,7 +49,7 @@ const SettingsSection = () => {
           id="foodTruk"
           className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
         >
-          Auto Food TRUK {"{Helper}"} Settings
+          Food TRUK {"{Helper}"} Settings
         </h1>
         <LokasiFoodTruk />
       </>

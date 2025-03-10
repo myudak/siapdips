@@ -549,7 +549,7 @@ function ToggleItemBankDragDrop(): () => void {
         ".dndSentenceItem"
       ) as NodeListOf<HTMLElement>;
       const targetElement = Array.from(elements).find(
-        (el) => el.innerText.trim() === item
+        (el) => el.innerText.trim() === item.trim()
       );
       if (!targetElement) return;
       klikElement(targetElement);

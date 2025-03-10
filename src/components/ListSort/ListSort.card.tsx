@@ -46,7 +46,7 @@ export const cardComponentsOption: {
   QuoteCard: ["Quotes", Quote],
   AutopbmCard: ["PBM Auto", Calendar],
   AutoLearnSocial: ["Auto Learn Social {Helper}", LeafyGreen],
-  AutoFoodTruk: ["Auto Food Truk {Helper}", SaladIcon],
+  AutoFoodTruk: ["Food Truk {Helper}", SaladIcon],
   HidePopupcard: ["Lainnya", MoreHorizontal], // etc
 };
 

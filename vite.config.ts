@@ -1,8 +1,6 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-// @ts-ignore IGNORE KARENA VITE PLUGIN COPY GK AD TYPE
-import { copy } from "vite-plugin-copy";
 import fs from "fs";
 import CleanCSS from "clean-css";
 import flattenOutput from "vite-plugin-flatten-output";

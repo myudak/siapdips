@@ -51,7 +51,7 @@ const TutorialCarousel = ({ media }: { media: Media[] }) => {
           />
         )}
         {currentMedia.type === "text" && currentMedia.content && (
-          <div className="p-4 bg-white dark:bg-slate-900 rounded-lg shadow-2xl">
+          <div className="p-4 text-center bg-white dark:bg-gray-900 rounded-lg shadow-2xl">
             {currentMedia.content}
           </div>
         )}
@@ -118,7 +118,13 @@ const TutorialSection = () => {
     {
       id: 5,
       title: "Jadwal Dips",
-      media: [{ type: "video", src: "vid-jadwal.mp4" }] as Media[],
+      media: [
+        { type: "video", src: "vid-jadwal.mp4" },
+        {
+          type: "video",
+          src: "vid-jadwal-2.mp4",
+        },
+      ] as Media[],
       hash: "tutorialJadwal",
     },
     {

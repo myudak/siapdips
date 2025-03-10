@@ -15,7 +15,7 @@ const HeaderSection = () => {
             <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full"></div>
             <Icons.logoSiapDips className="h-28 w-28 text-primary relative animate-pulse" />
             {/* Version badge positioned near the logo */}
-            <Badge className="absolute -right-6 top-0  text-xs px-2 py-1 rounded-full font-medium">
+            <Badge className="cursor-default absolute -right-6 top-0  text-xs px-2 py-1 rounded-full font-medium">
               v{VERSION}
             </Badge>
           </div>
