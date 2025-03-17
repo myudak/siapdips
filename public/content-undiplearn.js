@@ -7,4 +7,4 @@ var I=Object.defineProperty;var C=(n,u,g)=>u in n?I(n,u,{enumerable:!0,configura
       user-select: none;
       cursor: move;
     }
-  `,document.head.appendChild(t)}function B(t){L(),T()}Toastify({text:"Siap DiPS ~> Auto Learn Social (●ˇ∀ˇ●)",duration:3e3,close:!0,position:"left"}).showToast(),console.log("Hello Undiplearnv 3"),B()})();
+  `,document.head.appendChild(t)}function B(t){L(),T()}Toastify({text:"Siap DiPS ~> Auto Learn Social (●ˇ∀ˇ●)",duration:3e3,close:!0,position:"left"}).showToast(),console.log("Hello Undiplearnv 5"),B()})();
