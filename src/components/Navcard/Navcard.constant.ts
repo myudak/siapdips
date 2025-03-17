@@ -109,7 +109,7 @@ const INCLUDED_AWAL: DraggableButton[] = [
   },
   {
     id: "6",
-    title: "Learn Social",
+    title: "LEARN SOCIAL",
     icon: SquareTerminal,
     subtitle: "Basing",
     tooltip: "Basing",
@@ -136,7 +136,7 @@ const EXCLUDED_AWAL: DraggableButton[] = [
   },
   {
     id: "9",
-    title: "Beasiswa",
+    title: "BEASISWA",
     icon: School2Icon,
     subtitle: "Beasiswa Dips",
     tooltip: "SCHOLARSHIP UNDIP",
@@ -144,7 +144,7 @@ const EXCLUDED_AWAL: DraggableButton[] = [
   },
   {
     id: "10",
-    title: "Drive",
+    title: "DRIVE",
     icon: School2Icon,
     subtitle: "Onedrive Undip",
     tooltip: "Penyimpanan Online OneDrive",

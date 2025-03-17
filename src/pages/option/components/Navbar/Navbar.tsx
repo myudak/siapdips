@@ -24,9 +24,12 @@ const Navbar = () => {
           <a className="hover:underline" href="#foodTruk">
             FoodTruk
           </a>
+          <a className="hover:underline" href="#todoboard">
+            Todo
+          </a>
         </div>
 
-        {/* Right side icons */}
+        {/* KANAN */}
         <div className="flex items-center gap-2">
           <ModeToggle />
           <NavbarProfile />

@@ -5,6 +5,7 @@ import SettingcardProfile from "./Settingcard.profile";
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import LokasiFoodTruk from "./Settingcard.ft";
 import NavCardSetting from "./Settingcard.navcard";
+import KanbanBoard from "./TodoBoard";
 
 const SettingsSection = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
@@ -52,6 +53,15 @@ const SettingsSection = () => {
           Food TRUK {"{Helper}"} Settings
         </h1>
         <LokasiFoodTruk />
+      </>
+      <>
+        <h1
+          id="todoboard"
+          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+        >
+          TodoBoard
+        </h1>
+        <KanbanBoard />
       </>
     </div>
   );

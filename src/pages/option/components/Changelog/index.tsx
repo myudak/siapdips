@@ -11,6 +11,18 @@ interface ChangelogEntry {
 
 const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.3.0",
+    date: "March 14, 2025",
+    type: "feature",
+    changes: [
+      "TODO Board",
+      "Fix Thememode {change from radix to own}",
+      "React compilerr ヾ(≧ ▽ ≦)ゝ ",
+      "Bugfixes",
+      "New features",
+    ],
+  },
+  {
     version: "v1.2.0",
     date: "March 7, 2025",
     type: "feature",

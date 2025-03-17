@@ -71,7 +71,7 @@ const AutoFoodTruk = ({
                 }
               >
                 <video
-                  src="/vid-learnsocial.mp4"
+                  src="/vid-foodtruk.mp4"
                   autoPlay
                   loop
                   muted
@@ -154,7 +154,7 @@ const AutoFoodTruk = ({
         <Button
           className="w-full"
           onClick={() => {
-            chrome.tabs.create({ url: "option.html#autolearnsocial" });
+            chrome.tabs.create({ url: "option.html#foodTruk" });
           }}
         >
           Tutorial

@@ -1,19 +1,6 @@
 import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import { useMemo, useRef, useState } from "react";
-
-type Media = {
-  type: "video" | "image" | "text";
-  src?: string;
-  content?: string;
-};
-
-type Tutorial = {
-  id: number;
-  title: string;
-  media: Media[];
-  hash: string;
-  ref?: React.RefObject<HTMLDivElement>;
-};
+import { Media, Tutorial, tutorialsData } from "./Tutorial.constant";
 
 const TutorialCarousel = ({ media }: { media: Media[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,7 +38,7 @@ const TutorialCarousel = ({ media }: { media: Media[] }) => {
           />
         )}
         {currentMedia.type === "text" && currentMedia.content && (
-          <div className="p-4 text-center bg-white dark:bg-gray-900 rounded-lg shadow-2xl">
+          <div className="p-4 text-center bg-white dark:bg-gray-900 rounded-lg shadow-2xl text-lg">
             {currentMedia.content}
           </div>
         )}
@@ -86,66 +73,12 @@ const TutorialSection = () => {
       tutorialJadwal: useRef<HTMLDivElement>(null),
       autolearnsocial: useRef<HTMLDivElement>(null),
       autolearnsocialold: useRef<HTMLDivElement>(null),
+      foodtruk: useRef<HTMLDivElement>(null),
     }),
     []
   );
 
-  const tutorials: Tutorial[] = [
-    {
-      id: 1,
-      title: "Ipk Status",
-      media: [{ type: "video", src: "vid-ipk.mp4" }] as Media[],
-      hash: "IpkStatus",
-    },
-    {
-      id: 2,
-      title: "Theme",
-      media: [{ type: "video", src: "Vid-Theme.mp4" }] as Media[],
-      hash: "Theme",
-    },
-    {
-      id: 3,
-      title: "Auto PBM",
-      media: [{ type: "video", src: "Vid-Pbm.mp4" }] as Media[],
-      hash: "Autopbm",
-    },
-    {
-      id: 4,
-      title: "Enable Click Kanan",
-      media: [{ type: "video", src: "vid-klikKanan.mp4" }] as Media[],
-      hash: "EnableClickKanan",
-    },
-    {
-      id: 5,
-      title: "Jadwal Dips",
-      media: [
-        { type: "video", src: "vid-jadwal.mp4" },
-        {
-          type: "video",
-          src: "vid-jadwal-2.mp4",
-        },
-      ] as Media[],
-      hash: "tutorialJadwal",
-    },
-    {
-      id: 6,
-      title: "Auto Learn Social",
-      media: [
-        { type: "video", src: "vid-learnsocial.mp4" },
-        {
-          type: "text",
-          content: "LearnSocial ~~> loremipsum",
-        },
-      ] as Media[],
-      hash: "autolearnsocial",
-    },
-    {
-      id: 7,
-      title: "Auto Learn Social {old}",
-      media: [{ type: "video", src: "vid-learnsocialold.mp4" }] as Media[],
-      hash: "autolearnsocialold",
-    },
-  ].map((tutorial) => {
+  const tutorials: Tutorial[] = tutorialsData.map((tutorial) => {
     const ref = tutorialRefs[tutorial.hash as keyof typeof tutorialRefs];
     useScrollToHashSection(tutorial.hash, ref);
     return { ...tutorial, ref };

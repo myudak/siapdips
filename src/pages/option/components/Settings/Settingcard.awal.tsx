@@ -127,6 +127,7 @@ const SettingcardAwal = () => {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-slate-600 dark:text-slate-300 text-base">
+              <li className="flex items-center gap-2">- Foodtruk helper</li>
               <li className="flex items-center gap-2">- Auto Learn Social</li>
               <li className="flex items-center gap-2">
                 - Quick Navigation Undip

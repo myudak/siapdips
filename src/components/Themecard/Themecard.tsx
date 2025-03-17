@@ -29,6 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import {
+  MySelect,
+  MySelectTrigger,
+  MySelectContent,
+  MySelectItem,
+} from "./select";
 
 const darkModeAllowedUrls: string[] = [
   "https://siap.undip.ac.id/",
@@ -207,6 +213,7 @@ const UndipThemeSettings = ({
     ainc();
   }, [mode, customColor]);
 
+  console.log(customColor !== "custom");
   return (
     <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
       <Button
@@ -280,28 +287,37 @@ const UndipThemeSettings = ({
         {/* Custom Color Selection */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Custom Color</label>
-          <Select value={customColor} onValueChange={setCustomColorTab}>
-            <SelectTrigger
-              disabled={!isEnabled}
-              className="w-full"
-              title="Custom Color"
-            >
-              <SelectValue
-                onClick={(e) => e.stopPropagation()}
-                placeholder="Select a color"
-              />
-            </SelectTrigger>
-            <SelectContent>
+          <MySelect
+            value={customColor}
+            onChange={setCustomColorTab}
+            disabled={!isEnabled}
+            placeholder=""
+          >
+            <MySelectTrigger className="w-full" title="Custom Color">
+              {customColor !== "custom" ? (
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`h-4 w-4 rounded-full ${
+                      colors[customColor] || ""
+                    }`}
+                  />
+                  <span className="capitalize">{customColor}</span>
+                </div>
+              ) : (
+                <span>Select a color</span>
+              )}
+            </MySelectTrigger>
+            <MySelectContent>
               {Object.entries(colors).map(([name, bgClass]) => (
-                <SelectItem key={name} value={name}>
+                <MySelectItem key={name} value={name}>
                   <div className="flex items-center gap-2">
                     <div className={`h-4 w-4 rounded-full ${bgClass}`} />
                     <span className="capitalize">{name}</span>
                   </div>
-                </SelectItem>
+                </MySelectItem>
               ))}
-            </SelectContent>
-          </Select>
+            </MySelectContent>
+          </MySelect>
         </div>
 
         {/* Preview */}
