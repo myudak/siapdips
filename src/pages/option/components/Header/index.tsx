@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Icons } from "../Navbar/Navbar.logo";
 
-const VERSION = "1.2.0";
-const LAST_UPDATE = "March 7, 2025";
+const VERSION = "1.3.1";
+const LAST_UPDATE = "March 20, 2025";
 
 const HeaderSection = () => {
   return (

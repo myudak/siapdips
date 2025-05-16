@@ -11,6 +11,7 @@ import {
   FilePenIcon,
   MailIcon,
   School2Icon,
+  NewspaperIcon,
 } from "lucide-react";
 
 // Define allowed icon names as a union type.
@@ -23,6 +24,7 @@ type IconName =
   | "SquareTerminal"
   | "FilePenIcon"
   | "MailIcon"
+  | "NewspaperIcon"
   | "School2Icon";
 
 // Map icon names to their corresponding Lucide React components.
@@ -36,6 +38,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   FilePenIcon,
   MailIcon,
   School2Icon,
+  NewspaperIcon,
 };
 
 // Helper to retrieve the icon name from a component.
@@ -149,6 +152,14 @@ const EXCLUDED_AWAL: DraggableButton[] = [
     subtitle: "Onedrive Undip",
     tooltip: "Penyimpanan Online OneDrive",
     href: "https://undipmail-my.sharepoint.com/_layouts/15/MySite.aspx?MySiteRedirect=AllDocuments",
+  },
+  {
+    id: "11",
+    title: "NEWS",
+    icon: NewspaperIcon,
+    subtitle: "Hot news",
+    tooltip: "NEWS PAGE",
+    href: "https://sso.undip.ac.id/news/page",
   },
 ];
 

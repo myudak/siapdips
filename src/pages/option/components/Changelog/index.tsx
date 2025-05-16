@@ -18,8 +18,6 @@ const changelogEntries: ChangelogEntry[] = [
       "TODO Board",
       "Fix Thememode {change from radix to own}",
       "React compilerr ヾ(≧ ▽ ≦)ゝ ",
-      "Bugfixes",
-      "New features",
     ],
   },
   {

@@ -8,8 +8,10 @@ const darkModeAllowedUrls: string[] = [
   "https://form.undip.ac.id/",
 ];
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.runtime.openOptionsPage();
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.runtime.openOptionsPage();
+  }
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -132,7 +134,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     });
 
     // ENABLE CTRL C
-    if (!tab.url?.includes("https://form.undip.ac.id/makanansehat")) {
+    if (
+      !tab.url?.includes("https://form.undip.ac.id/makanansehat") &&
+      !tab.url?.includes("https://undip.learnsocial.online")
+    ) {
       chrome.storage.local.get(
         "disableCtrlC",
         (data: { disableCtrlC?: boolean }) => {

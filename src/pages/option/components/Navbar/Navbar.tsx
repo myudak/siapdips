@@ -25,7 +25,7 @@ const Navbar = () => {
             FoodTruk
           </a>
           <a className="hover:underline" href="#todoboard">
-            Todo
+            TODO
           </a>
         </div>
 
