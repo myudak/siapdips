@@ -3,9 +3,9 @@ import { Column, Task } from "@/types/kanban";
 const DB_NAME = "kanban-db";
 const DB_VERSION = 2;
 
-interface DBSchema {
-  columns: Column[];
-}
+// interface DBSchema {
+//   columns: Column[];
+// }
 
 export class KanbanDB {
   private db: IDBDatabase | null = null;
@@ -31,6 +31,7 @@ export class KanbanDB {
           const transaction = request.transaction;
           if (transaction) {
             const store = transaction.objectStore("columns");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             store.openCursor().onsuccess = (e: any) => {
               const cursor = e.target.result;
               if (cursor) {

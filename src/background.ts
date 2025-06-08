@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 console.log("myudak lagi cooking...");
 
 const darkModeAllowedUrls: string[] = [
@@ -587,7 +589,7 @@ function PBM() {
         selectElement?.dispatchEvent(event);
 
         const observer = new MutationObserver((mutationsList, observer) => {
-          for (let mutation of mutationsList) {
+          for (const mutation of mutationsList) {
             if (mutation.type === "childList") {
               automateTableResponses(settings, autoSubmit);
               observer.disconnect();

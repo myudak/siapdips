@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // A button configuration interface, with an optional async action.
 interface ButtonConfig {
   text: string;
@@ -533,7 +535,7 @@ function ToggleItemBankDragDrop(): () => void {
       ".dndSentenceItem.dndSentenceItem-dndSentenceItemDropped"
     );
 
-    let AllJawaban: string[] = [];
+    const AllJawaban: string[] = [];
 
     AllJawabanElement.forEach((item) => {
       AllJawaban.push(item.textContent || "");

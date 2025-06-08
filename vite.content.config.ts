@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import path from "path";
 import { defineConfig } from "vite";
 

@@ -237,89 +237,233 @@ function createLogoMyudak(): SVGSVGElement {
   return svg;
 }
 
-// Updated createButtons function that supports custom actions per button.
+// QR Code Image Upload Button with jsQR scanning
 function createButtons(container: HTMLElement) {
-  BUTTONS.forEach((btn) => {
-    const button = document.createElement("button");
-    Object.assign(button.style, {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: "8px",
-      padding: "12px 16px",
-      border: btn.primary ? "none" : "1px solid #e0e0e0",
-      borderRadius: "8px",
-      backgroundColor: btn.primary ? "#007AFF" : "#ffffff",
-      color: btn.primary ? "#ffffff" : "#333333",
-      fontSize: "14px",
-      fontWeight: "500",
-      cursor: "pointer",
-      transition: "all 0.2s ease",
-      width: "100%",
-      fontFamily:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      position: "relative",
-    });
+  // Create file input (hidden)
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.style.display = "none";
 
-    // Container for icon and text.
-    const buttonContent = document.createElement("div");
-    Object.assign(buttonContent.style, {
-      display: "flex",
-      alignItems: "center",
-      gap: "8px",
-      transition: "opacity 0.2s",
-    });
+  // Create upload button
+  const uploadButton = document.createElement("button");
+  Object.assign(uploadButton.style, {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    padding: "12px 16px",
+    border: "none",
+    borderRadius: "8px",
+    backgroundColor: "#007AFF",
+    color: "#ffffff",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    width: "100%",
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    position: "relative",
+  });
 
-    const icon = document.createElement("span");
-    icon.textContent = btn.icon;
-    Object.assign(icon.style, { fontSize: "16px" });
+  // Container for icon and text
+  const buttonContent = document.createElement("div");
+  Object.assign(buttonContent.style, {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    transition: "opacity 0.2s",
+  });
 
-    const text = document.createElement("span");
-    text.textContent = btn.text;
+  const icon = document.createElement("span");
+  icon.textContent = "📷";
+  Object.assign(icon.style, { fontSize: "16px" });
 
-    buttonContent.appendChild(icon);
-    buttonContent.appendChild(text);
-    button.appendChild(buttonContent);
+  const text = document.createElement("span");
+  text.textContent = "Upload QR Absen";
 
-    // Loading spinner element (initially hidden)
-    const spinner = createSpinner();
-    spinner.style.display = "none";
-    button.appendChild(spinner);
+  buttonContent.appendChild(icon);
+  buttonContent.appendChild(text);
+  uploadButton.appendChild(buttonContent);
 
-    // Mouse effects
-    button.addEventListener("mouseenter", () => {
-      button.style.backgroundColor = btn.primary ? "#0066DD" : "#f5f5f5";
-      button.style.transform = "translateY(-1px)";
-      button.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
-    });
-    button.addEventListener("mouseleave", () => {
-      button.style.backgroundColor = btn.primary ? "#007AFF" : "#ffffff";
-      button.style.transform = "translateY(0)";
-      button.style.boxShadow = "none";
-    });
+  // Loading spinner (initially hidden)
+  const spinner = createSpinner();
+  spinner.style.display = "none";
+  uploadButton.appendChild(spinner);
 
-    // Button click handler with custom action and loading state.
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      buttonContent.style.opacity = "0";
-      spinner.style.display = "block";
+  // Result display area
+  const resultDiv = document.createElement("div");
+  Object.assign(resultDiv.style, {
+    marginTop: "12px",
+    padding: "12px",
+    borderRadius: "8px",
+    backgroundColor: "#f5f5f5",
+    fontSize: "14px",
+    lineHeight: "1.4",
+    wordBreak: "break-all",
+    display: "none",
+  });
 
-      if (btn.action) {
-        await btn.action();
-        await new Promise((resolve) => setTimeout(resolve, 900));
-      } else {
-        // Default loading simulation if no action is provided.
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log(`${btn.text} clicked`);
-      }
+  // Mouse effects
+  uploadButton.addEventListener("mouseenter", () => {
+    uploadButton.style.backgroundColor = "#0066DD";
+    uploadButton.style.transform = "translateY(-1px)";
+    uploadButton.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+  });
+  uploadButton.addEventListener("mouseleave", () => {
+    uploadButton.style.backgroundColor = "#007AFF";
+    uploadButton.style.transform = "translateY(0)";
+    uploadButton.style.boxShadow = "none";
+  });
 
-      button.disabled = false;
+  // Button click handler
+  uploadButton.addEventListener("click", () => {
+    fileInput.click();
+  });
+
+  // File input change handler
+  fileInput.addEventListener("change", async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    // Show loading state
+    uploadButton.disabled = true;
+    buttonContent.style.opacity = "0";
+    spinner.style.display = "block";
+    resultDiv.style.display = "none";
+
+    try {
+      // Create image element
+      const img = new Image();
+      img.onload = () => {
+        // Create canvas to get image data
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx?.drawImage(img, 0, 0);
+
+        // Get image data
+        const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+
+        // Define jsQR interface
+        interface JsQRCode {
+          data: string;
+        }
+
+        interface WindowWithJsQR extends Window {
+          jsQR?: (
+            data: Uint8ClampedArray,
+            width: number,
+            height: number
+          ) => JsQRCode | null;
+        }
+
+        if (imageData && (window as WindowWithJsQR).jsQR) {
+          // Scan QR code using jsQR
+          const code = (window as WindowWithJsQR).jsQR!(
+            imageData.data,
+            imageData.width,
+            imageData.height
+          );
+
+          if (code) {
+            // QR code found
+            resultDiv.innerHTML = `
+              <div style="color: #28a745; font-weight: bold; margin-bottom: 8px;">✅ Done</div>
+              <div style="color: #333;"><strong>Data:</strong></div>
+              <div style="color: #666; margin-top: 4px;">${code.data}</div>
+            `;
+            resultDiv.style.backgroundColor = "#d4edda";
+            resultDiv.style.borderLeft = "4px solid #28a745";
+
+            window.open(`https://siap.undip.ac.id/a/${code.data}`, "_blank");
+
+            // Try to navigate to the URL if it's a valid URL
+            try {
+              new URL(code.data); // Just validate, don't store
+              setTimeout(() => {
+                if (
+                  confirm(
+                    `Found QR code with URL: ${code.data}\n\nDo you want to navigate to this URL?`
+                  )
+                ) {
+                  window.location.href = code.data;
+                }
+              }, 1000);
+            } catch {
+              // Not a valid URL, just show the data
+            }
+          } else {
+            // No QR code found
+            resultDiv.innerHTML = `
+              <div style="color: #dc3545; font-weight: bold;">❌ No QR Code Found</div>
+              <div style="color: #666; margin-top: 4px;">Please try with a clearer image or different angle.</div>
+            `;
+            resultDiv.style.backgroundColor = "#f8d7da";
+            resultDiv.style.borderLeft = "4px solid #dc3545";
+          }
+        } else {
+          // jsQR not available
+          resultDiv.innerHTML = `
+            <div style="color: #ffc107; font-weight: bold;">⚠️ QR Scanner Not Available</div>
+            <div style="color: #666; margin-top: 4px;">jsQR library is not loaded.</div>
+          `;
+          resultDiv.style.backgroundColor = "#fff3cd";
+          resultDiv.style.borderLeft = "4px solid #ffc107";
+        }
+
+        resultDiv.style.display = "block";
+
+        // Reset button state
+        uploadButton.disabled = false;
+        buttonContent.style.opacity = "1";
+        spinner.style.display = "none";
+      };
+
+      img.onerror = () => {
+        resultDiv.innerHTML = `
+          <div style="color: #dc3545; font-weight: bold;">❌ Error Loading Image</div>
+          <div style="color: #666; margin-top: 4px;">Please select a valid image file.</div>
+        `;
+        resultDiv.style.backgroundColor = "#f8d7da";
+        resultDiv.style.borderLeft = "4px solid #dc3545";
+        resultDiv.style.display = "block";
+
+        // Reset button state
+        uploadButton.disabled = false;
+        buttonContent.style.opacity = "1";
+        spinner.style.display = "none";
+      };
+
+      // Load image
+      img.src = URL.createObjectURL(file);
+    } catch (error) {
+      console.error("Error processing image:", error);
+      resultDiv.innerHTML = `
+        <div style="color: #dc3545; font-weight: bold;">❌ Processing Error</div>
+        <div style="color: #666; margin-top: 4px;">An error occurred while processing the image.</div>
+      `;
+      resultDiv.style.backgroundColor = "#f8d7da";
+      resultDiv.style.borderLeft = "4px solid #dc3545";
+      resultDiv.style.display = "block";
+
+      // Reset button state
+      uploadButton.disabled = false;
       buttonContent.style.opacity = "1";
       spinner.style.display = "none";
-    });
+    }
 
-    container.appendChild(button);
+    // Reset file input
+    fileInput.value = "";
   });
+
+  // Append elements to container
+  container.appendChild(fileInput);
+  container.appendChild(uploadButton);
+  container.appendChild(resultDiv);
 }
 
 // Creates a spinner SVG element with a CSS spin animation.

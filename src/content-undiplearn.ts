@@ -2,6 +2,7 @@ import { createHelperDefault } from "@/lib/content_undiplearn";
 
 // START
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Toastify({
   text: "Siap DiPS ~> Auto Learn Social (●ˇ∀ˇ●)",

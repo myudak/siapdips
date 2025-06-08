@@ -61,7 +61,7 @@ export default function QrReader({
       </Button>
       <CardContent className="flex flex-col  p-0">
         <div className="p-4">
-          <h2 className="text-lg font-bold mb-2">Upload QR Image</h2>
+          <h2 className="text-lg font-bold mb-2">Upload QR Absen</h2>
           <input type="file" accept="image/*" onChange={handleFileChange} />
           <canvas ref={canvasRef} style={{ display: "none" }} />
           <p className="mt-3">

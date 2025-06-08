@@ -2,6 +2,7 @@ import { createHelper, injectGlobalStyles } from "./helper";
 
 export function createHelperDefault(message?: string) {
   if (message) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     Toastify({
       text: message,

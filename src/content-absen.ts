@@ -1,7 +1,8 @@
-// import { createHelperDefault } from "@/lib/content_undiplearn";
+import { createHelperDefault } from "@/lib/content_absen";
 
 // START
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Toastify({
   text: "Siap DiPS ~> Absen (●ˇ∀ˇ●)",
@@ -16,5 +17,5 @@ console.log("Hello Undiplearnv 5");
 
 //  ++++++++++++++++++++++++++++++++++++++++++++++++
 // window.addEventListener("load", () => {
-// createHelperDefault();
+createHelperDefault();
 // });
