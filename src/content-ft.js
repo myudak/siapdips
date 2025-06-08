@@ -29,7 +29,6 @@ function createHelper() {
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "12px",
-    cursor: "move",
     userSelect: "none",
     padding: "4px 4px 12px 4px",
     borderBottom: "1px solid rgba(0,0,0,0.06)",
@@ -41,6 +40,10 @@ function createHelper() {
     display: "flex",
     alignItems: "center",
     gap: "8px",
+    cursor: "move",
+    padding: "4px 8px",
+    borderRadius: "6px",
+    transition: "background-color 0.2s ease",
   });
 
   const logoSiapDips = createLogoSiapDips();
@@ -61,11 +64,16 @@ function createHelper() {
     border: "none",
     background: "none",
     cursor: "pointer",
-    padding: "4px 8px",
+    padding: "8px 12px",
     borderRadius: "6px",
     color: "#666",
-    fontSize: "14px",
+    fontSize: "16px",
     transition: "all 0.2s ease",
+    minWidth: "44px",
+    minHeight: "44px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   });
   closeButton.textContent = "✕";
   closeButton.addEventListener("mouseenter", () => {
@@ -78,10 +86,70 @@ function createHelper() {
   });
   closeButton.addEventListener("click", () => helper.remove());
 
+  // Create minimize button
+  const minimizeButton = document.createElement("button");
+  Object.assign(minimizeButton.style, {
+    border: "none",
+    background: "none",
+    cursor: "pointer",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    color: "#666",
+    fontSize: "16px",
+    transition: "all 0.2s ease",
+    marginRight: "8px",
+    minWidth: "44px",
+    minHeight: "44px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  });
+  minimizeButton.textContent = "▼";
+  minimizeButton.title = "Minimize";
+
+  minimizeButton.addEventListener("mouseenter", () => {
+    minimizeButton.style.backgroundColor = "#f5f5f5";
+    minimizeButton.style.color = "#333";
+  });
+  minimizeButton.addEventListener("mouseleave", () => {
+    minimizeButton.style.backgroundColor = "transparent";
+    minimizeButton.style.color = "#666";
+  });
+
+  // Store original styles for restoring later
+  const originalStyles = {
+    width: helper.style.width,
+    minHeight: helper.style.minHeight,
+    padding: helper.style.padding,
+    borderRadius: helper.style.borderRadius,
+    resize: helper.style.resize,
+  };
+
+  let isMinimized = false;
+  minimizeButton.addEventListener("click", () => {
+    isMinimized = !isMinimized;
+    if (isMinimized) {
+      // Minimize the helper - just hide content, keep header
+      content.style.display = "none";
+      helper.style.minHeight = "auto";
+      helper.style.resize = "none";
+      minimizeButton.textContent = "▲";
+      minimizeButton.title = "Maximize";
+    } else {
+      // Restore the helper
+      content.style.display = "flex";
+      helper.style.minHeight = originalStyles.minHeight;
+      helper.style.resize = originalStyles.resize;
+      minimizeButton.textContent = "▼";
+      minimizeButton.title = "Minimize";
+    }
+  });
+
   titleContainer.appendChild(logoSiapDips);
   titleContainer.appendChild(logoMyudak);
   titleContainer.appendChild(titleText);
   header.appendChild(titleContainer);
+  header.appendChild(minimizeButton);
   header.appendChild(closeButton);
   helper.appendChild(header);
 
@@ -274,10 +342,11 @@ function createHelper() {
   helper.appendChild(content);
   document.body.appendChild(helper);
 
-  // Enable dragging for the helper using the header as the handle.
-  new Draggable({ element: helper, handle: header });
+  // Enable dragging for the helper using the title container as the handle.
+  new Draggable({ element: helper, handle: titleContainer });
   return helper;
 }
+
 function createLogoSiapDips() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -344,9 +413,16 @@ if (typeof window.Draggable === "undefined") {
       this.dragging = false;
       this.offsetX = 0;
       this.offsetY = 0;
+
+      // Bind all event handlers
       this.onMouseMove = this.onMouseMove.bind(this);
       this.onMouseUp = this.onMouseUp.bind(this);
+      this.onTouchMove = this.onTouchMove.bind(this);
+      this.onTouchEnd = this.onTouchEnd.bind(this);
+
+      // Add mouse and touch event listeners
       this.handle.addEventListener("mousedown", this.onMouseDown.bind(this));
+      this.handle.addEventListener("touchstart", this.onTouchStart.bind(this));
     }
     onMouseDown(e) {
       this.dragging = true;
@@ -366,6 +442,34 @@ if (typeof window.Draggable === "undefined") {
       this.dragging = false;
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
+    }
+
+    onTouchStart(e) {
+      e.preventDefault();
+      this.dragging = true;
+      const touch = e.touches[0];
+      const rect = this.element.getBoundingClientRect();
+      this.offsetX = touch.clientX - rect.left;
+      this.offsetY = touch.clientY - rect.top;
+      document.addEventListener("touchmove", this.onTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", this.onTouchEnd);
+    }
+
+    onTouchMove(e) {
+      if (this.dragging) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        this.element.style.left = touch.clientX - this.offsetX + "px";
+        this.element.style.top = touch.clientY - this.offsetY + "px";
+      }
+    }
+
+    onTouchEnd() {
+      this.dragging = false;
+      document.removeEventListener("touchmove", this.onTouchMove);
+      document.removeEventListener("touchend", this.onTouchEnd);
     }
   }
 

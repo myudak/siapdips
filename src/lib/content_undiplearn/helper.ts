@@ -30,18 +30,21 @@ export function createHelper(): HTMLElement {
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "12px",
-    cursor: "move",
     userSelect: "none",
     padding: "4px 4px 12px 4px",
     borderBottom: "1px solid rgba(0,0,0,0.06)",
   });
 
-  // Title container (logos + text)
+  // Title container (logos + text) - this will be the drag handle
   const titleContainer = document.createElement("div");
   Object.assign(titleContainer.style, {
     display: "flex",
     alignItems: "center",
     gap: "8px",
+    cursor: "move",
+    padding: "4px 8px",
+    borderRadius: "6px",
+    transition: "background-color 0.2s ease",
   });
 
   // Create logo SVGs (split into helper functions)
@@ -59,17 +62,22 @@ export function createHelper(): HTMLElement {
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   });
 
-  // Close button
+  // Close button with mobile-friendly touch targets
   const closeButton = document.createElement("button");
   Object.assign(closeButton.style, {
     border: "none",
     background: "none",
     cursor: "pointer",
-    padding: "4px 8px",
+    padding: "8px 12px",
     borderRadius: "6px",
     color: "#666",
-    fontSize: "14px",
+    fontSize: "16px",
     transition: "all 0.2s ease",
+    minWidth: "44px",
+    minHeight: "44px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   });
   closeButton.textContent = "✕";
   closeButton.addEventListener("mouseenter", () => {
@@ -82,11 +90,71 @@ export function createHelper(): HTMLElement {
   });
   closeButton.addEventListener("click", () => helper.remove());
 
+  // Create minimize button with mobile-friendly touch targets
+  const minimizeButton = document.createElement("button");
+  Object.assign(minimizeButton.style, {
+    border: "none",
+    background: "none",
+    cursor: "pointer",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    color: "#666",
+    fontSize: "16px",
+    transition: "all 0.2s ease",
+    marginRight: "8px",
+    minWidth: "44px",
+    minHeight: "44px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  });
+  minimizeButton.textContent = "▼";
+  minimizeButton.title = "Minimize";
+
+  minimizeButton.addEventListener("mouseenter", () => {
+    minimizeButton.style.backgroundColor = "#f5f5f5";
+    minimizeButton.style.color = "#333";
+  });
+  minimizeButton.addEventListener("mouseleave", () => {
+    minimizeButton.style.backgroundColor = "transparent";
+    minimizeButton.style.color = "#666";
+  });
+
+  // Store original styles for restoring later
+  const originalStyles = {
+    width: helper.style.width,
+    minHeight: helper.style.minHeight,
+    padding: helper.style.padding,
+    borderRadius: helper.style.borderRadius,
+    resize: helper.style.resize,
+  };
+
+  let isMinimized = false;
+  minimizeButton.addEventListener("click", () => {
+    isMinimized = !isMinimized;
+    if (isMinimized) {
+      // Minimize the helper - just hide content, keep header
+      content.style.display = "none";
+      helper.style.minHeight = "auto";
+      helper.style.resize = "none";
+      minimizeButton.textContent = "▲";
+      minimizeButton.title = "Maximize";
+    } else {
+      // Restore the helper
+      content.style.display = "grid";
+      helper.style.minHeight = originalStyles.minHeight;
+      helper.style.resize = originalStyles.resize;
+      minimizeButton.textContent = "▼";
+      minimizeButton.title = "Minimize";
+    }
+  });
+
   // Assemble header
   titleContainer.appendChild(logoSiapDips);
   titleContainer.appendChild(logoMyudak);
   titleContainer.appendChild(titleText);
   header.appendChild(titleContainer);
+  header.appendChild(minimizeButton);
   header.appendChild(closeButton);
   helper.appendChild(header);
 
@@ -101,8 +169,8 @@ export function createHelper(): HTMLElement {
   });
   helper.appendChild(content);
 
-  // Enable dragging for the helper via its header.
-  new Draggable({ element: helper, handle: header });
+  // Enable dragging for the helper using the title container as the handle.
+  new Draggable({ element: helper, handle: titleContainer });
 
   // Create buttons in the content area.
   createButtons(content);

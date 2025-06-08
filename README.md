@@ -1,50 +1,44 @@
-# React + TypeScript + Vite
+# Firefox Extension Build Instructions
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This document provides step-by-step instructions to build the source code for this Firefox extension.
 
-Currently, two official plugins are available:
+## Operating System and Build Environment
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is built using Node.js and pnpm. The build process should be compatible with common operating systems including Windows, macOS, and Linux.
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+You need to have Node.js and pnpm installed on your system.
 
-- Configure the top-level `parserOptions` property like this:
+- **Node.js:** We recommend using Node.js version 20 or later. You can download the installer from the official Node.js website: [https://nodejs.org/](https://nodejs.org/)
+- **pnpm:** Once Node.js is installed, you can install pnpm globally by running the following command in your terminal:
+  ```bash
+  npm install -g pnpm
+  ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Build Instructions
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Follow these steps to build the extension:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1.  **Clone the repository:** If you haven't already, clone the source code repository to your local machine.
+    ```bash
+    git clone <repository_url>
+    ```
+    Replace `<repository_url>` with the actual URL of the repository.
+2.  **Navigate to the project directory:**
+    ```bash
+    cd siapDipss
+    ```
+3.  **Install dependencies:** Use pnpm to install the project dependencies.
+    ```bash
+    pnpm install
+    ```
+4.  **Build the extension:** Run the build script to generate the extension files.
+    ```bash
+    pnpm run build:full
+    ```
+    This command will build both the main extension files and the content scripts.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Source Code
+
+The source code for this extension is provided in its original form. Source files (aside from open-source third-party libraries located in `node_modules`) are not transpiled, concatenated, minified, or otherwise machine-generated. The build process primarily bundles the modules and prepares them for the extension environment.

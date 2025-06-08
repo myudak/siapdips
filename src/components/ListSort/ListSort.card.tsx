@@ -19,8 +19,10 @@ import {
   ScanHeart,
   LucideIcon,
   SaladIcon,
+  QrCodeIcon,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
+import QrReader from "../QRCodeAbsen/QRCodeAbsen";
 
 export const cardComponents = {
   NavigationCard,
@@ -33,6 +35,7 @@ export const cardComponents = {
   AutoLearnSocial,
   AutoFoodTruk,
   HidePopupcard, // Lainnya
+  QrReader,
 } as const;
 
 export const cardComponentsOption: {
@@ -48,6 +51,7 @@ export const cardComponentsOption: {
   AutoLearnSocial: ["Auto Learn Social {Helper}", LeafyGreen],
   AutoFoodTruk: ["Food Truk {Helper}", SaladIcon],
   HidePopupcard: ["Lainnya", MoreHorizontal], // etc
+  QrReader: ["QR Code Reader", QrCodeIcon],
 };
 
 export type CardComponentsType = typeof cardComponents;

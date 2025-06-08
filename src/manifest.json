@@ -36,6 +36,11 @@
       "matches": ["https://form.undip.ac.id/makanansehat/*"],
       "js": ["libs/toastify.js", "./content-ft.js"],
       "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://siap.undip.ac.id/master_perkuliahan/mhs/absensi/*"],
+      "js": ["libs/jsQR.js", "libs/toastify.js", "./content-absen.js"],
+      "css": ["libs/toastify.css"]
     }
   ],
   "background": {
