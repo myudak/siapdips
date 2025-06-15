@@ -41,6 +41,11 @@
       "matches": ["https://siap.undip.ac.id/master_perkuliahan/mhs/absensi/*"],
       "js": ["libs/jsQR.js", "libs/toastify.js", "./content-absen.js"],
       "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://*/mod/quiz/*"],
+      "js": ["libs/marked.min.js", "libs/toastify.js", "./content-moodle.js"],
+      "css": ["libs/toastify.css"]
     }
   ],
   "background": {

@@ -50,7 +50,10 @@ const HidePopupcard = ({
 
   const onclick = async () => {
     chrome.storage.local.set({ hidePopup: !hidePopup });
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
     if (
       !hidePopup ||
       !tab.url?.includes("https://sso.undip.ac.id/pages/dashboard")

@@ -39,6 +39,7 @@ export default defineConfig(() => {
           content: path.resolve(__dirname, "src/content.js"),
           contentFt: path.resolve(__dirname, "src/content-ft.js"),
           background: path.resolve(__dirname, "src/background.ts"),
+          "content-moodle": path.resolve(__dirname, "src/content-moodle.ts"),
         },
         output: {
           // manualChunks(id) {
@@ -51,6 +52,7 @@ export default defineConfig(() => {
             if (chunkInfo.name === "content") return "content.js";
             if (chunkInfo.name === "background") return "background.js";
             if (chunkInfo.name === "contentFt") return "content-ft.js";
+            if (chunkInfo.name === "content-moodle") return "content-moodle.js";
             return "assets/[name]-[hash].js";
           },
           banner: `/*!

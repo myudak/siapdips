@@ -65,9 +65,8 @@ export default function QrReader({
           <input type="file" accept="image/*" onChange={handleFileChange} />
           <canvas ref={canvasRef} style={{ display: "none" }} />
           <p className="mt-3">
-            <strong>Result:</strong> {result}
+            <strong>Code:</strong> {result}
           </p>
-          {/* make a button that open window to https://siap.undip.ac.id/a/{result} */}
           {result && (
             <Button
               className="mt-2"

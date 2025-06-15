@@ -20,9 +20,11 @@ import {
   LucideIcon,
   SaladIcon,
   QrCodeIcon,
+  LucideSchool2,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
+import MoodleCard from "../MoodleCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -36,6 +38,7 @@ export const cardComponents = {
   AutoFoodTruk,
   HidePopupcard, // Lainnya
   QrReader,
+  MoodleCard,
 } as const;
 
 export const cardComponentsOption: {
@@ -52,6 +55,7 @@ export const cardComponentsOption: {
   AutoFoodTruk: ["Food Truk {Helper}", SaladIcon],
   HidePopupcard: ["Lainnya", MoreHorizontal], // etc
   QrReader: ["QR Code Reader", QrCodeIcon],
+  MoodleCard: ["Moodle Helper Settings", LucideSchool2],
 };
 
 export type CardComponentsType = typeof cardComponents;
