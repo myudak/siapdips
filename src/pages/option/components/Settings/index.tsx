@@ -18,15 +18,19 @@ const SettingsSection = () => {
   useScrollToHashSection("moodleHelper", moodleHelperRef);
 
   return (
-    <div ref={settingsRef} id="sect1" className="min-h-screen mx-36 space-y-6">
+    <div
+      ref={settingsRef}
+      id="sect1"
+      className="min-h-screen space-y-6 sm:space-y-8 lg:space-y-12"
+    >
       <>
-        <h1 className="text-2xl pt-20 font-bold text-slate-900 dark:text-white text-center">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl pt-12 sm:pt-16 lg:pt-20 font-bold text-slate-900 dark:text-white text-center">
           ⚙️ Settings ~~&gt;
         </h1>
         <SettingcardAwal />
       </>
       <>
-        <h1 className="text-2xl pt-20 font-bold text-slate-900 dark:text-white text-center">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl pt-8 sm:pt-12 lg:pt-20 font-bold text-slate-900 dark:text-white text-center">
           NavCard
         </h1>
         <NavCardSetting />
@@ -36,14 +40,14 @@ const SettingsSection = () => {
         <h1
           id="TemplatePBM"
           ref={PBMTableRef}
-          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
         >
           ~~ Template PBM
         </h1>
         <EvaluationTable />
       </>
       <>
-        <h1 className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center">
+        <h1 className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center">
           ~~ Profilee ~~
         </h1>
         <SettingcardProfile />
@@ -51,7 +55,7 @@ const SettingsSection = () => {
       <>
         <h1
           id="foodTruk"
-          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
         >
           Food TRUK {"{Helper}"} Settings
         </h1>
@@ -60,7 +64,7 @@ const SettingsSection = () => {
       <>
         <h1
           id="moodleHelper"
-          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
           ref={moodleHelperRef}
         >
           Moodle Kulon {"{Helper}"} Settings
@@ -70,7 +74,7 @@ const SettingsSection = () => {
       <>
         <h1
           id="todoboard"
-          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
         >
           TodoBoard
         </h1>

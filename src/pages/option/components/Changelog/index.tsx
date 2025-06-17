@@ -18,6 +18,7 @@ const changelogEntries: ChangelogEntry[] = [
       "Upload Absen Image",
       "Moodle Kulon helper",
       "DIPS AI Helper ( •̀ ω •́ )✧",
+      "better mobile layout",
     ],
   },
   {
@@ -75,7 +76,7 @@ const getBadgeVariant = (
     case "initial":
       return "secondary";
     case "patch":
-      return "default";
+      return "secondary";
     default:
       return "outline";
   }

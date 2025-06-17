@@ -15,18 +15,20 @@ const LandingPage = () => {
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Navbar />
-        <div className="main">
-          <HeaderSection />
+        <div className="main min-h-screen bg-background">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <HeaderSection />
 
-          {/* <section className="min-h-screen bg-muted/50 flex items-center">
-            
-          </section> */}
+            {/* <section className="min-h-screen bg-muted/50 flex items-center">
+              
+            </section> */}
 
-          <SettingsSection />
+            <SettingsSection />
 
-          <TutorialSection />
+            <TutorialSection />
 
-          <ChangelogSection />
+            <ChangelogSection />
+          </div>
         </div>
         <SiteFooter />
       </ThemeProvider>

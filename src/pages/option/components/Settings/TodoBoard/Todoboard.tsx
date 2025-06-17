@@ -2,8 +2,12 @@ import { useState, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
-  DragOverlay,
+  DragStartEvent,
   closestCorners,
+  TouchSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -60,9 +64,23 @@ const initialColumns: Column[] = [
 
 export default function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [isNewColumnDialogOpen, setIsNewColumnDialogOpen] = useState(false);
+
+  // Configure sensors for better touch support
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 8, // 8px of movement to activate drag
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 200, // 200ms delay before drag starts
+      tolerance: 8, // 8px tolerance for movement
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   useEffect(() => {
     const initDB = async () => {
@@ -84,17 +102,9 @@ export default function KanbanBoard() {
     initDB();
   }, []);
 
-  const handleDragStart = (event: any) => {
-    const { active } = event;
-    const task =
-      active.data.current?.type === "task" ? active.data.current.task : null;
-    const column =
-      active.data.current?.type === "column"
-        ? active.data.current.column
-        : null;
-
-    if (task) setActiveTask(task);
-    if (column) setActiveColumn(column);
+  const handleDragStart = (event: DragStartEvent) => {
+    // Optional: Add visual feedback when drag starts
+    console.log("Drag started:", event.active.id);
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -168,7 +178,7 @@ export default function KanbanBoard() {
           (task) => task.id === overId
         );
 
-        let newOverTasks = [...overColumn.tasks];
+        const newOverTasks = [...overColumn.tasks];
         if (overTaskIndex !== -1) {
           newOverTasks.splice(overTaskIndex, 0, updatedTask);
         } else {
@@ -196,9 +206,6 @@ export default function KanbanBoard() {
         console.error("Failed to save task movement:", error);
       }
     }
-
-    setActiveTask(null);
-    setActiveColumn(null);
   };
 
   const handleNewColumn = async (title: string) => {
@@ -279,28 +286,34 @@ export default function KanbanBoard() {
   };
 
   return (
-    <div className="w-full h-full  bg-gradient-to-b from-background to-muted/20 p-8  rounded-md">
-      <div className="flex justify-between items-center mb-8 ">
-        <h1 className="text-3xl font-bold text-white">
+    <div className="w-full h-full bg-gradient-to-b from-background to-muted/20 p-4 sm:p-6 lg:p-8 rounded-md">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
           {"ƪ(˘⌣˘)ʃ（*＾-＾*）"}
         </h1>
         <Button
           onClick={() => setIsNewColumnDialogOpen(true)}
           variant="outline"
+          className="touch-manipulation min-h-[44px] w-full sm:w-auto"
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Add List
         </Button>
       </div>
 
-      <div className="">
+      <div className="touch-pan-x">
         <DndContext
+          sensors={sensors}
           collisionDetection={closestCorners}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           modifiers={[]}
         >
-          <div className="flex gap-6 overflow-x-auto pb-4 max-w-[calc(320px*3+1.5rem*2)] mx-auto">
+          <div
+            className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 sm:pb-6 
+                         max-w-full sm:max-w-[calc(320px*2+1.5rem*1)] lg:max-w-[calc(320px*3+1.5rem*2)] 
+                         mx-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
+          >
             <SortableContext
               items={columns.map((col) => col.id)}
               strategy={horizontalListSortingStrategy}
