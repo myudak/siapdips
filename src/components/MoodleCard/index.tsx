@@ -183,15 +183,26 @@ export default function MoodleCard({
           </div>
         </div>
         <Button
-          className="m-4 p-0"
+          variant={"secondary"}
+          className=" p-0"
           onClick={() => {
             chrome.tabs.create({
               url: chrome.runtime.getURL("option.html#sect1"),
             });
           }}
         >
+          Tutorial
+        </Button>
+        <Button
+          className="p-0"
+          onClick={() => {
+            chrome.tabs.create({
+              url: chrome.runtime.getURL("option.html#moodleHelper"),
+            });
+          }}
+        >
           <SettingsIcon className="w-4 h-4 mr-2" />
-          Advanced Settings
+          Settings
         </Button>
       </CardContent>
     </Card>

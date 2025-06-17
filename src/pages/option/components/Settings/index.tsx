@@ -6,13 +6,16 @@ import { useScrollToHashSection } from "@/hooks/useScrollToHashSection";
 import LokasiFoodTruk from "./Settingcard.ft";
 import NavCardSetting from "./Settingcard.navcard";
 import KanbanBoard from "./TodoBoard";
+import SettingMoodle from "./Settingcard.moodle";
 
 const SettingsSection = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
   const PBMTableRef = useRef<null | HTMLDivElement>(null);
+  const moodleHelperRef = useRef<null | HTMLDivElement>(null);
 
   useScrollToHashSection("PBMTable", PBMTableRef);
   useScrollToHashSection("sect1", settingsRef);
+  useScrollToHashSection("moodleHelper", moodleHelperRef);
 
   return (
     <div ref={settingsRef} id="sect1" className="min-h-screen mx-36 space-y-6">
@@ -53,6 +56,16 @@ const SettingsSection = () => {
           Food TRUK {"{Helper}"} Settings
         </h1>
         <LokasiFoodTruk />
+      </>
+      <>
+        <h1
+          id="moodleHelper"
+          className="text-2xl pt-5 font-bold text-slate-900 dark:text-white text-center"
+          ref={moodleHelperRef}
+        >
+          Moodle Kulon {"{Helper}"} Settings
+        </h1>
+        <SettingMoodle />
       </>
       <>
         <h1

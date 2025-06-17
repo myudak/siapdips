@@ -104,40 +104,109 @@ async function handleAiButtonClick(
   question: HTMLElement
 ): Promise<void> {
   try {
-    setButtonLoadingState(button, true);
+    // Prevent double clicking while request is in progress
 
-    //
-    const inputChat =
-      document.querySelector<HTMLInputElement>(".myudak-ai-input");
-    const sendChat = document.querySelector<HTMLButtonElement>(
-      ".myudak-ai-send-button"
-    );
-    if (inputChat && sendChat) {
-      inputChat.value = soalText;
-      inputChat.dispatchEvent(new Event("input", { bubbles: true }));
-      sendChat.click();
-    }
+    chrome.storage.local.get(["geminiApiKey"], (result) => {
+      if (!result.geminiApiKey) {
+        showToast(
+          "GEMINI API KEY belum diatur, silakan atur di settings",
+          "error"
+        );
+        return;
+      }
+    });
 
-    const response = await chatWithGemini(soalText);
-
-    console.log("AI Response:", response);
-
-    const answerLetter = extractAnswerFromResponse(response);
-    if (!answerLetter) {
-      showToast("AI tidak memberikan jawaban yang valid", "error");
+    if (button.disabled) {
       return;
     }
 
-    const success = selectAnswerOption(question, answerLetter);
-    if (success) {
-      showToast(`Done jawaban: ${answerLetter.toUpperCase()}`, "success");
-    } else {
-      showToast("Gagal memilih jawaban", "error");
-    }
+    setButtonLoadingState(button, true);
+
+    // Generate unique question ID with question element identifier
+    const questionElementId = question.id || `question-${Date.now()}`;
+    const questionId = `${questionElementId}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+    // Create unique event name for this specific question
+    const responseEventName = `myudak-ai-response-${questionId}`;
+
+    // Set up response listener for this specific question only
+    const responseListener = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const {
+        questionId: responseQuestionId,
+        success,
+        response,
+        error,
+      } = customEvent.detail;
+
+      // Double-check this is our response (extra safety)
+      if (responseQuestionId !== questionId) {
+        console.warn(
+          "Response ID mismatch, ignoring:",
+          responseQuestionId,
+          "expected:",
+          questionId
+        );
+        return;
+      }
+
+      // Remove this specific listener
+      document.removeEventListener(responseEventName, responseListener);
+
+      if (success && response) {
+        console.log("AI Response for question:", questionId, response);
+
+        const answerLetter = extractAnswerFromResponse(response);
+        if (!answerLetter) {
+          showToast("AI tidak memberikan jawaban yang valid", "error");
+          setButtonLoadingState(button, false);
+          return;
+        }
+
+        const selectSuccess = selectAnswerOption(question, answerLetter);
+        if (selectSuccess) {
+          showToast(`Done jawaban: ${answerLetter.toUpperCase()}`, "success");
+        } else {
+          showToast("Gagal memilih jawaban", "error");
+        }
+      } else {
+        console.error("AI Error for question:", questionId, error);
+        showToast("Failed to get AI response", "error");
+      }
+
+      setButtonLoadingState(button, false);
+    };
+
+    // Add response listener with unique event name
+    document.addEventListener(responseEventName, responseListener);
+
+    // Dispatch question event to helper with the unique response event name
+    document.dispatchEvent(
+      new CustomEvent("myudak-ai-question", {
+        detail: {
+          question: soalText,
+          questionId: questionId,
+          responseEventName: responseEventName, // Tell helper which event to dispatch
+        },
+      })
+    );
+
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      document.removeEventListener(responseEventName, responseListener);
+      if (button.disabled) {
+        setButtonLoadingState(button, false);
+        showToast("Request timeout - please try again", "error");
+      }
+    }, 30000); // 30 seconds timeout
+
+    // Store timeout ID in case we need to clear it early
+    button.dataset.timeoutId = timeoutId.toString();
   } catch (error) {
     console.error("Error communicating with AI:", error);
     showToast("Failed to get AI response", "error");
-  } finally {
     setButtonLoadingState(button, false);
   }
 }
@@ -377,66 +446,3 @@ function createLogoSiapDips(): SVGSVGElement {
 
   return svg;
 }
-
-const API_KEY = "AIzaSyByESbyFz1h5W9a_pUJXM3mRfSVxzIosGc"; // Load from secure storage
-
-const SYSTEM_PROMPT = `
-You are a helpful assistant named DIPS for multiple-choice questions.
-
-Always explain your reasoning.
-
-At the end, provide your final answer in **exactly** this format:
-XX_CODE_FINAL_ANSWER_XX: <correct choice letter>. <answer text>
-
-Example:
-XX_CODE_FINAL_ANSWER_XX: b. Tweet
-
----
-`;
-
-async function chatWithGemini(userPrompt: string) {
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: SYSTEM_PROMPT + "\n\n" + userPrompt }],
-            role: "user",
-          },
-        ],
-      }),
-    }
-  );
-
-  const result = await response.json();
-  const output = result.candidates?.[0]?.content?.parts?.[0]?.text;
-  return output;
-}
-
-// Example usage
-// chatWithGemini(`
-// You are a helpful assistant named DIPS for multiple-choice questions.
-
-// Always explain your reasoning.
-
-// At the end, provide your final answer in **exactly** this format:
-// XX_CODE_FINAL_ANSWER_XX: <correct choice letter>. <answer text>
-
-// Example:
-// XX_CODE_FINAL_ANSWER_XX: b. Tweet
-
-// ---
-
-// Question:
-// A short message on Twitter is called a...
-// a. Twix
-// b. Tweet
-// c. Post
-// d. Thread
-
-// `).then(console.log);

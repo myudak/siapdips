@@ -24,6 +24,9 @@ const Navbar = () => {
           <a className="hover:underline" href="#foodTruk">
             FoodTruk
           </a>
+          <a className="hover:underline" href="#moodleHelper">
+            Moodle
+          </a>
           <a className="hover:underline" href="#todoboard">
             TODO
           </a>

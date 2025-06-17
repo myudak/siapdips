@@ -11,6 +11,16 @@ interface ChangelogEntry {
 
 const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.4.0",
+    date: "June 15, 2025",
+    type: "feature",
+    changes: [
+      "Upload Absen Image",
+      "Moodle Kulon helper",
+      "DIPS AI Helper ( •̀ ω •́ )✧",
+    ],
+  },
+  {
     version: "v1.3.0",
     date: "March 14, 2025",
     type: "feature",

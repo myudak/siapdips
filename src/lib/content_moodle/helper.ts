@@ -5,7 +5,6 @@ import { Draggable } from "./draggable";
 interface ChatMessage {
   role: "user" | "model";
   parts: [{ text: string }];
-  timestamp?: Date;
 }
 
 const chatHistory: ChatMessage[] = [];
@@ -33,6 +32,110 @@ function loadMarkedLibrary(): Promise<void> {
     script.onerror = () => reject(new Error("Failed to load marked library"));
     document.head.appendChild(script);
   });
+}
+
+// Function to process external questions from content script
+async function processExternalQuestion(
+  question: string,
+  questionId: string,
+  responseEventName: string,
+  messagesContainer: HTMLElement
+): Promise<void> {
+  console.log(
+    "Processing external question:",
+    question,
+    "with ID:",
+    questionId
+  );
+
+  // Add user message to UI (the question)
+  const userMessageElement = createMessageElement(question, "user");
+  messagesContainer.appendChild(userMessageElement);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  // Add user message to history
+  chatHistory.push({
+    role: "user",
+    parts: [{ text: question }],
+  });
+
+  // Show loading indicator
+  const loadingElement = createLoadingElement();
+  messagesContainer.appendChild(loadingElement);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  try {
+    // Get AI response
+    const response = await chatWithGemini(chatHistory);
+
+    // Remove loading indicator
+    messagesContainer.removeChild(loadingElement);
+
+    if (response) {
+      // Add AI response to UI
+      const aiMessageElement = createMessageElement(response, "model");
+      messagesContainer.appendChild(aiMessageElement);
+
+      // Add AI response to history
+      chatHistory.push({
+        role: "model",
+        parts: [{ text: response }],
+      });
+
+      // Dispatch success event with the response to the specific event name
+      document.dispatchEvent(
+        new CustomEvent(responseEventName, {
+          detail: {
+            questionId,
+            success: true,
+            response: response,
+          },
+        })
+      );
+    } else {
+      const errorElement = createMessageElement(
+        "Sorry, I couldn't process your request. Please try again.",
+        "model"
+      );
+      messagesContainer.appendChild(errorElement);
+
+      // Dispatch error event to the specific event name
+      document.dispatchEvent(
+        new CustomEvent(responseEventName, {
+          detail: {
+            questionId,
+            success: false,
+            error: "No response from AI",
+          },
+        })
+      );
+    }
+  } catch (error) {
+    // Remove loading indicator
+    if (messagesContainer.contains(loadingElement)) {
+      messagesContainer.removeChild(loadingElement);
+    }
+
+    const errorElement = createMessageElement(
+      "An error occurred. Please check your connection and try again.",
+      "model"
+    );
+    messagesContainer.appendChild(errorElement);
+
+    // Dispatch error event to the specific event name
+    document.dispatchEvent(
+      new CustomEvent(responseEventName, {
+        detail: {
+          questionId,
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      })
+    );
+  }
+
+  // Auto-scroll to bottom
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
 export function createHelper(): HTMLElement {
@@ -311,8 +414,47 @@ function createChatInterface(): HTMLElement {
       'hola gw DIPS buat jawab" pertanyaan lu ( •̀ ω •́ )✧',
       "model"
     );
+    const welcome2Message = createMessageElement(
+      "`{BETA masih ad bbrp bug, auto answer only accurate for pilgan}`",
+      "model"
+    );
     messagesContainer.appendChild(welcomeMessage);
+    messagesContainer.appendChild(welcome2Message);
   }
+
+  // Add event listener for external question requests
+  document.addEventListener("myudak-ai-question", async (event: Event) => {
+    const customEvent = event as CustomEvent;
+    const { question, questionId, responseEventName } = customEvent.detail;
+    console.log(
+      "Helper received question:",
+      question,
+      "with response event:",
+      responseEventName
+    );
+
+    try {
+      // Process the question through the chat system
+      await processExternalQuestion(
+        question,
+        questionId,
+        responseEventName,
+        messagesContainer
+      );
+    } catch (error) {
+      console.error("Error processing external question:", error);
+      // Dispatch error event to the specific response event name
+      document.dispatchEvent(
+        new CustomEvent(responseEventName || "myudak-ai-response", {
+          detail: {
+            questionId,
+            success: false,
+            error: "Failed to process question",
+          },
+        })
+      );
+    }
+  });
 
   // Event handlers
   sendButton.addEventListener("mouseenter", () => {
@@ -357,6 +499,17 @@ function createChatInterface(): HTMLElement {
 
     try {
       // Get AI response
+      const apiKey = await getGeminiApiKey();
+      if (!apiKey) {
+        console.error("No Gemini API key found");
+        messagesContainer.removeChild(loadingElement);
+        const errorElement = createMessageElement(
+          "km belum set API key, coba set di menu setting ;)",
+          "model"
+        );
+        messagesContainer.appendChild(errorElement);
+        return;
+      }
       const response = await chatWithGemini(chatHistory);
 
       // Remove loading indicator
@@ -453,6 +606,10 @@ function createMessageElement(
   const bubble = document.createElement("div");
   bubble.classList.add("chat-bubble");
 
+  // REGEX TEXT TO EXCLUDE this string `XX_CODE_FINAL_ANSWER_XX:`
+
+  text = text.replace("XX_CODE_FINAL_ANSWER_XX:", "").trim();
+
   // Use markdown parsing if marked is available, otherwise fallback to plain text
   if (window.marked) {
     bubble.innerHTML = window.marked.parse(text);
@@ -527,19 +684,67 @@ function createLoadingElement(): HTMLElement {
   return loadingDiv;
 }
 
-const API_KEY = "AIzaSyByESbyFz1h5W9a_pUJXM3mRfSVxzIosGc"; // Load from secure storage
+// const API_KEY = "AIzaSyByESbyFz1h5W9a_pUJXM3mRfSVxzIosGc"; // Load from secure storage
 
 const SYSTEM_PROMPT = `
-You are a helpful assistant named DIPS for multiple-choice questions.
+<SYSTEM_PROMPT>
+You are **DIPS**, a quiz-answering assistant developed by myudakk.
 
-Always explain your reasoning.
 ---
-Ends with Final Answer: <answer>
+
+## 🎯 Behavior Rules:
+- Users may send multiple-choice questions one after another.
+- You MUST always answer **only the LAST question** that appears in the most recent user message.
+- Completely **ignore earlier questions**, unless the final question includes references to them.
+- In message history, process from top to bottom, and **only answer the most recent multiple-choice question**.
+
+---
+
+## 🧠 Answer Format:
+1. Start with a **brief explanation** of your reasoning.
+2. End with the final answer using **this exact format**, on a new line:
+
+\`\`\`
+XX_CODE_FINAL_ANSWER_XX: <choice letter>. <answer text>
+\`\`\`
+
+✅ **Example**:
+If the chat contains:
+\`\`\`
+user: "Unlike dogs, cats cannot synthesize which vitamin...?"
+user: "Cats require a dietary source of what fatty acid...?"
+user: "What essential nutrient must be present in a cat's diet to prevent retinal degeneration?"
+\`\`\`
+You must answer ONLY:
+_"What essential nutrient must be present in a cat's diet..."_
+
+---
+
+## ☑️ Final Check:
+Before answering, ask yourself:
+> Am I responding to the most recent multiple-choice question only?
+
+If not — fix it.
+
+---
+
+## 💬 Non-Quiz Messages:
+If the user isn’t asking a quiz question, act like a friendly and playful assistant. For example:
+
+\`hola gw DIPS buat jawab-jawab pertanyaan lu ( •̀ ω •́ )✧\`
+
+REMEMBER THAT IS JUST AN EXAMPLE, U CAN USE ANYTHING, ANSWER ACCORDING TO USER DONT USE TEMPLATE
+</SYSTEM_PROMPT>
 `;
 
 async function chatWithGemini(
   history: ChatMessage[]
 ): Promise<string | undefined> {
+  const API_KEY = await getGeminiApiKey();
+  if (!API_KEY) {
+    console.error("No Gemini API key found");
+    return;
+  }
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
     {
@@ -761,4 +966,12 @@ export function injectGlobalStyles() {
     }
   `;
   document.head.appendChild(style);
+}
+
+function getGeminiApiKey() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get("geminiApiKey", (result) => {
+      resolve(result.geminiApiKey);
+    });
+  });
 }
