@@ -23,13 +23,6 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
   MySelect,
   MySelectTrigger,
   MySelectContent,
@@ -238,7 +231,7 @@ const UndipThemeSettings = ({
                 title="Tutorial Theme"
               >
                 <video
-                  src="/Vid-Theme.mp4"
+                  src="/video/Vid-Theme.mp4"
                   autoPlay
                   loop
                   muted
@@ -335,7 +328,7 @@ const UndipThemeSettings = ({
                 <div className="flex items-end space-x-4">
                   <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-white bg-white">
                     <img
-                      src={profile.avatarUrl || "profile.webp"}
+                      src={profile.avatarUrl || "images/profile.webp"}
                       alt="Profile"
                       className="h-full w-full object-cover"
                     />

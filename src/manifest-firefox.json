@@ -1,0 +1,120 @@
+{
+  "manifest_version": 3,
+  "name": "Siap Dips",
+  "version": "1.4.2",
+  "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "alarms",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "contextMenus"
+  ],
+  "homepage_url": "https://myudak.com",
+  "options_ui": {
+    "page": "option.html",
+    "open_in_tab": true
+  },
+  "host_permissions": [
+    "*://*.undip.ac.id/*",
+    "https://undip.learnsocial.online/*",
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "SiAP DiPS",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://siap.undip.ac.id/pages/mhs/dashboard/*"],
+      "js": ["./content.js"]
+    },
+    {
+      "matches": ["https://undip.learnsocial.online/*"],
+      "js": ["libs/toastify.js", "./content-undiplearn.js"],
+      "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://form.undip.ac.id/makanansehat/*"],
+      "js": ["libs/toastify.js", "./content-ft.js"],
+      "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://siap.undip.ac.id/master_perkuliahan/mhs/absensi/*"],
+      "js": ["libs/jsQR.js", "libs/toastify.js", "./content-absen.js"],
+      "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://*/mod/quiz/*"],
+      "js": ["libs/marked.min.js", "libs/toastify.js", "./content-moodle.js"],
+      "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["./content-form-watcher.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.linkedin.com/*",
+        "*://*.indeed.com/*",
+        "*://*.glassdoor.com/*",
+        "*://*.monster.com/*",
+        "*://*.naukri.com/*",
+        "*://*.ziprecruiter.com/*",
+        "*://*.internshala.com/*",
+        "*://*.simplyhired.com/*",
+        "*://*.careerbuilder.com/*",
+        "*://*.dice.com/*",
+        "*://*.stackoverflow.com/*",
+        "*://*.angel.co/*",
+        "*://*.wellfound.com/*",
+        "*://*.lever.co/*",
+        "*://*.greenhouse.io/*",
+        "*://*.workday.com/*",
+        "*://*.smartrecruiters.com/*",
+        "*://*.bamboohr.com/*",
+        "*://*/jobs/*",
+        "*://*/careers/*",
+        "*://*/job/*",
+        "*://*/career/*",
+        "*://*/apply/*",
+        "*://*/applications/*",
+        "*://*/opportunities/*",
+        "*://*/positions/*",
+        "*://*/openings/*",
+        "*://*/hiring/*",
+        "*://*/recruitment/*",
+        "*://*/job-listings/*",
+        "*://*/job_listings/*",
+        "*://*/jobsearch/*",
+        "*://*/job-search/*",
+        "*://*/job_search/*",
+        "*://*/employment/*",
+        "*://*/vacancies/*",
+        "*://*/listings/*",
+        "*://*/posting/*",
+        "*://*/postings/*"
+      ],
+      "js": ["./content-job.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "siap-dips@myudak.com",
+      "strict_min_version": "102.0"
+    }
+  }
+}

@@ -67,9 +67,9 @@ const SettingsSection = () => {
           className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
           ref={moodleHelperRef}
         >
-          Moodle Kulon {"{Helper}"} Settings
+          Setting jadwal
         </h1>
-        <SettingMoodle />
+        <SettingJadwal />
       </>
       <>
         <h1

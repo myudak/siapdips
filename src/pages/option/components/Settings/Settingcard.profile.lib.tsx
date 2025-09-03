@@ -13,11 +13,13 @@ import Cropper, { Area } from "react-easy-crop";
 interface ImageCropperProps {
   onCropComplete: (croppedImageUrl: string) => void;
   triggerButton: React.ReactNode;
+  aspectRatio?: number;
 }
 
 export function ImageCropper({
   onCropComplete,
   triggerButton,
+  aspectRatio = 1,
 }: ImageCropperProps) {
   const [src, setSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -82,7 +84,7 @@ export function ImageCropper({
                   image={src}
                   crop={crop}
                   zoom={zoom}
-                  aspect={1}
+                  aspect={aspectRatio}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={onCropCompleteCallback}

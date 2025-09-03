@@ -71,7 +71,7 @@ const AutoFoodTruk = ({
                 }
               >
                 <video
-                  src="/vid-foodtruk.mp4"
+                  src="/video/vid-foodtruk.mp4"
                   autoPlay
                   loop
                   muted
@@ -106,6 +106,7 @@ const AutoFoodTruk = ({
               await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: () => {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   Toastify({
                     text: "Siap DIps ~~> BUKAN FOOD TRUK `(*>﹏<*)′",

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>😴 Snoozing...</title>
+    <link rel="icon" id="dynamic-favicon" href="data:," />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+        color: #e0e0e0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+          sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 255, 255, 0.02) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .container {
+        text-align: center;
+        z-index: 2;
+        max-width: 600px;
+        padding: 20px;
+      }
+
+      .browser-window {
+        background: #333;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        position: relative;
+        border: 1px solid #444;
+      }
+
+      .browser-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #444;
+      }
+
+      .traffic-lights {
+        display: flex;
+        gap: 8px;
+        margin-right: 15px;
+      }
+
+      .traffic-light {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #555;
+      }
+
+      .traffic-light.red {
+        background: #ff5f57;
+      }
+      .traffic-light.yellow {
+        background: #ffbd2e;
+      }
+      .traffic-light.green {
+        background: #28ca42;
+      }
+
+      .browser-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+      }
+
+      .sleeping-face {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        animation: breathe 3s ease-in-out infinite;
+      }
+
+      .favicon-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      .original-favicon {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: breathe 3s ease-in-out infinite;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        display: none;
+      }
+
+      .original-favicon.loaded {
+        display: block;
+      }
+
+      .sleeping-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        animation: breathe 3s ease-in-out infinite;
+      }
+
+      .sleeping-face {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        animation: breathe 3s ease-in-out infinite;
+      }
+
+      .zzz {
+        position: absolute;
+        top: -1px;
+        right: 20px;
+        font-size: 2rem;
+        opacity: 0.6;
+        animation: float 2s ease-in-out infinite;
+      }
+
+      @keyframes breathe {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+          opacity: 0.6;
+        }
+        50% {
+          transform: translateY(-10px);
+          opacity: 0.8;
+        }
+      }
+
+      .main-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 20px;
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .url-display {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin: 30px 0;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.9rem;
+        color: #b0b0b0;
+        word-break: break-all;
+        backdrop-filter: blur(10px);
+      }
+
+      .reload-text {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: #c0c0c0;
+      }
+
+      .keyboard-hint {
+        font-size: 0.9rem;
+        color: #888;
+        text-decoration: underline;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .keyboard-hint:hover {
+        color: #ff6b35;
+      }
+
+      .footer {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .click-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        cursor: pointer;
+      }
+
+      .pulse-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        border: 2px solid rgba(255, 107, 53, 0.3);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        pointer-events: none;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      .loading-spinner {
+        display: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #333;
+        border-top: 2px solid #ff6b35;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-title {
+          font-size: 2rem;
+        }
+
+        .sleeping-face {
+          font-size: 3rem;
+        }
+
+        .container {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="click-overlay" id="clickOverlay"></div>
+    <div class="pulse-ring"></div>
+
+    <div class="container">
+      <div class="browser-window">
+        <div class="browser-header">
+          <div class="traffic-lights">
+            <div class="traffic-light red"></div>
+            <div class="traffic-light yellow"></div>
+            <div class="traffic-light green"></div>
+          </div>
+        </div>
+
+        <div class="browser-content">
+          <div class="favicon-container">
+            <img
+              id="originalFavicon"
+              class="original-favicon"
+              alt="Site favicon"
+            />
+            <div class="sleeping-overlay">😴</div>
+          </div>
+          <div class="zzz">z z z</div>
+        </div>
+      </div>
+
+      <h1 class="main-title">Refresh or click to reload</h1>
+
+      <div class="url-display" id="urlDisplay">Loading...</div>
+
+      <div class="reload-text">Click anywhere to wake up this tab</div>
+      <div class="keyboard-hint">Set keyboard shortcuts</div>
+
+      <div class="loading-spinner" id="loadingSpinner"></div>
+    </div>
+
+    <div class="footer">SiapDips Suspender</div>
+
+    <script type="module" src="index.js"></script>
+  </body>
+</html>

@@ -237,7 +237,7 @@ const IpkStatus = ({
                 title="Tutorial Ipk"
               >
                 <video
-                  src="/vid-ipk.mp4"
+                  src="/video/vid-ipk.mp4"
                   autoPlay
                   loop
                   muted

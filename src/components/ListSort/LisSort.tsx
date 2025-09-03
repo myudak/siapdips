@@ -36,6 +36,14 @@ const LisSort = ({ setIsLocalStatus }: any) => {
     return initialCards;
   });
 
+  const [itemsHide] = useState<string[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + "Hide");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return [];
+  });
+
   const sensors = useSensors(useSensor(MouseSensor));
 
   useEffect(() => {
@@ -79,6 +87,7 @@ const LisSort = ({ setIsLocalStatus }: any) => {
             Component={cardComponents[id]}
             // @ts-ignore
             propis={propsMap[id]}
+            itemsHide={itemsHide}
           />
         ))}
       </SortableContext>
@@ -90,10 +99,12 @@ function SortableItem({
   id,
   Component,
   propis,
+  itemsHide,
 }: {
   id: string;
   Component: React.FC<any>;
   propis?: any;
+  itemsHide: string[];
 }) {
   const {
     attributes,
@@ -109,12 +120,16 @@ function SortableItem({
     transition,
   };
 
+  console.log("id", id);
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={`${isDragging ? "opacity-50" : ""}`}
+      className={`${isDragging ? "opacity-50" : ""} ${
+        itemsHide.includes(id) ? "hidden" : ""
+      }`}
       role=""
     >
       <Component attributes={attributes} listeners={listeners} {...propis} />

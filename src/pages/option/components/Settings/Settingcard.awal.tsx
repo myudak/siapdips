@@ -30,6 +30,8 @@ import {
   Code,
   LucideChartNoAxesGantt,
   LucideIcon,
+  EyeClosed,
+  Eye,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -51,6 +53,13 @@ const SettingcardAwal = () => {
     }
     return initialCards;
   });
+  const [itemsHide, setItemsHide] = useState<string[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + "Hide");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return [];
+  });
 
   const sensors = useSensors(useSensor(MouseSensor));
 
@@ -63,6 +72,10 @@ const SettingcardAwal = () => {
       },
     });
   }, [items]);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY + "Hide", JSON.stringify(itemsHide));
+  }, [itemsHide]); // run this every time itemsHide changes
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -104,6 +117,8 @@ const SettingcardAwal = () => {
                   // @ts-ignore
                   Nama={cardComponentsOption[id][0]}
                   Emot={cardComponentsOption[id][1]}
+                  itemsHide={itemsHide}
+                  setItemsHide={setItemsHide}
                 />
               ))}
             </SortableContext>
@@ -231,10 +246,14 @@ function SortableItem({
   id,
   Nama,
   Emot,
+  itemsHide,
+  setItemsHide,
 }: {
   id: string;
-  Nama: String;
+  Nama: string;
   Emot: LucideIcon;
+  itemsHide: string[];
+  setItemsHide: (items: string[]) => void;
 }) {
   const {
     attributes,
@@ -268,10 +287,47 @@ function SortableItem({
         <GripVertical className="h-4 w-4" />
       </Button>
       <span className={`flex-1 text-base flex-wrap select-none `}>{Nama}</span>
-      <Button variant="ghost" size="icon" className="h-8 w-8  ">
-        {/* @ts-ignore */}
-        {<Emot />}
-      </Button>
+      <div>
+        {/* EYES BUTTON TO HIDE */}
+        <Button
+          title={itemsHide.includes(id) ? "Unhide" : "Hide"}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8  "
+          onClick={() => {
+            if (itemsHide.includes(id)) {
+              // Remove from hide list
+              toast.info(`Unhide ${id}`, {
+                action: {
+                  label: "X",
+                  onClick: () => console.log("(#-_ゝ-)"),
+                },
+              });
+              setItemsHide(itemsHide.filter((item) => item !== id));
+            } else {
+              // Add to hide list
+              toast.info(`Hide ${id}`, {
+                action: {
+                  label: "X",
+                  onClick: () => console.log("(#-_ゝ-)"),
+                },
+              });
+              setItemsHide([...itemsHide, id]);
+            }
+          }}
+        >
+          {itemsHide.includes(id) ? (
+            <EyeClosed className="h-4 w-4 text-red-500" />
+          ) : (
+            <Eye className="h-4 w-4 text-green-500" />
+          )}
+        </Button>
+
+        <Button variant="ghost" size="icon" className="h-8 w-8  ">
+          {/* @ts-ignore */}
+          {<Emot />}
+        </Button>
+      </div>
     </div>
   );
 }

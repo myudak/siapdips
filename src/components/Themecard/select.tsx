@@ -8,48 +8,53 @@ import React, {
 import { cn } from "@/lib/utils";
 import { ChevronDown, Check } from "lucide-react";
 
-type SelectContextType = {
+type SelectContextType<T extends string = string> = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  value: T;
+  setValue: React.Dispatch<React.SetStateAction<T>>;
   selectedLabel: string;
   setSelectedLabel: React.Dispatch<React.SetStateAction<string>>;
-  onValueChange?: (value: string) => void;
+  onValueChange?: React.Dispatch<React.SetStateAction<T>>;
   disabled?: boolean;
 };
 
-const SelectContext = createContext<SelectContextType | undefined>(undefined);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SelectContext = createContext<SelectContextType<any> | undefined>(
+  undefined
+);
 
-const useSelectContext = () => {
-  const context = useContext(SelectContext);
+function useSelectContext<T extends string = string>() {
+  const context = useContext(SelectContext) as SelectContextType<T> | undefined;
   if (!context) {
     throw new Error("Select components must be used within a Select provider");
   }
   return context;
-};
+}
 
-type SelectProps = {
+type SelectProps<T extends string = string> = {
   children: React.ReactNode;
-  defaultValue?: string;
-  value?: string;
-  onChange?: (value: string) => void;
+  defaultValue?: T;
+  value?: T;
+  onChange?: React.Dispatch<React.SetStateAction<T>>;
   className?: string;
   disabled?: boolean;
   placeholder?: string;
 };
 
-const Select = ({
+const Select = <T extends string = string>({
   children,
-  defaultValue = "",
+  defaultValue = "" as T,
   value: propValue,
   onChange,
   className,
   disabled = false,
   placeholder = "Select an option",
-}: SelectProps) => {
+}: SelectProps<T>) => {
   const [open, setOpen] = useState(false);
-  const [internalValue, setInternalValue] = useState(propValue || defaultValue);
+  const [internalValue, setInternalValue] = useState<T>(
+    propValue ?? defaultValue
+  );
   const [selectedLabel, setSelectedLabel] = useState(placeholder);
 
   // Use prop value if provided, otherwise use internal state
@@ -74,9 +79,11 @@ const Select = ({
     }
   }, [value, selectedLabel]);
 
-  const setValue = (newValue: React.SetStateAction<string>) => {
+  const setValue = (newValue: React.SetStateAction<T>) => {
     const resolvedValue =
-      typeof newValue === "function" ? newValue(value) : newValue;
+      typeof newValue === "function"
+        ? (newValue as (prev: T) => T)(value)
+        : newValue;
     setInternalValue(resolvedValue);
     if (onChange && resolvedValue) {
       onChange(resolvedValue);
@@ -226,6 +233,7 @@ const SelectItem = ({
   onSelect,
   disabled = false,
 }: SelectItemProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { setValue, setSelectedLabel, setOpen, onValueChange } =
     useSelectContext();
 

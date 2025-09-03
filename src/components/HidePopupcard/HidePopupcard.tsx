@@ -162,7 +162,7 @@ const HidePopupcard = ({
                 title="Tutorial Enable klikakan"
               >
                 <video
-                  src="/vid-klikKanan.mp4"
+                  src="/video/Vid-Klikkanan.mp4"
                   autoPlay
                   loop
                   muted

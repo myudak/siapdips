@@ -51,7 +51,7 @@ const AutoLearnSocial = ({
                 }
               >
                 <video
-                  src="/vid-learnsocial.mp4"
+                  src="/video/vid-learnsocial.mp4"
                   autoPlay
                   loop
                   muted

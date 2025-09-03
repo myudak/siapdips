@@ -76,7 +76,7 @@ const AutopbmCard = ({
                   title="Tutorial PBM"
                 >
                   <video
-                    src="/Vid-Pbm.mp4"
+                    src="/video/Vid-Pbm.mp4"
                     autoPlay
                     loop
                     muted

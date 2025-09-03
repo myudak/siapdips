@@ -1,0 +1,60 @@
+/* ActivityCalendar custom styles */
+
+.github-calendar .react-calendar-heatmap .color-empty {
+  fill: var(--calendar-empty);
+}
+
+.github-calendar .react-calendar-heatmap .color-scale-1 {
+  fill: var(--calendar-scale-1);
+}
+
+.github-calendar .react-calendar-heatmap .color-scale-2 {
+  fill: var(--calendar-scale-2);
+}
+
+.github-calendar .react-calendar-heatmap .color-scale-3 {
+  fill: var(--calendar-scale-3);
+}
+
+.github-calendar .react-calendar-heatmap .color-scale-4 {
+  fill: var(--calendar-scale-4);
+}
+
+.github-calendar .react-calendar-heatmap text {
+  fill: var(--calendar-text);
+  font-size: 10px;
+}
+
+.github-calendar .react-calendar-heatmap rect:hover {
+  stroke: var(--calendar-hover-stroke);
+  stroke-width: 1px;
+}
+
+/* Enhanced styling for better appearance */
+.github-calendar .react-calendar-heatmap rect {
+  transition: all 0.2s ease;
+  rx: 2px;
+  ry: 2px;
+}
+
+.github-calendar .react-calendar-heatmap .react-calendar-heatmap-month-label {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.github-calendar .react-calendar-heatmap .react-calendar-heatmap-weekday-label {
+  font-size: 9px;
+  font-weight: 400;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .github-calendar .react-calendar-heatmap {
+    font-size: 8px;
+  }
+
+  .github-calendar .react-calendar-heatmap rect {
+    rx: 1px;
+    ry: 1px;
+  }
+}
