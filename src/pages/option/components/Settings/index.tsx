@@ -7,6 +7,7 @@ import LokasiFoodTruk from "./Settingcard.ft";
 import NavCardSetting from "./Settingcard.navcard";
 import KanbanBoard from "./TodoBoard";
 import SettingMoodle from "./Settingcard.moodle";
+import SettingJadwal from "./Settingcard.jadwal";
 
 const SettingsSection = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
@@ -60,6 +61,16 @@ const SettingsSection = () => {
           Food TRUK {"{Helper}"} Settings
         </h1>
         <LokasiFoodTruk />
+      </>
+      <>
+        <h1
+          id="moodleHelper"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
+          ref={moodleHelperRef}
+        >
+          Setting Moodle
+        </h1>
+        <SettingMoodle />
       </>
       <>
         <h1
