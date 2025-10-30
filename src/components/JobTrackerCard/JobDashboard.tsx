@@ -228,73 +228,73 @@ export function JobDashboard({
         {/* Header */}
         <div className="mb-6 text-center">
           <h1 className="text-2xl font-bold mb-1">Job Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
+          <p className="text-muted-foreground text-sm">
             Track your applications and progress
           </p>
         </div>
 
         {/* Stats Cards - Always 3x1 Grid, Optimized for Extension */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <Card className="bg-gradient-to-br from-white via-white to-blue-50/50 dark:from-gray-800 dark:via-gray-800 dark:to-blue-950/50 border border-blue-100/50 dark:border-blue-800/50 shadow-md hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-400/10 transition-all duration-300 hover:-translate-y-0.5 group">
+          <Card className="bg-card border shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group bg-gray-100 dark:bg-gray-900">
             <CardContent className="p-3 text-center h-full flex flex-col justify-center relative overflow-hidden min-h-[4rem]">
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-blue-100/20 dark:to-blue-800/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
-                <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-1">
+                <div className="text-xl font-bold text-primary mb-1">
                   {appliedCount}
                 </div>
-                <div className="text-gray-600 dark:text-gray-400 text-xs font-medium">
+                <div className="text-muted-foreground text-xs font-medium">
                   Applied
                 </div>
-                <div className="w-8 h-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-1 rounded-full" />
+                <div className="w-8 h-0.5 bg-primary mx-auto mt-1 rounded-full" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white via-white to-emerald-50/50 dark:from-gray-800 dark:via-gray-800 dark:to-emerald-950/50 border border-emerald-100/50 dark:border-emerald-800/50 shadow-md hover:shadow-lg hover:shadow-emerald-500/10 dark:hover:shadow-emerald-400/10 transition-all duration-300 hover:-translate-y-0.5 group">
+          <Card className="bg-card border shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group bg-gray-100 dark:bg-gray-900">
             <CardContent className="p-3 text-center h-full flex flex-col justify-center relative overflow-hidden min-h-[4rem]">
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-emerald-100/20 dark:to-emerald-800/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
-                <div className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent mb-1">
+                <div className="text-xl font-bold text-primary mb-1">
                   {savedCount}
                 </div>
-                <div className="text-gray-600 dark:text-gray-400 text-xs font-medium">
+                <div className="text-muted-foreground text-xs font-medium">
                   Saved
                 </div>
-                <div className="w-8 h-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 mx-auto mt-1 rounded-full" />
+                <div className="w-8 h-0.5 bg-primary mx-auto mt-1 rounded-full" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-white via-white to-purple-50/50 dark:from-gray-800 dark:via-gray-800 dark:to-purple-950/50 border border-purple-100/50 dark:border-purple-800/50 shadow-md hover:shadow-lg hover:shadow-purple-500/10 dark:hover:shadow-purple-400/10 transition-all duration-300 hover:-translate-y-0.5 group">
+          <Card className="bg-card border shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group bg-gray-100 dark:bg-gray-900">
             <CardContent className="p-3 text-center h-full flex flex-col justify-center relative overflow-hidden min-h-[4rem]">
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-purple-100/20 dark:to-purple-800/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
-                <div className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-1">
+                <div className="text-xl font-bold text-primary mb-1">
                   {thisWeekCount}
                 </div>
-                <div className="text-gray-600 dark:text-gray-400 text-xs font-medium">
+                <div className="text-muted-foreground text-xs font-medium">
                   This Week
                 </div>
-                <div className="w-8 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mt-1 rounded-full" />
+                <div className="w-8 h-0.5 bg-primary mx-auto mt-1 rounded-full" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Compact Tabs Section for Extension */}
-        <Card className="bg-gradient-to-br from-white via-white to-gray-50/50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-850/50 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+        <Card className="bg-card border shadow-lg bg-gray-100 dark:bg-gray-900">
           <CardContent className="p-0">
             <Tabs defaultValue="status" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-gray-200 dark:border-gray-700 rounded-none h-auto p-0">
+              <TabsList className="grid w-full grid-cols-2 bg-transparent border-b rounded-none h-auto p-0">
                 <TabsTrigger
                   value="status"
-                  className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 dark:data-[state=active]:border-blue-400 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 rounded-none py-3 px-4 font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200 text-sm"
+                  className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none py-3 px-4 font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 text-sm"
                 >
                   Status
                 </TabsTrigger>
                 <TabsTrigger
                   value="reminders"
-                  className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 dark:data-[state=active]:border-blue-400 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 rounded-none py-3 px-4 font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors duration-200 text-sm"
+                  className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary rounded-none py-3 px-4 font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 text-sm"
                 >
                   Reminders
                 </TabsTrigger>
@@ -304,7 +304,7 @@ export function JobDashboard({
                 <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-4">
                   {/* Job Selector */}
                   <div className="flex-1 w-full">
-                    <Label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="mb-1 block text-sm font-medium">
                       Select Job
                     </Label>
                     <MySelect
@@ -325,7 +325,7 @@ export function JobDashboard({
                       <MySelectContent>
                         {jobs.filter((job) => job.status !== "saved").length ===
                         0 ? (
-                          <div className="px-4 py-2 text-gray-500 text-sm">
+                          <div className="px-4 py-2 text-muted-foreground text-sm">
                             No jobs available
                           </div>
                         ) : (
@@ -343,7 +343,7 @@ export function JobDashboard({
 
                   {/* Status Selector */}
                   <div className="flex-1 w-full">
-                    <Label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <Label className="mb-1 block text-sm font-medium">
                       Update Status
                     </Label>
                     <MySelect
@@ -377,7 +377,7 @@ export function JobDashboard({
                           setJobs
                         )
                       }
-                      className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow hover:from-blue-700 hover:to-indigo-700 transition-all"
+                      className="w-full md:w-auto"
                     >
                       Save Status
                     </Button>
@@ -398,18 +398,18 @@ export function JobDashboard({
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {reminders.length === 0 ? (
                     <div className="text-center py-8">
-                      <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/50 dark:to-pink-900/50 rounded-full mb-3">
-                        <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-secondary rounded-full mb-3">
+                        <Clock className="w-6 h-6 text-secondary-foreground" />
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">
                         No Reminders Set
                       </h3>
-                      <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">
+                      <p className="text-muted-foreground mb-4 text-sm">
                         Set up reminders for follow-ups
                       </p>
                       <Button
                         onClick={openAddReminderDialog}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 shadow-lg hover:shadow-purple-500/25 dark:hover:shadow-purple-400/25 transition-all duration-300 text-sm"
+                        className="px-6 py-2 text-sm"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         Create Reminder
@@ -423,11 +423,11 @@ export function JobDashboard({
                           key={reminder.id}
                           className={`group cursor-pointer transition-all duration-200 hover:shadow-md rounded-lg border p-3 ${
                             status === "completed"
-                              ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                              ? "bg-secondary/50 border-secondary"
                               : status === "overdue"
-                              ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
+                              ? "bg-destructive/10 border-destructive/50"
                               : status === "today"
-                              ? "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
+                              ? "bg-accent/50 border-accent"
                               : "bg-card hover:bg-muted/50"
                           }`}
                           onClick={() => toggleReminderComplete(reminder.id)}
@@ -437,13 +437,13 @@ export function JobDashboard({
                               {/* Status Icon */}
                               <div className="mt-0.5">
                                 {status === "completed" ? (
-                                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                                  <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                                 ) : status === "overdue" ? (
-                                  <AlertCircle className="h-4 w-4 text-red-600" />
+                                  <AlertCircle className="h-4 w-4 text-destructive" />
                                 ) : status === "today" ? (
-                                  <Timer className="h-4 w-4 text-orange-600" />
+                                  <Timer className="h-4 w-4 text-accent-foreground" />
                                 ) : (
-                                  <Bell className="h-4 w-4 text-blue-600" />
+                                  <Bell className="h-4 w-4 text-primary" />
                                 )}
                               </div>
 
@@ -453,7 +453,7 @@ export function JobDashboard({
                                   <p
                                     className={`font-medium text-sm ${
                                       status === "completed"
-                                        ? "line-through text-gray-500"
+                                        ? "line-through text-muted-foreground"
                                         : ""
                                     }`}
                                   >
@@ -491,16 +491,16 @@ export function JobDashboard({
                                 <div className="space-y-1">
                                   {reminder.relatedJob && (
                                     <div className="flex items-center gap-1">
-                                      <Building2 className="h-3 w-3 text-blue-500" />
-                                      <span className="text-xs text-blue-600 dark:text-blue-400 truncate">
+                                      <Building2 className="h-3 w-3 text-primary" />
+                                      <span className="text-xs text-primary truncate">
                                         {reminder.relatedJob}
                                       </span>
                                     </div>
                                   )}
                                   {reminder.notes && (
                                     <div className="flex items-center gap-1">
-                                      <StickyNote className="h-3 w-3 text-gray-500" />
-                                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                      <StickyNote className="h-3 w-3 text-muted-foreground" />
+                                      <span className="text-xs text-muted-foreground truncate">
                                         {reminder.notes}
                                       </span>
                                     </div>
@@ -529,7 +529,7 @@ export function JobDashboard({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 text-red-500 hover:text-red-700"
+                                className="h-6 w-6 text-destructive hover:text-destructive/80"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   deleteReminder(reminder.id);
@@ -554,7 +554,7 @@ export function JobDashboard({
           <Button
             variant="ghost"
             onClick={() => chrome.tabs.create({ url: "job.html" })}
-            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/50 gap-2 px-4 py-2 transition-all duration-300 group text-sm"
+            className="gap-2 px-4 py-2 transition-all duration-300 group text-sm"
           >
             <Eye className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
             Explore Dashboard

@@ -170,7 +170,7 @@ const JobManual = () => {
   };
 
   return (
-    <Card className="dark:bg-gray-800 dark:border-gray-700 p-0 m-0 border-0">
+    <Card className="p-0 m-0 border-0 bg-transparent">
       <CardHeader className="p-0 mb-3">
         <CardTitle>Add job manually</CardTitle>
         <CardDescription>
@@ -195,13 +195,13 @@ const JobManual = () => {
                     company: e.target.value,
                   })
                 }
-                className={`dark:bg-gray-800 dark:border-gray-700" ${
-                  formErrors.company ? "border-red-500" : ""
-                }`}
+                className={`${
+                  formErrors.company ? "border-destructive " : ""
+                }bg-gray-100 dark:bg-gray-900`}
                 placeholder="Enter company name"
               />
               {formErrors.company && (
-                <span className="text-sm text-red-500">
+                <span className="text-sm text-destructive">
                   {formErrors.company}
                 </span>
               )}
@@ -220,13 +220,15 @@ const JobManual = () => {
                     title: e.target.value,
                   })
                 }
-                className={`dark:bg-gray-800 dark:border-gray-700 ${
-                  formErrors.title ? "border-red-500" : ""
-                }`}
+                className={`${
+                  formErrors.title ? "border-destructive " : ""
+                }bg-gray-100 dark:bg-gray-900`}
                 placeholder="Enter job title"
               />
               {formErrors.title && (
-                <span className="text-sm text-red-500">{formErrors.title}</span>
+                <span className="text-sm text-destructive">
+                  {formErrors.title}
+                </span>
               )}
             </div>
           </div>
@@ -247,13 +249,13 @@ const JobManual = () => {
                     location: e.target.value,
                   })
                 }
-                className={`dark:bg-gray-800 dark:border-gray-700 ${
-                  formErrors.location ? "border-red-500" : ""
-                }`}
+                className={`${
+                  formErrors.location ? "border-destructive " : ""
+                }bg-gray-100 dark:bg-gray-900`}
                 placeholder="e.g., Jakarta, Indonesia"
               />
               {formErrors.location && (
-                <span className="text-sm text-red-500">
+                <span className="text-sm text-destructive">
                   {formErrors.location}
                 </span>
               )}
@@ -270,7 +272,7 @@ const JobManual = () => {
                 }
               >
                 <SelectTrigger
-                  className={formErrors.status ? "border-red-500" : ""}
+                  className={formErrors.status ? "border-destructive" : ""}
                 >
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -284,7 +286,7 @@ const JobManual = () => {
                 </SelectContent>
               </Select>
               {formErrors.status && (
-                <span className="text-sm text-red-500">
+                <span className="text-sm text-destructive">
                   {formErrors.status}
                 </span>
               )}
@@ -306,13 +308,13 @@ const JobManual = () => {
                   url: e.target.value,
                 })
               }
-              className={`dark:bg-gray-800 dark:border-gray-700 ${
-                formErrors.url ? "border-red-500" : ""
-              }`}
+              className={`${
+                formErrors.url ? "border-destructive " : ""
+              }bg-gray-100 dark:bg-gray-900`}
               placeholder="https://company.com/jobs/123"
             />
             {formErrors.url && (
-              <span className="text-sm text-red-500">{formErrors.url}</span>
+              <span className="text-sm text-destructive">{formErrors.url}</span>
             )}
           </div>
 
@@ -324,7 +326,6 @@ const JobManual = () => {
                 Salary
               </Label>
               <Input
-                className="dark:bg-gray-800 dark:border-gray-700"
                 id="add-salary"
                 value={addFormData.salary}
                 onChange={(e) =>
@@ -333,7 +334,8 @@ const JobManual = () => {
                     salary: e.target.value,
                   })
                 }
-                placeholder="e.g., $80,000 - $100,000"
+                className="bg-gray-100 dark:bg-gray-900"
+                placeholder="e.g., $80,000 - $1 00,000"
               />
             </div>
             <div className="flex flex-col gap-2 flex-1">
@@ -342,7 +344,6 @@ const JobManual = () => {
                 Job Type
               </Label>
               <Input
-                className="dark:bg-gray-800 dark:border-gray-700"
                 id="add-jobType"
                 value={addFormData.jobType}
                 onChange={(e) =>
@@ -351,7 +352,8 @@ const JobManual = () => {
                     jobType: e.target.value,
                   })
                 }
-                placeholder="e.g., Full-time, Part-time"
+                className="bg-gray-100 dark:bg-gray-900"
+                placeholder="e.g., Full-time, Par t-time"
               />
             </div>
           </div>
@@ -367,7 +369,6 @@ const JobManual = () => {
                 Company Size
               </Label>
               <Input
-                className="dark:bg-gray-800 dark:border-gray-700"
                 id="add-companySize"
                 value={addFormData.companySize}
                 onChange={(e) =>
@@ -376,7 +377,8 @@ const JobManual = () => {
                     companySize: e.target.value,
                   })
                 }
-                placeholder="e.g., 50-200 employees"
+                className="bg-gray-100 dark:bg-gray-900"
+                placeholder="e.g., 50-200 emp loyees"
               />
             </div>
             <div className="flex flex-col gap-2 flex-1">
@@ -388,7 +390,6 @@ const JobManual = () => {
                 Experience Level
               </Label>
               <Input
-                className="dark:bg-gray-800 dark:border-gray-700"
                 id="add-experienceLevel"
                 value={addFormData.experienceLevel}
                 onChange={(e) =>
@@ -397,7 +398,8 @@ const JobManual = () => {
                     experienceLevel: e.target.value,
                   })
                 }
-                placeholder="e.g., Mid-level, Senior"
+                className="bg-gray-100 dark:bg-gray-900"
+                placeholder="e.g., Mid-level,  Senior"
               />
             </div>
           </div>
@@ -409,7 +411,6 @@ const JobManual = () => {
               Industry
             </Label>
             <Input
-              className="dark:bg-gray-800 dark:border-gray-700"
               id="add-industry"
               value={addFormData.industry}
               onChange={(e) =>
@@ -418,7 +419,8 @@ const JobManual = () => {
                   industry: e.target.value,
                 })
               }
-              placeholder="e.g., Technology, Finance, Healthcare"
+              className="bg-gray-100 dark:bg-gray-900"
+              placeholder="e.g., Technology, Finance, Heal thcare"
             />
           </div>
 
@@ -429,7 +431,6 @@ const JobManual = () => {
               Notes
             </Label>
             <Textarea
-              className="dark:bg-gray-800 dark:border-gray-700"
               id="add-notes"
               value={addFormData.notes}
               onChange={(e) =>

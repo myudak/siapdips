@@ -67,17 +67,17 @@ export default function JobTrackerCard({
   };
 
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700 ">
+    <Card className="w-full">
       <Button
         variant="ghost"
         size="icon"
-        className="w-full h-8 rounded-b-none border border-b-0 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+        className="w-full h-8 rounded-b-none border border-b-0 bg-card hover:bg-accent bg-white dark:bg-gray-800 "
         {...attributes}
         {...listeners}
       >
         <GripHorizontal className="h-4 w-4" />
       </Button>
-      <CardContent className="flex flex-col">
+      <CardContent className="flex flex-col bg-white dark:bg-gray-800 ">
         <div className="flex justify-between">
           <div className="text-lg font-semibold">Job Tracker</div>
           <Button
@@ -94,14 +94,14 @@ export default function JobTrackerCard({
         </div>
         <div className="gap-4">
           <Tabs defaultValue="saved">
-            <TabsList className="dark:bg-gray-800 dark:border-gray-700">
+            <TabsList>
               <TabsTrigger value="saved">Saved</TabsTrigger>
               <TabsTrigger value="applied">Applied</TabsTrigger>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="add job">Add Job</TabsTrigger>
             </TabsList>
             <TabsContent value="saved">
-              <Card className="dark:bg-gray-800 dark:border-gray-700 p-0 m-0 border-0">
+              <Card className="p-0 m-0 border-0 bg-transparent">
                 <CardHeader className="p-0 mb-3">
                   <CardTitle>Saved for later</CardTitle>
                 </CardHeader>
@@ -150,7 +150,7 @@ export default function JobTrackerCard({
               </Card>
             </TabsContent>
             <TabsContent value="applied">
-              <Card className="dark:bg-gray-800 dark:border-gray-700 p-0 m-0 border-0">
+              <Card className="p-0 m-0 border-0 bg-transparent">
                 <CardHeader className="p-0 mb-3">
                   <CardTitle>Applied Jobs</CardTitle>
                 </CardHeader>
