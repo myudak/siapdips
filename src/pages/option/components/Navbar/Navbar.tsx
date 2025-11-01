@@ -18,6 +18,7 @@ const Navbar = () => {
     { href: "#foodTruk", label: "FoodTruk" },
     { href: "#moodleHelper", label: "Moodle" },
     { href: "#todoboard", label: "TODO" },
+    { href: "job.html", label: "JOB" },
   ];
 
   const handleLinkClick = () => {
