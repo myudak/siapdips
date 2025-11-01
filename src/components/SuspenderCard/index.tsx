@@ -20,13 +20,16 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { Separator } from "../ui/separator";
+import HideButton from "../hideButton";
 
 export default function SuspenderCard({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id: string;
 }) {
   const [timerSuspend, setTimerSuspend] =
     useState<SuspendPageTimerType>("never");
@@ -107,7 +110,11 @@ export default function SuspenderCard({
   ]);
 
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+    <Card className="relative group w-full dark:bg-gray-800 dark:border-gray-700">
+      <HideButton
+        id={id}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

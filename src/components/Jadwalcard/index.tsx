@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { useState, useEffect } from "react";
+import HideButton from "../hideButton";
 
 type jadwalHariIni = {
   mataKuliah: string;
@@ -38,9 +39,11 @@ type jadwalMinggu = {
 const JadwalCard = ({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id: string;
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeJadwal, setActiveJadwal] = useState<jadwalHariIni | null>(null);
@@ -143,7 +146,7 @@ const JadwalCard = ({
 
   return (
     <Card
-      className={`w-full transition-all duration-300 bg-white dark:bg-gray-800 
+      className={`relative w-full transition-all duration-300 bg-white dark:bg-gray-800 group 
         ${
           activeJadwal?.status === "active"
             ? "ring-2 ring-blue-500 dark:ring-blue-400"
@@ -152,6 +155,11 @@ const JadwalCard = ({
             : "ring-2 ring-gray-500 dark:ring-gray-400"
         }`}
     >
+      {" "}
+      <HideButton
+        id={id}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"
@@ -161,7 +169,6 @@ const JadwalCard = ({
       >
         <GripHorizontal className="h-4 w-4" />
       </Button>
-
       {/* Day Navigation */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700">
         <Button
@@ -194,7 +201,6 @@ const JadwalCard = ({
           <ChevronRight className="h-4 w-4 ml-1" />
         </Button>
       </div>
-
       <CardHeader className="pb-2">
         {isJadwal && (
           <>
@@ -234,7 +240,6 @@ const JadwalCard = ({
           </CardTitle>
         )}
       </CardHeader>
-
       {isJadwal && jadwalHariIni.length > 0 && (
         <>
           <CardContent>
@@ -303,7 +308,6 @@ const JadwalCard = ({
           </CardFooter>
         </>
       )}
-
       {isJadwal && jadwalHariIni.length === 0 && (
         <CardContent>
           <Card className="w-full bg-gray-100 dark:bg-gray-900 max-w-md mx-auto">
@@ -318,7 +322,6 @@ const JadwalCard = ({
           </Card>
         </CardContent>
       )}
-
       {!isJadwal && (
         <CardContent>
           <Card className="w-full bg-gray-100 dark:bg-gray-900 max-w-md mx-auto">

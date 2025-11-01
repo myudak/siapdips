@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,15 +12,17 @@ import {
 import {
   useSensors,
   useSensor,
-  MouseSensor,
   DndContext,
   closestCenter,
+  KeyboardSensor,
+  PointerSensor,
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
   useSortable,
+  sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 
 import {
@@ -32,39 +36,69 @@ import {
   LucideIcon,
   EyeClosed,
   Eye,
+  RefreshCcw,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { CSS } from "@dnd-kit/utilities";
 import { cardComponentsOption } from "@/components/ListSort/ListSort.card";
+import {
+  LOCAL_STORAGE_SORTABLE_KEY,
+  LOCAL_STORAGE_SORTABLE_HIDE_KEY,
+} from "@/constants/storage";
 
 const initialCards = Object.keys(cardComponentsOption);
-const LOCAL_STORAGE_KEY = "sortableCards";
 
-const SettingcardAwal = () => {
-  const [items, setItems] = useState<string[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (saved) {
+const readItemsFromStorage = () => {
+  const saved = localStorage.getItem(LOCAL_STORAGE_SORTABLE_KEY);
+  if (saved) {
+    try {
       const savedArray = JSON.parse(saved);
       const isSameArray =
+        Array.isArray(savedArray) &&
         savedArray.length === initialCards.length &&
         [...savedArray].sort().join() === [...initialCards].sort().join();
-      if (isSameArray) return savedArray;
-    }
-    return initialCards;
-  });
-  const [itemsHide, setItemsHide] = useState<string[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + "Hide");
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    return [];
-  });
 
-  const sensors = useSensors(useSensor(MouseSensor));
+      if (isSameArray) {
+        return savedArray;
+      }
+    } catch (error) {
+      console.error("Failed to parse stored cards order", error);
+    }
+  }
+
+  return initialCards;
+};
+
+const readItemsHideFromStorage = () => {
+  const saved = localStorage.getItem(LOCAL_STORAGE_SORTABLE_HIDE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (error) {
+      console.error("Failed to parse stored hidden cards", error);
+    }
+  }
+
+  return [];
+};
+
+const SettingcardAwal = () => {
+  const [items, setItems] = useState<string[]>(readItemsFromStorage);
+  const [itemsHide, setItemsHide] = useState<string[]>(
+    readItemsHideFromStorage
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(LOCAL_STORAGE_SORTABLE_KEY, JSON.stringify(items));
     toast.success("Saved", {
       action: {
         label: "X",
@@ -74,7 +108,10 @@ const SettingcardAwal = () => {
   }, [items]);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY + "Hide", JSON.stringify(itemsHide));
+    localStorage.setItem(
+      LOCAL_STORAGE_SORTABLE_HIDE_KEY,
+      JSON.stringify(itemsHide)
+    );
   }, [itemsHide]); // run this every time itemsHide changes
 
   const handleDragEnd = (event: any) => {
@@ -88,14 +125,58 @@ const SettingcardAwal = () => {
       });
     }
   };
+
+  const handleRefreshItems = () => {
+    const storedItems = readItemsFromStorage();
+    const storedHiddenItems = readItemsHideFromStorage();
+
+    const isSameAsCurrent =
+      items.length === storedItems.length &&
+      items.every((item, index) => item === storedItems[index]);
+
+    const isHiddenSame =
+      itemsHide.length === storedHiddenItems.length &&
+      itemsHide.every((item, index) => item === storedHiddenItems[index]);
+
+    if (isSameAsCurrent && isHiddenSame) {
+      toast.info("Layout already matches saved order", {
+        action: {
+          label: "X",
+          onClick: () => console.log("(#-_?-)"),
+        },
+      });
+      return;
+    }
+
+    if (!isSameAsCurrent) {
+      setItems(storedItems);
+    }
+
+    if (!isHiddenSame) {
+      setItemsHide(storedHiddenItems);
+    }
+
+    toast.info("Layout refreshed from saved preferences", {
+      action: {
+        label: "X",
+        onClick: () => console.log("(#-_?-)"),
+      },
+    });
+  };
   return (
     <>
       {/* Main Feature Card */}
       <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
         <CardHeader>
-          <CardTitle className="text-slate-900 dark:text-white">
-            SiapDipss
+          <CardTitle className="flex justify-between text-slate-900 dark:text-white">
+            <span>SiapDipss</span>
+
+            <Button variant={"secondary"} onClick={handleRefreshItems}>
+              <RefreshCcw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
           </CardTitle>
+
           <CardDescription className="dark:text-slate-400">
             (✿◡‿◡)(*^▽^*)（*＾-＾*）
           </CardDescription>
@@ -124,7 +205,7 @@ const SettingcardAwal = () => {
             </SortableContext>
           </DndContext>
         </CardContent>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-end gap-2">
           <Button variant={"destructive"}>
             {" "}
             <RotateCcw /> Reset
@@ -253,7 +334,7 @@ function SortableItem({
   Nama: string;
   Emot: LucideIcon;
   itemsHide: string[];
-  setItemsHide: (items: string[]) => void;
+  setItemsHide: Dispatch<SetStateAction<string[]>>;
 }) {
   const {
     attributes,

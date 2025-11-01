@@ -4,13 +4,16 @@ import { GripHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import HideButton from "../hideButton";
 
 export default function QrReader({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id: string;
 }) {
   const [result, setResult] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,7 +52,11 @@ export default function QrReader({
   };
 
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700 ">
+    <Card className="relative group w-full dark:bg-gray-800 dark:border-gray-700 ">
+      <HideButton
+        id={id}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

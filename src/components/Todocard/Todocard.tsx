@@ -20,13 +20,16 @@ import { TodoInput } from "./Todocard.input";
 import { Todo } from "./Todocard.type";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Button } from "../ui/button";
+import HideButton from "../hideButton";
 
 export function TodoList({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id?: string;
 }) {
   const [todos, setTodos] = useState<Todo[]>([]);
 
@@ -81,7 +84,11 @@ export function TodoList({
   }, []);
 
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+    <Card className="relative group w-full dark:bg-gray-800 dark:border-gray-700">
+      <HideButton
+        id={id || "TodoList"}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

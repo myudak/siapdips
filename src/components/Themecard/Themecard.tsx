@@ -16,6 +16,7 @@ import { Label } from "../ui/label";
 import { getActiveTab } from "@/lib/utils";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import HideButton from "../hideButton";
 import {
   Tooltip,
   TooltipContent,
@@ -38,9 +39,11 @@ const darkModeAllowedUrls: string[] = [
 const UndipThemeSettings = ({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id?: string;
 }) => {
   // const [openCustomValue, setOpenCustomValue] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
@@ -208,7 +211,11 @@ const UndipThemeSettings = ({
 
   console.log(customColor !== "custom");
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+    <Card className="relative group w-full dark:bg-gray-800 dark:border-gray-700">
+      <HideButton
+        id={id || "Themecard"}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

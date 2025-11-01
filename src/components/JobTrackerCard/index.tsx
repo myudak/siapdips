@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { JobDashboard } from "./JobDashboard";
 import { JobCard } from "./JobCard";
 import JobManual from "./JobManual";
+import HideButton from "../hideButton";
 
 export type Job = {
   title: string;
@@ -33,9 +34,11 @@ export type Job = {
 export default function JobTrackerCard({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id?: string;
 }) {
   const [jobs, setJobs] = useState<Job[]>([]);
 
@@ -67,7 +70,11 @@ export default function JobTrackerCard({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="relative group w-full">
+      <HideButton
+        id={id || "JobTrackerCard"}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

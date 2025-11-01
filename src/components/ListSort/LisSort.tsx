@@ -19,13 +19,16 @@ import { CSS } from "@dnd-kit/utilities";
 
 import { toast } from "sonner";
 import { cardComponents, CardComponentsType } from "./ListSort.card";
+import {
+  LOCAL_STORAGE_SORTABLE_KEY,
+  LOCAL_STORAGE_SORTABLE_HIDE_KEY,
+} from "@/constants/storage";
 
 const initialCards = Object.keys(cardComponents);
-const LOCAL_STORAGE_KEY = "sortableCards";
 
 const LisSort = ({ setIsLocalStatus }: any) => {
   const [items, setItems] = useState<string[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const saved = localStorage.getItem(LOCAL_STORAGE_SORTABLE_KEY);
     if (saved) {
       const savedArray = JSON.parse(saved);
       const isSameArray =
@@ -36,8 +39,8 @@ const LisSort = ({ setIsLocalStatus }: any) => {
     return initialCards;
   });
 
-  const [itemsHide] = useState<string[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY + "Hide");
+  const [itemsHide, setItemsHide] = useState<string[]>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_SORTABLE_HIDE_KEY);
     if (saved) {
       return JSON.parse(saved);
     }
@@ -46,8 +49,21 @@ const LisSort = ({ setIsLocalStatus }: any) => {
 
   const sensors = useSensors(useSensor(MouseSensor));
 
+  // Listen for changes to itemsHide from HideButton
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(items));
+    const handleItemsHideChange = (event: CustomEvent) => {
+      setItemsHide(event.detail.itemsHide);
+    };
+
+    window.addEventListener("itemsHideChanged", handleItemsHideChange as EventListener);
+
+    return () => {
+      window.removeEventListener("itemsHideChanged", handleItemsHideChange as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_SORTABLE_KEY, JSON.stringify(items));
     toast.success("Saved", {
       action: {
         label: "X",
@@ -132,7 +148,12 @@ function SortableItem({
       }`}
       role=""
     >
-      <Component attributes={attributes} listeners={listeners} {...propis} />
+      <Component
+        id={id}
+        attributes={attributes}
+        listeners={listeners}
+        {...propis}
+      />
     </div>
   );
 }

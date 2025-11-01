@@ -15,16 +15,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import HideButton from "../hideButton";
 
 const AutoLearnSocial = ({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id?: string;
 }) => {
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+    <Card className="w-full dark:bg-gray-800 dark:border-gray-700 relative group">
+      <HideButton id={id || "AutoLearnSocial"} classNames="group-hover:flex hidden transition-all duration-300" />
       <Button
         variant="ghost"
         size="icon"

@@ -5,13 +5,16 @@ import { quotes } from "./Quotescard.constant";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Button } from "../ui/button";
+import HideButton from "../hideButton";
 
 const QuoteCard = ({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id?: string;
 }) => {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(
     Math.floor(Math.random() * quotes.length)
@@ -26,7 +29,11 @@ const QuoteCard = ({
   };
 
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700 ">
+    <Card className="relative group w-full dark:bg-gray-800 dark:border-gray-700 ">
+      <HideButton
+        id={id || "QuoteCard"}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

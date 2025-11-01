@@ -12,12 +12,15 @@ import {
 } from "../ui/tooltip";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
+import HideButton from "../hideButton";
 export default function MoodleCard({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id: string;
 }) {
   const [stateGoogleSoal, setStateGoogleSoal] = useState(true);
   const [stateCopySoal, setStateCopySoal] = useState(true);
@@ -52,7 +55,11 @@ export default function MoodleCard({
   }, []);
 
   return (
-    <Card className="w-full dark:bg-gray-800 dark:border-gray-700 ">
+    <Card className="relative group w-full dark:bg-gray-800 dark:border-gray-700 ">
+      <HideButton
+        id={id}
+        classNames="group-hover:flex hidden transition-all duration-300"
+      />
       <Button
         variant="ghost"
         size="icon"

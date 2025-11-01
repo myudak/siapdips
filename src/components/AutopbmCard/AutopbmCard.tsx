@@ -17,13 +17,16 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useEffect, useState } from "react";
+import HideButton from "../hideButton";
 
 const AutopbmCard = ({
   listeners,
   attributes,
+  id,
 }: {
   listeners?: DraggableAttributes;
   attributes?: SyntheticListenerMap;
+  id?: string;
 }) => {
   const [settingsPBM, setSettingsPBM] = useState(defaultSettingsPBM);
 
@@ -51,7 +54,8 @@ const AutopbmCard = ({
 
   return (
     <>
-      <Card className="w-full dark:bg-gray-800 dark:border-gray-700">
+      <Card className="w-full dark:bg-gray-800 dark:border-gray-700 relative group">
+        <HideButton id={id || "AutopbmCard"} classNames="group-hover:flex hidden transition-all duration-300" />
         <Button
           variant="ghost"
           size="icon"

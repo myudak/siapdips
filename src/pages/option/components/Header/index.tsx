@@ -2,9 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Icons } from "../Navbar/Navbar.logo";
-
-const VERSION = "1.4.0";
-const LAST_UPDATE = "June 15, 2025";
+import { VERSION, LAST_UPDATE } from "@/constants/storage";
 
 const HeaderSection = () => {
   return (
