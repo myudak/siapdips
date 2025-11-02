@@ -1,0 +1,69 @@
+================================================================================
+JUSTIFIKASI IZIN - CHROME WEB STORE
+Siap Dips: Your Campus Companion v1.4.2
+================================================================================
+
+Copy-paste teks di bawah ke form "Praktik Privasi" Chrome Web Store
+
+================================================================================
+IZIN: alarms
+================================================================================
+
+Digunakan untuk fitur tab suspender yang menghemat memori browser. Ekstensi
+membuat alarm berkala setiap 1 menit untuk memeriksa tab mana yang sudah tidak
+aktif dan perlu ditangguhkan. Ini membantu mahasiswa yang membuka banyak tab
+untuk kuliah online agar browser tidak boros RAM. Tidak ada data pribadi yang
+dikumpulkan dari izin ini.
+
+
+================================================================================
+IZIN: contextMenus
+================================================================================
+
+Digunakan untuk menambahkan menu pintasan di klik-kanan browser, yaitu opsi
+"Suspend this tab" untuk menunda tab secara manual dan "Close all suspended
+tabs" untuk menutup semua tab yang ditangguhkan. Ini memberikan kemudahan
+akses tanpa harus membuka popup ekstensi. Tidak ada data pribadi yang
+dikumpulkan dari izin ini.
+
+
+================================================================================
+IZIN: tabs
+================================================================================
+
+Izin ini diperlukan untuk berbagai fitur inti ekstensi:
+
+1. Tab Suspender: Menghemat memori dengan menangguhkan tab yang tidak aktif.
+Ekstensi memeriksa status tab dan melindungi data dengan mendeteksi form yang
+belum disimpan.
+
+2. Portal Kampus Enhancement: Menyuntikkan dark mode, tema kustom, dan UI
+improvements ke portal SIAP Undip dan sistem pembelajaran kampus.
+
+3. Otomasi Form: Auto-fill evaluasi dosen (PBM) dan form pendaftaran food truck
+untuk menghemat waktu mahasiswa.
+
+4. Privasi: Blur informasi sensitif (nama, NIM, nilai) saat sharing screen.
+
+5. Parsing Data: Membaca jadwal kuliah dari halaman SIAP untuk ditampilkan
+dalam ekstensi.
+
+PENTING: Ekstensi HANYA mengakses konten halaman pada domain kampus yang
+diizinkan (siap.undip.ac.id, learn-social.undip.ac.id, dll). Semua data
+disimpan lokal, tidak ada data yang dikirim ke server eksternal, dan tidak ada
+tracking browsing history.
+
+
+================================================================================
+CATATAN PENTING
+================================================================================
+
+Permission webRequest dan webRequestBlocking SUDAH DIHAPUS dari manifest.
+Manifest sudah diperbaiki dan siap untuk submission.
+
+Files yang sudah dibuat:
+- EXTENSION_DOCUMENTATION.md (dokumentasi teknis lengkap dalam bahasa Inggris)
+- PERMISSION_JUSTIFICATIONS_ID.md (justifikasi detail dalam bahasa Indonesia)
+- CHROME_STORE_SUBMISSION.md (panduan lengkap submisi ke Chrome Web Store)
+
+================================================================================
