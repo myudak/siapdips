@@ -911,7 +911,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
           console.log("Will create:", toCreate);
           console.log("Will update:", toUpdate);
-          console.log("Stale tasks (present in Todoist but not on page):", stale);
+          console.log(
+            "Stale tasks (present in Todoist but not on page):",
+            stale
+          );
 
           if (DRY_RUN) {
             console.log("DRY_RUN = true → No changes sent to Todoist.");
