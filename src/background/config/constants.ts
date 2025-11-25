@@ -12,13 +12,6 @@ export const DARK_MODE_ALLOWED_URLS: string[] = [
 
 export const CHECK_INTERVAL_MINUTES = 1;
 
-export const TODOIST_CONFIG = {
-  API_TOKEN: "65a1af939df760a34a44583eabcec3fea6050384",
-  PROJECT_ID: "2360600488",
-  API_BASE: "https://api.todoist.com/rest/v2",
-  DRY_RUN: false,
-};
-
 export const DEFAULT_SETTINGS_PBM = {
   1: "Ada",
   2: "Ada",

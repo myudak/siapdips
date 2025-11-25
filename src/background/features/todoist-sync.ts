@@ -2,17 +2,47 @@
  * Todoist synchronization functionality for Kulon2 assignments
  */
 
-export function initTodoistSync(tabId: number): void {
+const STORAGE_KEY_API_TOKEN = "todoistApiToken";
+const STORAGE_KEY_PROJECT_ID = "todoistProjectId";
+
+export async function initTodoistSync(tabId: number): Promise<void> {
+  // Fetch configuration from storage
+  const config = await chrome.storage.local.get([
+    STORAGE_KEY_API_TOKEN,
+    STORAGE_KEY_PROJECT_ID,
+  ]);
+
+  const apiToken = config[STORAGE_KEY_API_TOKEN];
+  const projectId = config[STORAGE_KEY_PROJECT_ID];
+
+  // Check if configuration is complete
+  if (!apiToken || !projectId) {
+    console.warn(
+      "Todoist sync skipped: API token or project ID not configured"
+    );
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        console.warn(
+          "⚠️ Todoist sync is not configured. Please set your API token and project ID in the extension settings."
+        );
+      },
+    });
+    return;
+  }
+
+  // Execute the sync script with the configuration
   chrome.scripting.executeScript({
     target: { tabId },
     func: syncJadwalToTodoist,
+    args: [apiToken, projectId],
   });
 }
 
-function syncJadwalToTodoist() {
-  // Configuration constants (inline to avoid import issues in injected context)
-  const TODOIST_API_TOKEN = "65a1af939df760a34a44583eabcec3fea6050384";
-  const TODOIST_PROJECT_ID = "2360600488";
+function syncJadwalToTodoist(apiToken: string, projectId: string) {
+  // Configuration from parameters
+  const TODOIST_API_TOKEN = apiToken;
+  const TODOIST_PROJECT_ID = projectId;
   const TODOIST_API_BASE = "https://api.todoist.com/rest/v2";
   const DRY_RUN = false;
 
