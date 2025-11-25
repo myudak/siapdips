@@ -18,7 +18,8 @@
   },
   "host_permissions": [
     "*://*.undip.ac.id/*",
-    "https://undip.learnsocial.online/*"
+    "https://undip.learnsocial.online/*",
+    "https://api.todoist.com/*"
   ],
   "action": {
     "default_title": "SiAP DiPS",
