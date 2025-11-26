@@ -4,16 +4,19 @@
 
 const STORAGE_KEY_API_TOKEN = "todoistApiToken";
 const STORAGE_KEY_PROJECT_ID = "todoistProjectId";
+const STORAGE_KEY_IGNORE_OVERDUE = "todoistIgnoreOverdue";
 
 export async function initTodoistSync(tabId: number): Promise<void> {
   // Fetch configuration from storage
   const config = await chrome.storage.local.get([
     STORAGE_KEY_API_TOKEN,
     STORAGE_KEY_PROJECT_ID,
+    STORAGE_KEY_IGNORE_OVERDUE,
   ]);
 
   const apiToken = config[STORAGE_KEY_API_TOKEN];
   const projectId = config[STORAGE_KEY_PROJECT_ID];
+  const ignoreOverdue = config[STORAGE_KEY_IGNORE_OVERDUE] || false;
 
   // Check if configuration is complete
   if (!apiToken || !projectId) {
@@ -35,14 +38,15 @@ export async function initTodoistSync(tabId: number): Promise<void> {
   chrome.scripting.executeScript({
     target: { tabId },
     func: syncJadwalToTodoist,
-    args: [apiToken, projectId],
+    args: [apiToken, projectId, ignoreOverdue],
   });
 }
 
-function syncJadwalToTodoist(apiToken: string, projectId: string) {
+function syncJadwalToTodoist(apiToken: string, projectId: string, ignoreOverdue: boolean) {
   // Configuration from parameters
   const TODOIST_API_TOKEN = apiToken;
   const TODOIST_PROJECT_ID = projectId;
+  const IGNORE_OVERDUE = ignoreOverdue;
   const TODOIST_API_BASE = "https://api.todoist.com/rest/v2";
   const DRY_RUN = false;
 
@@ -384,11 +388,30 @@ function syncJadwalToTodoist(apiToken: string, projectId: string) {
 
       await waitForElement('[data-region="event-list-item"]');
 
-      const scraped = parseAssignmentsFromPage();
+      let scraped = parseAssignmentsFromPage();
       if (!scraped.length) {
         console.warn("No assignments scraped, aborting.");
         showResultToast("Siap DIps ~~> Nothing to sync", true);
         return;
+      }
+
+      // Filter out overdue tasks if setting is enabled
+      if (IGNORE_OVERDUE) {
+        const now = new Date();
+        const originalCount = scraped.length;
+        scraped = scraped.filter((assignment) => {
+          const dueDate = new Date(assignment.dueIso);
+          return dueDate >= now;
+        });
+        const filteredCount = originalCount - scraped.length;
+        if (filteredCount > 0) {
+          console.log(`⏭️ Filtered out ${filteredCount} overdue assignment(s)`);
+        }
+        if (!scraped.length) {
+          console.warn("All assignments are overdue, nothing to sync.");
+          showResultToast("Siap DIps ~~> All tasks overdue (ignored)", true);
+          return;
+        }
       }
 
       const todoistTasks = await fetchTodoistTasksForProject();

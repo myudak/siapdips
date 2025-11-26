@@ -10,11 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2, RefreshCw } from "lucide-react";
 
 const STORAGE_KEY_API_TOKEN = "todoistApiToken";
 const STORAGE_KEY_PROJECT_ID = "todoistProjectId";
+const STORAGE_KEY_IGNORE_OVERDUE = "todoistIgnoreOverdue";
 const TODOIST_API_BASE = "https://api.todoist.com/rest/v2";
 
 interface TodoistProject {
@@ -31,17 +33,21 @@ const TodoistSettings = () => {
   const [projects, setProjects] = useState<TodoistProject[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFetchingProjects, setIsFetchingProjects] = useState<boolean>(false);
+  const [ignoreOverdue, setIgnoreOverdue] = useState<boolean>(false);
 
   // Load saved settings on mount
   useEffect(() => {
     chrome.storage.local.get(
-      [STORAGE_KEY_API_TOKEN, STORAGE_KEY_PROJECT_ID],
-      (result: { [key: string]: string }) => {
+      [STORAGE_KEY_API_TOKEN, STORAGE_KEY_PROJECT_ID, STORAGE_KEY_IGNORE_OVERDUE],
+      (result: { [key: string]: string | boolean }) => {
         if (result[STORAGE_KEY_API_TOKEN]) {
-          setApiToken(result[STORAGE_KEY_API_TOKEN]);
+          setApiToken(result[STORAGE_KEY_API_TOKEN] as string);
         }
         if (result[STORAGE_KEY_PROJECT_ID]) {
-          setProjectId(result[STORAGE_KEY_PROJECT_ID]);
+          setProjectId(result[STORAGE_KEY_PROJECT_ID] as string);
+        }
+        if (result[STORAGE_KEY_IGNORE_OVERDUE] !== undefined) {
+          setIgnoreOverdue(result[STORAGE_KEY_IGNORE_OVERDUE] as boolean);
         }
       }
     );
@@ -119,13 +125,21 @@ const TodoistSettings = () => {
     });
   };
 
+  const handleIgnoreOverdueChange = (checked: boolean) => {
+    setIgnoreOverdue(checked);
+    chrome.storage.local.set({ [STORAGE_KEY_IGNORE_OVERDUE]: checked }, () => {
+      toast.success(checked ? "Overdue tasks will be ignored" : "Overdue tasks will be synced");
+    });
+  };
+
   const handleClearSettings = () => {
     chrome.storage.local.remove(
-      [STORAGE_KEY_API_TOKEN, STORAGE_KEY_PROJECT_ID],
+      [STORAGE_KEY_API_TOKEN, STORAGE_KEY_PROJECT_ID, STORAGE_KEY_IGNORE_OVERDUE],
       () => {
         setApiToken("");
         setProjectId("");
         setProjects([]);
+        setIgnoreOverdue(false);
         toast.success("Settings cleared");
       }
     );
@@ -219,6 +233,23 @@ const TodoistSettings = () => {
             </Select>
           </div>
         )}
+
+        {/* Ignore Overdue Tasks */}
+        <div className="flex items-center justify-between space-x-2 pt-2">
+          <div className="space-y-0.5">
+            <Label htmlFor="ignore-overdue" className="text-base">
+              Ignore Overdue Tasks
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              Skip syncing assignments that are past their due date
+            </p>
+          </div>
+          <Switch
+            id="ignore-overdue"
+            checked={ignoreOverdue}
+            onCheckedChange={handleIgnoreOverdueChange}
+          />
+        </div>
 
         {/* Clear Settings */}
         <div className="pt-4 border-t">
