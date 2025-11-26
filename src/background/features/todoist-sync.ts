@@ -218,10 +218,26 @@ function syncJadwalToTodoist(apiToken: string, projectId: string) {
     };
   }
 
+  function formatFullDate(isoString: string): string {
+    const date = new Date(isoString);
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
+  }
+
   function buildDesiredTodoistTask(
     scraped: ScrapedAssignment
   ): DesiredTodoistTask {
     const descriptionLines = [`sourceId=${scraped.sourceId}`];
+
+    // Add formatted full date
+    const fullDate = formatFullDate(scraped.dueIso);
+    descriptionLines.push(`📅 ${fullDate}`);
+
     if (scraped.course) descriptionLines.push(scraped.course);
     if (scraped.url) descriptionLines.push(scraped.url);
 
