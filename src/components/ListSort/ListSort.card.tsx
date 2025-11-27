@@ -23,12 +23,14 @@ import {
   LucideSchool2,
   SquareSplitHorizontal,
   BriefcaseBusinessIcon,
+  ListChecks,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
 import MoodleCard from "../MoodleCard";
 import SuspenderCard from "../SuspenderCard";
 import JobTrackerCard from "../JobTrackerCard";
+import TodoistSyncCard from "../TodoistSyncCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -45,6 +47,7 @@ export const cardComponents = {
   MoodleCard,
   SuspenderCard,
   JobTrackerCard,
+  TodoistSyncCard,
 } as const;
 
 export const cardComponentsOption: {
@@ -64,6 +67,7 @@ export const cardComponentsOption: {
   QrReader: ["QR Code Reader", QrCodeIcon],
   MoodleCard: ["Moodle Helper Settings", LucideSchool2],
   JobTrackerCard: ["Job Tracker", BriefcaseBusinessIcon],
+  TodoistSyncCard: ["Todoist Sync", ListChecks],
 };
 
 export type CardComponentsType = typeof cardComponents;
