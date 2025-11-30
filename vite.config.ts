@@ -41,6 +41,19 @@ export default defineConfig(({ mode }) => {
       })
     );
     console.log("Using Firefox manifest.json");
+  } else if (mode == "edge") {
+    PLUGINS.push(
+      viteStaticCopy({
+        targets: [
+          {
+            src: "src/manifest-edge.json",
+            dest: ".",
+            rename: "manifest.json",
+          },
+        ],
+      })
+    );
+    console.log("Using Edge manifest.json");
   } else {
     console.log("Using Chrome manifest.json");
     if (mode !== "chrome")
@@ -80,6 +93,10 @@ export default defineConfig(({ mode }) => {
           job: path.resolve(__dirname, "src/pages/job/job.html"),
           content: path.resolve(__dirname, "src/content.js"),
           contentFt: path.resolve(__dirname, "src/content-ft.js"),
+          contentOracleAcademy: path.resolve(
+            __dirname,
+            "src/content-oracleAcademy.ts"
+          ),
           background: path.resolve(__dirname, "src/background.ts"),
           "content-moodle": path.resolve(__dirname, "src/content-moodle.ts"),
           "content-form-watcher": path.resolve(
@@ -98,6 +115,8 @@ export default defineConfig(({ mode }) => {
             if (chunkInfo.name === "content") return "content.js";
             if (chunkInfo.name === "background") return "background.js";
             if (chunkInfo.name === "contentFt") return "content-ft.js";
+            if (chunkInfo.name === "contentOracleAcademy")
+              return "content-oracleAcademy.js";
             if (chunkInfo.name === "content-moodle") return "content-moodle.js";
             if (chunkInfo.name === "content-form-watcher")
               return "content-form-watcher.js";

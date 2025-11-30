@@ -8,6 +8,7 @@ import NavCardSetting from "./Settingcard.navcard";
 import KanbanBoard from "./TodoBoard";
 import SettingMoodle from "./Settingcard.moodle";
 import SettingJadwal from "./Settingcard.jadwal";
+import TodoistSettings from "./Settingcard.todoist";
 
 const SettingsSection = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
@@ -81,6 +82,15 @@ const SettingsSection = () => {
           Setting jadwal
         </h1>
         <SettingJadwal />
+      </>
+      <>
+        <h1
+          id="todoistSettings"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
+        >
+          ✅ Todoist Integration
+        </h1>
+        <TodoistSettings />
       </>
       <>
         <h1

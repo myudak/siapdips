@@ -23,12 +23,16 @@ import {
   LucideSchool2,
   SquareSplitHorizontal,
   BriefcaseBusinessIcon,
+  ListChecks,
+  GraduationCap,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
 import MoodleCard from "../MoodleCard";
 import SuspenderCard from "../SuspenderCard";
 import JobTrackerCard from "../JobTrackerCard";
+import TodoistSyncCard from "../TodoistSyncCard";
+import OracleAcademyCard from "../OracleAcademyCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -45,13 +49,15 @@ export const cardComponents = {
   MoodleCard,
   SuspenderCard,
   JobTrackerCard,
+  TodoistSyncCard,
+  OracleAcademyCard,
 } as const;
 
 export const cardComponentsOption: {
   [key: string]: [string, LucideIcon];
 } = {
-  SuspenderCard: ["Suspend Card", SquareSplitHorizontal],
   NavigationCard: ["Navigation Card", Navigation],
+  OracleAcademyCard: ["Oracle Academy Helper", GraduationCap],
   JadwalCard: ["Jadwal Card", ScanHeart],
   Ipkstatus: ["IPK Status", BarChart],
   Themecard: ["Theme Card", Palette],
@@ -64,6 +70,9 @@ export const cardComponentsOption: {
   QrReader: ["QR Code Reader", QrCodeIcon],
   MoodleCard: ["Moodle Helper Settings", LucideSchool2],
   JobTrackerCard: ["Job Tracker", BriefcaseBusinessIcon],
+  TodoistSyncCard: ["Todoist Sync", ListChecks],
+
+  SuspenderCard: ["Suspend Card", SquareSplitHorizontal],
 };
 
 export type CardComponentsType = typeof cardComponents;
