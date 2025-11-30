@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:firefox": "vite build --mode firefox",
     "build:chrome": "vite build --mode chrome",
+    "build:edge": "vite build --mode edge",
     "build:content": "vite build --config vite.content.config.ts",
     "build:absen": "vite build --config vite.absen.config.ts",
     "build:job": "vite build --config vite.content-job.config.ts",

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Siap Dips",
-  "version": "1.4.2",
+  "version": "1.4.5",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": [
     "activeTab",
@@ -38,6 +38,11 @@
     {
       "matches": ["https://undip.learnsocial.online/*"],
       "js": ["libs/toastify.js", "./content-undiplearn.js"],
+      "css": ["libs/toastify.css"]
+    },
+    {
+      "matches": ["https://academy.oracle.com/pls/*"],
+      "js": ["libs/toastify.js", "./content-oracleAcademy.js"],
       "css": ["libs/toastify.css"]
     },
     {
