@@ -30,14 +30,12 @@ function normalizeText(txt: string | null | undefined): string {
   );
 }
 
-function getQuestionElement():
-  | HTMLParagraphElement
-  | HTMLElement
-  | null {
+function getQuestionElement(): HTMLParagraphElement | HTMLElement | null {
   return (
     document.querySelector<HTMLParagraphElement>(
       "#question-Text .t-ContentBlock-body p"
-    ) || document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body")
+    ) ||
+    document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body")
   );
 }
 
@@ -48,7 +46,7 @@ function getQuestionText(): string | null {
   return text || null;
 }
 
-/** 
+/**
  * Try to find an answer in ORACLE_QA_BANK using:
  * 1) exact match
  * 2) "includes" match on keys
@@ -84,7 +82,10 @@ function findAnswerForQuestion(questionRaw: string): string | null {
   const leadingQuestion = questionNorm.slice(0, 160);
   for (const { keyNorm, val } of entries) {
     const leadingKey = keyNorm.slice(0, 160);
-    if (leadingQuestion.startsWith(leadingKey) || leadingKey.startsWith(leadingQuestion)) {
+    if (
+      leadingQuestion.startsWith(leadingKey) ||
+      leadingKey.startsWith(leadingQuestion)
+    ) {
       return val;
     }
   }
@@ -188,7 +189,11 @@ async function loadCustomQa(): Promise<void> {
   }
 }
 
-async function saveCustomQaPair(question: string, answer: string): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function saveCustomQaPair(
+  question: string,
+  answer: string
+): Promise<void> {
   const qNorm = normalizeText(question);
   if (!qNorm || !answer.trim()) {
     showToast("Question/answer cannot be empty.", "error");
@@ -378,7 +383,10 @@ function answerCurrentQuestion(): boolean {
   const answerText = findAnswerForQuestion(questionRaw);
   if (!answerText) {
     const preview = normalizeText(questionRaw).slice(0, 160);
-    console.warn("[Oracle Academy] No matching answer in QA bank. Question:", preview);
+    console.warn(
+      "[Oracle Academy] No matching answer in QA bank. Question:",
+      preview
+    );
     showToast("No matching answer in QA bank.", "error");
     return false;
   }
@@ -399,7 +407,8 @@ function answerCurrentQuestion(): boolean {
 
   const choiceNorms = choiceButtons.map((btn) =>
     normalizeText(
-      (btn.querySelector(".choice-Text")?.textContent ||
+      (
+        btn.querySelector(".choice-Text")?.textContent ||
         btn.getAttribute("aria-label") ||
         ""
       ).trim()
@@ -427,7 +436,8 @@ function answerCurrentQuestion(): boolean {
     const multiMatch =
       effectiveExpected.length > 0
         ? effectiveExpected.some(
-            (exp) => exp === btnNorm || exp.includes(btnNorm) || btnNorm.includes(exp)
+            (exp) =>
+              exp === btnNorm || exp.includes(btnNorm) || btnNorm.includes(exp)
           )
         : false;
     const singleMatch =
@@ -456,10 +466,14 @@ function answerCurrentQuestion(): boolean {
   }
 
   if (!clicked) {
-    console.warn("[Oracle Academy] Could not match the answer text:", answerText);
+    console.warn(
+      "[Oracle Academy] Could not match the answer text:",
+      answerText
+    );
     const available = choiceButtons.map((btn) =>
       normalizeText(
-        (btn.querySelector(".choice-Text")?.textContent ||
+        (
+          btn.querySelector(".choice-Text")?.textContent ||
           btn.getAttribute("aria-label") ||
           ""
         ).trim()
@@ -470,10 +484,7 @@ function answerCurrentQuestion(): boolean {
     return false;
   }
 
-  if (
-    effectiveExpected.length > 0 &&
-    matchedCount < effectiveExpected.length
-  ) {
+  if (effectiveExpected.length > 0 && matchedCount < effectiveExpected.length) {
     showToast(
       `Selected ${matchedCount}/${effectiveExpected.length} expected choices.`,
       "error"
@@ -553,7 +564,8 @@ function createHelper(): void {
     fontWeight: "600",
     cursor: "pointer",
     fontSize: "13px",
-    transition: "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
+    transition:
+      "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
     marginBottom: "8px",
   });
   copyBtn.addEventListener("mouseenter", () => {
@@ -583,7 +595,8 @@ function createHelper(): void {
     fontWeight: "600",
     cursor: "pointer",
     fontSize: "13px",
-    transition: "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
+    transition:
+      "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
   });
   copyQaBtn.addEventListener("mouseenter", () => {
     copyQaBtn.style.boxShadow = "0 8px 16px rgba(0,0,0,0.08)";
