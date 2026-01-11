@@ -81,11 +81,13 @@ function handleTabUpdate(
 
   // PBM AUTOMATION
   if (
-    changeInfo.status === "loading" &&
+    changeInfo.status === "complete" &&
     tab.url.includes(
       "https://siap.undip.ac.id/evaluasi_perkuliahan/mhs/evaluasi"
     )
   ) {
+    // anjing
+    console.log("ANJING");
     initPBMAutomation(tabId);
   }
 
