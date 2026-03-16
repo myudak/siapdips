@@ -7,7 +7,92 @@ interface ChatMessage {
   parts: [{ text: string }];
 }
 
+interface CliProxyMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+interface MoodleQuestionOption {
+  key: string;
+  text: string;
+  index: number;
+}
+
+interface MoodleQuestionPayload {
+  questionLabel: string;
+  questionText: string;
+  options: MoodleQuestionOption[];
+  questionType: "multiple_choice_single" | "unknown";
+}
+
+interface ToolAnswerResult {
+  answer_letter: string;
+  answer_text?: string;
+  confidence?: number;
+  reasoning_brief?: string;
+}
+
+type MoodleAiProvider = "cliproxy" | "gemini" | "openai_compatible";
+
+interface MoodleAiConfig {
+  provider: MoodleAiProvider;
+  cliProxyApiUrl: string;
+  cliProxyModel: string;
+  cliProxyTimeoutMs: number;
+  geminiApiKey: string;
+  geminiModel: string;
+  openAiCompatApiUrl: string;
+  openAiCompatApiKey: string;
+  openAiCompatModel: string;
+  temperature: number;
+  maxTokens: number;
+  systemPromptOverride: string;
+}
+
+interface CliProxyResponse {
+  choices?: Array<{
+    message?: {
+      content?: string;
+      tool_calls?: Array<{
+        function?: {
+          name?: string;
+          arguments?: string;
+        };
+      }>;
+    };
+  }>;
+}
+
 const chatHistory: ChatMessage[] = [];
+const STORAGE_KEY_MOODLE_AI_PROVIDER = "moodleAiProvider";
+const STORAGE_KEY_MOODLE_CLIPROXY_API_URL = "moodleCliProxyApiUrl";
+const STORAGE_KEY_MOODLE_CLIPROXY_MODEL = "moodleCliProxyModel";
+const STORAGE_KEY_MOODLE_CLIPROXY_TIMEOUT_MS = "moodleCliProxyTimeoutMs";
+const STORAGE_KEY_MOODLE_GEMINI_API_KEY = "moodleGeminiApiKey";
+const STORAGE_KEY_MOODLE_GEMINI_MODEL = "moodleGeminiModel";
+const STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_URL = "moodleOpenAiCompatApiUrl";
+const STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_KEY = "moodleOpenAiCompatApiKey";
+const STORAGE_KEY_MOODLE_OPENAI_COMPAT_MODEL = "moodleOpenAiCompatModel";
+const STORAGE_KEY_MOODLE_AI_TEMPERATURE = "moodleAiTemperature";
+const STORAGE_KEY_MOODLE_AI_MAX_TOKENS = "moodleAiMaxTokens";
+const STORAGE_KEY_MOODLE_AI_SYSTEM_PROMPT_OVERRIDE =
+  "moodleAiSystemPromptOverride";
+const LEGACY_STORAGE_KEY_GEMINI_API_KEY = "geminiApiKey";
+
+const DEFAULT_MOODLE_AI_PROVIDER: MoodleAiProvider = "cliproxy";
+const DEFAULT_CLI_PROXY_API_URL = "http://localhost:8317/v1/chat/completions";
+const DEFAULT_CLI_PROXY_MODEL = "gpt-5.3-codex";
+const DEFAULT_CLI_PROXY_TIMEOUT_MS = 30000;
+const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
+const DEFAULT_OPENAI_COMPAT_API_URL = "https://api.openai.com/v1/chat/completions";
+const DEFAULT_OPENAI_COMPAT_MODEL = "gpt-4o-mini";
+const DEFAULT_AI_TEMPERATURE = 0.2;
+const DEFAULT_AI_MAX_TOKENS = 1024;
+const NEXT_SHORTCUT_KEY = "n";
+const NEXT_SHORTCUT_LABEL = "Alt+N";
+const NEXT_SHORTCUT_BOUND_KEY = "__siapDipsMoodleNextShortcutBound";
+const GEMINI_API_URL_BASE =
+  "https://generativelanguage.googleapis.com/v1beta/models";
 
 // Global reference to marked library
 declare global {
@@ -34,9 +119,166 @@ function loadMarkedLibrary(): Promise<void> {
   });
 }
 
+function normalizeTimeout(value: unknown): number {
+  const parsed =
+    typeof value === "number"
+      ? value
+      : typeof value === "string"
+      ? Number.parseInt(value, 10)
+      : Number.NaN;
+
+  if (Number.isNaN(parsed)) return DEFAULT_CLI_PROXY_TIMEOUT_MS;
+  return Math.min(Math.max(parsed, 1000), 120000);
+}
+
+function normalizeTemperature(value: unknown): number {
+  const parsed =
+    typeof value === "number"
+      ? value
+      : typeof value === "string"
+      ? Number.parseFloat(value)
+      : Number.NaN;
+
+  if (Number.isNaN(parsed)) return DEFAULT_AI_TEMPERATURE;
+  return Math.min(Math.max(parsed, 0), 2);
+}
+
+function normalizeMaxTokens(value: unknown): number {
+  const parsed =
+    typeof value === "number"
+      ? value
+      : typeof value === "string"
+      ? Number.parseInt(value, 10)
+      : Number.NaN;
+
+  if (Number.isNaN(parsed)) return DEFAULT_AI_MAX_TOKENS;
+  return Math.min(Math.max(parsed, 1), 32768);
+}
+
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tagName = target.tagName.toLowerCase();
+  return (
+    tagName === "input" ||
+    tagName === "textarea" ||
+    target.isContentEditable
+  );
+}
+
+function getMoodleAiConfig(): Promise<MoodleAiConfig> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(
+      [
+        STORAGE_KEY_MOODLE_AI_PROVIDER,
+        STORAGE_KEY_MOODLE_CLIPROXY_API_URL,
+        STORAGE_KEY_MOODLE_CLIPROXY_MODEL,
+        STORAGE_KEY_MOODLE_CLIPROXY_TIMEOUT_MS,
+        STORAGE_KEY_MOODLE_GEMINI_API_KEY,
+        STORAGE_KEY_MOODLE_GEMINI_MODEL,
+        STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_URL,
+        STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_KEY,
+        STORAGE_KEY_MOODLE_OPENAI_COMPAT_MODEL,
+        STORAGE_KEY_MOODLE_AI_TEMPERATURE,
+        STORAGE_KEY_MOODLE_AI_MAX_TOKENS,
+        STORAGE_KEY_MOODLE_AI_SYSTEM_PROMPT_OVERRIDE,
+        LEGACY_STORAGE_KEY_GEMINI_API_KEY,
+      ],
+      (result) => {
+        const providerRaw = result[STORAGE_KEY_MOODLE_AI_PROVIDER];
+        const provider: MoodleAiProvider =
+          providerRaw === "gemini" || providerRaw === "openai_compatible"
+            ? providerRaw
+            : DEFAULT_MOODLE_AI_PROVIDER;
+
+        const cliProxyApiUrl =
+          typeof result[STORAGE_KEY_MOODLE_CLIPROXY_API_URL] === "string" &&
+          result[STORAGE_KEY_MOODLE_CLIPROXY_API_URL].trim()
+            ? result[STORAGE_KEY_MOODLE_CLIPROXY_API_URL].trim()
+            : DEFAULT_CLI_PROXY_API_URL;
+
+        const cliProxyModel =
+          typeof result[STORAGE_KEY_MOODLE_CLIPROXY_MODEL] === "string" &&
+          result[STORAGE_KEY_MOODLE_CLIPROXY_MODEL].trim()
+            ? result[STORAGE_KEY_MOODLE_CLIPROXY_MODEL].trim()
+            : DEFAULT_CLI_PROXY_MODEL;
+
+        const cliProxyTimeoutMs = normalizeTimeout(
+          result[STORAGE_KEY_MOODLE_CLIPROXY_TIMEOUT_MS]
+        );
+
+        const moodleGeminiApiKey =
+          typeof result[STORAGE_KEY_MOODLE_GEMINI_API_KEY] === "string"
+            ? result[STORAGE_KEY_MOODLE_GEMINI_API_KEY].trim()
+            : "";
+        const legacyGeminiApiKey =
+          typeof result[LEGACY_STORAGE_KEY_GEMINI_API_KEY] === "string"
+            ? result[LEGACY_STORAGE_KEY_GEMINI_API_KEY].trim()
+            : "";
+
+        const geminiApiKey = moodleGeminiApiKey || legacyGeminiApiKey || "";
+        const geminiModel =
+          typeof result[STORAGE_KEY_MOODLE_GEMINI_MODEL] === "string" &&
+          result[STORAGE_KEY_MOODLE_GEMINI_MODEL].trim()
+            ? result[STORAGE_KEY_MOODLE_GEMINI_MODEL].trim()
+            : DEFAULT_GEMINI_MODEL;
+
+        const openAiCompatApiUrl =
+          typeof result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_URL] ===
+            "string" && result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_URL].trim()
+            ? result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_URL].trim()
+            : DEFAULT_OPENAI_COMPAT_API_URL;
+
+        const openAiCompatApiKey =
+          typeof result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_KEY] === "string"
+            ? result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_API_KEY].trim()
+            : "";
+
+        const openAiCompatModel =
+          typeof result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_MODEL] === "string" &&
+          result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_MODEL].trim()
+            ? result[STORAGE_KEY_MOODLE_OPENAI_COMPAT_MODEL].trim()
+            : DEFAULT_OPENAI_COMPAT_MODEL;
+
+        const temperature = normalizeTemperature(
+          result[STORAGE_KEY_MOODLE_AI_TEMPERATURE]
+        );
+        const maxTokens = normalizeMaxTokens(
+          result[STORAGE_KEY_MOODLE_AI_MAX_TOKENS]
+        );
+        const systemPromptOverride =
+          typeof result[STORAGE_KEY_MOODLE_AI_SYSTEM_PROMPT_OVERRIDE] ===
+          "string"
+            ? result[STORAGE_KEY_MOODLE_AI_SYSTEM_PROMPT_OVERRIDE].trim()
+            : "";
+
+        if (!moodleGeminiApiKey && legacyGeminiApiKey) {
+          chrome.storage.local.set({
+            [STORAGE_KEY_MOODLE_GEMINI_API_KEY]: legacyGeminiApiKey,
+          });
+        }
+
+        resolve({
+          provider,
+          cliProxyApiUrl,
+          cliProxyModel,
+          cliProxyTimeoutMs,
+          geminiApiKey,
+          geminiModel,
+          openAiCompatApiUrl,
+          openAiCompatApiKey,
+          openAiCompatModel,
+          temperature,
+          maxTokens,
+          systemPromptOverride,
+        });
+      }
+    );
+  });
+}
+
 // Function to process external questions from content script
 async function processExternalQuestion(
-  question: string,
+  question: MoodleQuestionPayload,
   questionId: string,
   responseEventName: string,
   messagesContainer: HTMLElement
@@ -49,15 +291,12 @@ async function processExternalQuestion(
   );
 
   // Add user message to UI (the question)
-  const userMessageElement = createMessageElement(question, "user");
+  const userMessageElement = createMessageElement(
+    formatQuestionPayloadForDisplay(question),
+    "user"
+  );
   messagesContainer.appendChild(userMessageElement);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-  // Add user message to history
-  chatHistory.push({
-    role: "user",
-    parts: [{ text: question }],
-  });
 
   // Show loading indicator
   const loadingElement = createLoadingElement();
@@ -65,22 +304,18 @@ async function processExternalQuestion(
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
   try {
-    // Get AI response
-    const response = await chatWithGemini(chatHistory);
+    const structuredAnswer = await answerMoodleQuestion(question);
 
     // Remove loading indicator
     messagesContainer.removeChild(loadingElement);
 
-    if (response) {
+    if (structuredAnswer) {
       // Add AI response to UI
-      const aiMessageElement = createMessageElement(response, "model");
+      const aiMessageElement = createMessageElement(
+        formatStructuredAnswerForDisplay(structuredAnswer),
+        "model"
+      );
       messagesContainer.appendChild(aiMessageElement);
-
-      // Add AI response to history
-      chatHistory.push({
-        role: "model",
-        parts: [{ text: response }],
-      });
 
       // Dispatch success event with the response to the specific event name
       document.dispatchEvent(
@@ -88,13 +323,13 @@ async function processExternalQuestion(
           detail: {
             questionId,
             success: true,
-            response: response,
+            response: JSON.stringify(structuredAnswer),
           },
         })
       );
     } else {
       const errorElement = createMessageElement(
-        "Sorry, I couldn't process your request. Please try again.",
+        "Provider AI ngasih jawaban kosong / ga valid. Coba ulang lagi bentar.",
         "model"
       );
       messagesContainer.appendChild(errorElement);
@@ -117,7 +352,9 @@ async function processExternalQuestion(
     }
 
     const errorElement = createMessageElement(
-      "An error occurred. Please check your connection and try again.",
+      error instanceof Error
+        ? error.message
+        : "Gagal connect ke provider AI. Coba ulang lagi.",
       "model"
     );
     messagesContainer.appendChild(errorElement);
@@ -398,6 +635,24 @@ function createChatInterface(): HTMLElement {
     transition: "background-color 0.2s ease",
   });
 
+  // Next button
+  const nextButton = document.createElement("button");
+  nextButton.textContent = "Next";
+  Object.assign(nextButton.style, {
+    padding: "8px 12px",
+    backgroundColor: "#28a745",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    minHeight: "36px",
+    transition: "background-color 0.2s ease",
+  });
+  nextButton.title = `Next (${NEXT_SHORTCUT_LABEL})`;
+  nextButton.setAttribute("aria-label", `Next (${NEXT_SHORTCUT_LABEL})`);
+
   // Load marked library and add system message initially
   loadMarkedLibrary().catch(() => {
     console.warn("Failed to load marked library, falling back to plain text");
@@ -471,6 +726,13 @@ function createChatInterface(): HTMLElement {
     clearButton.style.backgroundColor = "#6c757d";
   });
 
+  nextButton.addEventListener("mouseenter", () => {
+    nextButton.style.backgroundColor = "#218838";
+  });
+  nextButton.addEventListener("mouseleave", () => {
+    nextButton.style.backgroundColor = "#28a745";
+  });
+
   const sendMessage = async () => {
     const message = messageInput.value.trim();
     if (!message) return;
@@ -498,19 +760,7 @@ function createChatInterface(): HTMLElement {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     try {
-      // Get AI response
-      const apiKey = await getGeminiApiKey();
-      if (!apiKey) {
-        console.error("No Gemini API key found");
-        messagesContainer.removeChild(loadingElement);
-        const errorElement = createMessageElement(
-          "km belum set API key, coba set di menu setting ;)",
-          "model"
-        );
-        messagesContainer.appendChild(errorElement);
-        return;
-      }
-      const response = await chatWithGemini(chatHistory);
+      const response = await chatWithConfiguredProvider(chatHistory);
 
       // Remove loading indicator
       messagesContainer.removeChild(loadingElement);
@@ -533,11 +783,13 @@ function createChatInterface(): HTMLElement {
         );
         messagesContainer.appendChild(errorElement);
       }
-    } catch {
+    } catch (error) {
       // Remove loading indicator
       messagesContainer.removeChild(loadingElement);
       const errorElement = createMessageElement(
-        "An error occurred. Please check your connection and try again.",
+        error instanceof Error
+          ? error.message
+          : "Provider AI error. Cek konfigurasi Moodle AI.",
         "model"
       );
       messagesContainer.appendChild(errorElement);
@@ -565,8 +817,44 @@ function createChatInterface(): HTMLElement {
     messagesContainer.appendChild(welcomeMessage);
   };
 
+  const triggerNext = () => {
+    const nextNav = document.querySelector<HTMLElement>("#mod_quiz-next-nav");
+    if (!nextNav) {
+      showToast("Tombol next tidak ketemu", "error");
+      return;
+    }
+    nextNav.click();
+  };
+
   sendButton.addEventListener("click", sendMessage);
   clearButton.addEventListener("click", clearChat);
+  nextButton.addEventListener("click", triggerNext);
+
+  type WindowWithNextShortcut = Window & {
+    [NEXT_SHORTCUT_BOUND_KEY]?: boolean;
+  };
+
+  const shortcutWindow = window as WindowWithNextShortcut;
+  if (!shortcutWindow[NEXT_SHORTCUT_BOUND_KEY]) {
+    shortcutWindow[NEXT_SHORTCUT_BOUND_KEY] = true;
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
+      if (isTypingTarget(event.target)) return;
+
+      const key = event.key.toLowerCase();
+      const isShortcut =
+        event.altKey &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.shiftKey &&
+        key === NEXT_SHORTCUT_KEY;
+
+      if (!isShortcut) return;
+
+      event.preventDefault();
+      triggerNext();
+    });
+  }
 
   messageInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -584,6 +872,7 @@ function createChatInterface(): HTMLElement {
   inputContainer.appendChild(messageInput);
   inputContainer.appendChild(sendButton);
   inputContainer.appendChild(clearButton);
+  inputContainer.appendChild(nextButton);
 
   chatContainer.appendChild(messagesContainer);
   chatContainer.appendChild(inputContainer);
@@ -737,29 +1026,682 @@ REMEMBER THAT IS JUST AN EXAMPLE, U CAN USE ANYTHING, ANSWER ACCORDING TO USER D
 </SYSTEM_PROMPT>
 `;
 
-async function chatWithGemini(
+const MOODLE_AUTO_ANSWER_SYSTEM_PROMPT = `
+You are DIPS, a Moodle multiple-choice quiz solving assistant.
+
+Rules:
+- You will receive one question and the exact answer options shown on screen.
+- Choose exactly one answer from the provided options.
+- Never invent an option.
+- Never use a letter that is not present in the provided options.
+- Base your answer on the exact provided option texts.
+
+When tools are available:
+- Call the tool \`select_moodle_answer\`.
+
+If tools are unavailable:
+- Return JSON only:
+{"answer_letter":"b","answer_text":"...","confidence":0.88,"reasoning_brief":"..."}
+
+Do not use markdown fences.
+`.trim();
+
+const MOODLE_ANSWER_TOOL = {
+  type: "function",
+  function: {
+    name: "select_moodle_answer",
+    description: "Select the best answer from the provided Moodle choices.",
+    parameters: {
+      type: "object",
+      properties: {
+        answer_letter: {
+          type: "string",
+          enum: ["a", "b", "c", "d", "e", "f"],
+        },
+        answer_text: {
+          type: "string",
+        },
+        confidence: {
+          type: "number",
+        },
+        reasoning_brief: {
+          type: "string",
+        },
+      },
+      required: ["answer_letter", "answer_text"],
+    },
+  },
+} as const;
+
+function getEffectiveChatSystemPrompt(config: MoodleAiConfig): string {
+  const override = config.systemPromptOverride.trim();
+  return override || SYSTEM_PROMPT;
+}
+
+function getEffectiveMoodleAutoAnswerSystemPrompt(config: MoodleAiConfig): string {
+  const override = config.systemPromptOverride.trim();
+  if (!override) return MOODLE_AUTO_ANSWER_SYSTEM_PROMPT;
+  return `${override}\n\n${MOODLE_AUTO_ANSWER_SYSTEM_PROMPT}`;
+}
+
+function buildOpenAiCompatHeaders(apiKey: string): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+  };
+}
+
+function convertChatHistoryToCliProxyMessages(
+  history: ChatMessage[],
+  systemPrompt: string
+): CliProxyMessage[] {
+  const messages: CliProxyMessage[] = [];
+
+  for (const entry of history) {
+    const text = entry.parts?.[0]?.text?.trim();
+    if (!text) continue;
+
+    const isSystemPrompt =
+      entry.role === "user" &&
+      messages.length === 0 &&
+      (text === systemPrompt || text === SYSTEM_PROMPT);
+
+    if (isSystemPrompt) {
+      messages.push({
+        role: "system",
+        content: text,
+      });
+      continue;
+    }
+
+    messages.push({
+      role: entry.role === "model" ? "assistant" : "user",
+      content: text,
+    });
+  }
+
+  if (messages.length === 0 || messages[0].role !== "system") {
+    messages.unshift({
+      role: "system",
+      content: systemPrompt,
+    });
+  }
+
+  return messages;
+}
+
+function formatQuestionPayloadForDisplay(
+  question: MoodleQuestionPayload
+): string {
+  const optionsText = question.options
+    .map((option) => `${option.key.toUpperCase()}. ${option.text}`)
+    .join("\n");
+
+  return `${question.questionLabel}\n\n${question.questionText}\n\n${optionsText}`;
+}
+
+function formatStructuredAnswerForDisplay(answer: ToolAnswerResult): string {
+  const lines = [
+    answer.reasoning_brief || "Udah gw pilih opsi paling masuk akal.",
+    `XX_CODE_FINAL_ANSWER_XX: ${answer.answer_letter}. ${answer.answer_text || ""}`.trim(),
+  ];
+  return lines.join("\n\n");
+}
+
+function extractJsonObject(text: string): string | null {
+  const match = text.match(/\{[\s\S]*\}/);
+  return match?.[0] || null;
+}
+
+function parseToolAnswerResult(value: unknown): ToolAnswerResult | null {
+  if (!value || typeof value !== "object") return null;
+
+  const candidate = value as {
+    answer_letter?: unknown;
+    answer_text?: unknown;
+    confidence?: unknown;
+    reasoning_brief?: unknown;
+  };
+
+  if (typeof candidate.answer_letter !== "string") return null;
+
+  return {
+    answer_letter: candidate.answer_letter.toLowerCase(),
+    answer_text:
+      typeof candidate.answer_text === "string"
+        ? candidate.answer_text
+        : undefined,
+    confidence:
+      typeof candidate.confidence === "number"
+        ? candidate.confidence
+        : undefined,
+    reasoning_brief:
+      typeof candidate.reasoning_brief === "string"
+        ? candidate.reasoning_brief
+        : undefined,
+  };
+}
+
+function extractToolAnswerFromText(content: string): ToolAnswerResult | null {
+  if (!content) return null;
+
+  const jsonText = extractJsonObject(content);
+  if (jsonText) {
+    try {
+      return parseToolAnswerResult(JSON.parse(jsonText));
+    } catch (error) {
+      console.warn("Failed to parse JSON answer content:", error);
+    }
+  }
+
+  const markerMatch = content.match(
+    /XX_CODE_FINAL_ANSWER_XX:\s*([a-zA-Z])\.\s*(.*)/
+  );
+  if (!markerMatch) return null;
+
+  return {
+    answer_letter: markerMatch[1].toLowerCase(),
+    answer_text: markerMatch[2]?.trim() || undefined,
+  };
+}
+
+function extractToolAnswerFromCliProxyResponse(
+  result: CliProxyResponse
+): ToolAnswerResult | null {
+  const choice = result.choices?.[0];
+  const toolCalls = choice?.message?.tool_calls || [];
+
+  for (const toolCall of toolCalls) {
+    const fn = toolCall.function;
+    if (fn?.name !== "select_moodle_answer" || !fn.arguments) continue;
+
+    try {
+      return parseToolAnswerResult(JSON.parse(fn.arguments));
+    } catch (error) {
+      console.warn("Failed to parse tool call arguments:", error);
+    }
+  }
+
+  const content = choice?.message?.content;
+  return content ? extractToolAnswerFromText(content) : null;
+}
+
+function buildMoodleAutoAnswerUserPrompt(
+  question: MoodleQuestionPayload
+): string {
+  const optionsText = question.options
+    .map((option) => `${option.key}. ${option.text}`)
+    .join("\n");
+
+  return [
+    `Question Label: ${question.questionLabel}`,
+    `Question Type: ${question.questionType}`,
+    "",
+    "Question:",
+    question.questionText,
+    "",
+    "Options:",
+    optionsText,
+    "",
+    "Choose exactly one option from the provided list.",
+  ].join("\n");
+}
+
+function convertChatHistoryToGeminiContents(
+  history: ChatMessage[],
+  systemPrompt: string
+): Array<{
+  role: "user" | "model";
+  parts: Array<{ text: string }>;
+}> {
+  return history
+    .map((entry) => {
+      const text = entry.parts?.[0]?.text?.trim();
+      if (!text) return null;
+      const isSystemPrompt =
+        entry.role === "user" && (text === systemPrompt || text === SYSTEM_PROMPT);
+      if (isSystemPrompt) return null;
+      return {
+        role: entry.role === "model" ? "model" : "user",
+        parts: [{ text }],
+      };
+    })
+    .filter(Boolean) as Array<{
+    role: "user" | "model";
+    parts: Array<{ text: string }>;
+  }>;
+}
+
+function normalizeStructuredAnswerForQuestion(
+  parsed: ToolAnswerResult | null,
+  question: MoodleQuestionPayload
+): ToolAnswerResult | null {
+  if (!parsed) return null;
+
+  const validOptionKeys = new Set(question.options.map((option) => option.key));
+  if (!validOptionKeys.has(parsed.answer_letter)) {
+    console.warn("Provider returned invalid option key:", parsed.answer_letter);
+    return null;
+  }
+
+  return parsed;
+}
+
+async function answerMoodleQuestion(
+  question: MoodleQuestionPayload
+): Promise<ToolAnswerResult | null> {
+  const config = await getMoodleAiConfig();
+
+  if (config.provider === "gemini") {
+    return answerMoodleQuestionWithGemini(question, config);
+  }
+  if (config.provider === "openai_compatible") {
+    return answerMoodleQuestionWithOpenAiCompatible(question, config);
+  }
+
+  return answerMoodleQuestionWithCliProxy(question, config);
+}
+
+async function chatWithConfiguredProvider(
   history: ChatMessage[]
 ): Promise<string | undefined> {
-  const API_KEY = await getGeminiApiKey();
-  if (!API_KEY) {
-    console.error("No Gemini API key found");
-    return;
+  const config = await getMoodleAiConfig();
+
+  if (config.provider === "gemini") {
+    return chatWithGemini(history, config);
   }
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
-    {
+  if (config.provider === "openai_compatible") {
+    return chatWithOpenAiCompatible(history, config);
+  }
+
+  return chatWithCliProxy(history, config);
+}
+
+async function answerMoodleQuestionWithCliProxy(
+  question: MoodleQuestionPayload,
+  config: MoodleAiConfig
+): Promise<ToolAnswerResult | null> {
+  const controller = new AbortController();
+  const timeoutMs = config.cliProxyTimeoutMs;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(config.cliProxyApiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        contents: history,
+        model: config.cliProxyModel,
+        temperature: config.temperature,
+        max_tokens: config.maxTokens,
+        messages: [
+          {
+            role: "system",
+            content: getEffectiveMoodleAutoAnswerSystemPrompt(config),
+          },
+          {
+            role: "user",
+            content: buildMoodleAutoAnswerUserPrompt(question),
+          },
+        ],
+        tools: [MOODLE_ANSWER_TOOL],
+        tool_choice: {
+          type: "function",
+          function: {
+            name: "select_moodle_answer",
+          },
+        },
       }),
-    }
-  );
+      signal: controller.signal,
+    });
 
-  const result = await response.json();
-  return result.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = (await response.json()) as CliProxyResponse;
+    return normalizeStructuredAnswerForQuestion(
+      extractToolAnswerFromCliProxyResponse(result),
+      question
+    );
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        `CLIProxy request timeout after ${Math.floor(timeoutMs / 1000)}s`
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function answerMoodleQuestionWithGemini(
+  question: MoodleQuestionPayload,
+  config: MoodleAiConfig
+): Promise<ToolAnswerResult | null> {
+  if (!config.geminiApiKey) {
+    throw new Error("Gemini API key belum diisi. Cek setting Moodle AI.");
+  }
+  if (!config.geminiModel) {
+    throw new Error("Gemini model belum diisi. Cek setting Moodle AI.");
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = config.cliProxyTimeoutMs;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(
+      `${GEMINI_API_URL_BASE}/${encodeURIComponent(
+        config.geminiModel
+      )}:generateContent?key=${encodeURIComponent(config.geminiApiKey)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: getEffectiveMoodleAutoAnswerSystemPrompt(config) }],
+          },
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text: `${buildMoodleAutoAnswerUserPrompt(
+                    question
+                  )}\n\nReturn JSON only.`,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: config.temperature,
+            maxOutputTokens: config.maxTokens,
+          },
+        }),
+        signal: controller.signal,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = (await response.json()) as {
+      candidates?: Array<{
+        content?: {
+          parts?: Array<{ text?: string }>;
+        };
+      }>;
+    };
+
+    const text =
+      result.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text || "")
+        .join("\n")
+        .trim() || "";
+
+    return normalizeStructuredAnswerForQuestion(
+      extractToolAnswerFromText(text),
+      question
+    );
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        `Gemini request timeout after ${Math.floor(timeoutMs / 1000)}s`
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function answerMoodleQuestionWithOpenAiCompatible(
+  question: MoodleQuestionPayload,
+  config: MoodleAiConfig
+): Promise<ToolAnswerResult | null> {
+  if (!config.openAiCompatApiUrl) {
+    throw new Error(
+      "OpenAI-compatible API URL belum diisi. Cek setting Moodle AI."
+    );
+  }
+  if (!config.openAiCompatApiKey) {
+    throw new Error(
+      "OpenAI-compatible API key belum diisi. Cek setting Moodle AI."
+    );
+  }
+  if (!config.openAiCompatModel) {
+    throw new Error(
+      "OpenAI-compatible model belum diisi. Cek setting Moodle AI."
+    );
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = config.cliProxyTimeoutMs;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(config.openAiCompatApiUrl, {
+      method: "POST",
+      headers: buildOpenAiCompatHeaders(config.openAiCompatApiKey),
+      body: JSON.stringify({
+        model: config.openAiCompatModel,
+        temperature: config.temperature,
+        max_tokens: config.maxTokens,
+        messages: [
+          {
+            role: "system",
+            content: getEffectiveMoodleAutoAnswerSystemPrompt(config),
+          },
+          {
+            role: "user",
+            content: buildMoodleAutoAnswerUserPrompt(question),
+          },
+        ],
+        tools: [MOODLE_ANSWER_TOOL],
+        tool_choice: {
+          type: "function",
+          function: {
+            name: "select_moodle_answer",
+          },
+        },
+      }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = (await response.json()) as CliProxyResponse;
+    return normalizeStructuredAnswerForQuestion(
+      extractToolAnswerFromCliProxyResponse(result),
+      question
+    );
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        `OpenAI-compatible request timeout after ${Math.floor(timeoutMs / 1000)}s`
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function chatWithCliProxy(
+  history: ChatMessage[],
+  config: MoodleAiConfig
+): Promise<string | undefined> {
+  const controller = new AbortController();
+  const timeoutMs = config.cliProxyTimeoutMs;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(config.cliProxyApiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: config.cliProxyModel,
+        temperature: config.temperature,
+        max_tokens: config.maxTokens,
+        messages: convertChatHistoryToCliProxyMessages(
+          history,
+          getEffectiveChatSystemPrompt(config)
+        ),
+      }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = (await response.json()) as CliProxyResponse;
+    return result.choices?.[0]?.message?.content;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        `CLIProxy request timeout after ${Math.floor(timeoutMs / 1000)}s`
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function chatWithGemini(
+  history: ChatMessage[],
+  config: MoodleAiConfig
+): Promise<string | undefined> {
+  if (!config.geminiApiKey) {
+    throw new Error("Gemini API key belum diisi. Cek setting Moodle AI.");
+  }
+  if (!config.geminiModel) {
+    throw new Error("Gemini model belum diisi. Cek setting Moodle AI.");
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = config.cliProxyTimeoutMs;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(
+      `${GEMINI_API_URL_BASE}/${encodeURIComponent(
+        config.geminiModel
+      )}:generateContent?key=${encodeURIComponent(config.geminiApiKey)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: getEffectiveChatSystemPrompt(config) }],
+          },
+          contents: convertChatHistoryToGeminiContents(
+            history,
+            getEffectiveChatSystemPrompt(config)
+          ),
+          generationConfig: {
+            temperature: config.temperature,
+            maxOutputTokens: config.maxTokens,
+          },
+        }),
+        signal: controller.signal,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = (await response.json()) as {
+      candidates?: Array<{
+        content?: {
+          parts?: Array<{ text?: string }>;
+        };
+      }>;
+    };
+
+    return result.candidates?.[0]?.content?.parts?.[0]?.text;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        `Gemini request timeout after ${Math.floor(timeoutMs / 1000)}s`
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+async function chatWithOpenAiCompatible(
+  history: ChatMessage[],
+  config: MoodleAiConfig
+): Promise<string | undefined> {
+  if (!config.openAiCompatApiUrl) {
+    throw new Error(
+      "OpenAI-compatible API URL belum diisi. Cek setting Moodle AI."
+    );
+  }
+  if (!config.openAiCompatApiKey) {
+    throw new Error(
+      "OpenAI-compatible API key belum diisi. Cek setting Moodle AI."
+    );
+  }
+  if (!config.openAiCompatModel) {
+    throw new Error(
+      "OpenAI-compatible model belum diisi. Cek setting Moodle AI."
+    );
+  }
+
+  const controller = new AbortController();
+  const timeoutMs = config.cliProxyTimeoutMs;
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(config.openAiCompatApiUrl, {
+      method: "POST",
+      headers: buildOpenAiCompatHeaders(config.openAiCompatApiKey),
+      body: JSON.stringify({
+        model: config.openAiCompatModel,
+        temperature: config.temperature,
+        max_tokens: config.maxTokens,
+        messages: convertChatHistoryToCliProxyMessages(
+          history,
+          getEffectiveChatSystemPrompt(config)
+        ),
+      }),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    }
+
+    const result = (await response.json()) as CliProxyResponse;
+    return result.choices?.[0]?.message?.content;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(
+        `OpenAI-compatible request timeout after ${Math.floor(timeoutMs / 1000)}s`
+      );
+    }
+    throw error;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 }
 
 function createLogoSiapDips(): SVGSVGElement {
@@ -968,10 +1910,3 @@ export function injectGlobalStyles() {
   document.head.appendChild(style);
 }
 
-function getGeminiApiKey() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get("geminiApiKey", (result) => {
-      resolve(result.geminiApiKey);
-    });
-  });
-}

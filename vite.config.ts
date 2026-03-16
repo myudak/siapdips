@@ -1,10 +1,119 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import fs from "fs";
 import CleanCSS from "clean-css";
 import flattenOutput from "vite-plugin-flatten-output";
-import { viteStaticCopy } from "vite-plugin-static-copy";
+
+const ENTRY_FILE_BY_NAME = {
+  content: "content.js",
+  contentFt: "content-ft.js",
+  contentOracleAcademy: "content-oracleAcademy.js",
+  "content-moodle": "content-moodle.js",
+  "content-form-watcher": "content-form-watcher.js",
+  "content-undiplearn": "content-undiplearn.js",
+  "content-absen": "content-absen.js",
+  "content-job": "content-job.js",
+  background: "background.js",
+} as const;
+
+const LEGACY_TO_ENTRY = Object.fromEntries(
+  Object.entries(ENTRY_FILE_BY_NAME).map(([entryName, fileName]) => [
+    fileName,
+    entryName,
+  ])
+) as Record<string, keyof typeof ENTRY_FILE_BY_NAME>;
+
+function resolveManifestTemplatePath(mode: string): string {
+  if (mode === "firefox") {
+    console.log("Using Firefox manifest template");
+    return path.resolve(__dirname, "src/manifest-firefox.json");
+  }
+
+  if (mode === "edge") {
+    console.log("Using Edge manifest template");
+    return path.resolve(__dirname, "src/manifest-edge.json");
+  }
+
+  if (mode !== "chrome") {
+    console.warn(
+      "Build mode is not 'chrome', 'firefox', or 'edge'. Defaulting to Chrome manifest template."
+    );
+  } else {
+    console.log("Using Chrome manifest template");
+  }
+
+  return path.resolve(__dirname, "src/manifest-chrome.json");
+}
+
+function rewriteManifestPlugin(mode: string): Plugin {
+  return {
+    name: "rewrite-manifest-to-built-entries",
+    apply: "build",
+    generateBundle(_, bundle) {
+      const entryFileNames = new Map<string, string>();
+
+      for (const outputFile of Object.values(bundle)) {
+        if (outputFile.type === "chunk" && outputFile.isEntry) {
+          entryFileNames.set(outputFile.name, outputFile.fileName);
+        }
+      }
+
+      const resolveBuiltFile = (entryName: keyof typeof ENTRY_FILE_BY_NAME) => {
+        const builtFileName = entryFileNames.get(entryName);
+        if (!builtFileName) {
+          this.error(
+            `Missing built entry "${entryName}". Check rollup input configuration.`
+          );
+        }
+        return builtFileName;
+      };
+
+      const templatePath = resolveManifestTemplatePath(mode);
+      const template = fs.readFileSync(templatePath, "utf-8");
+      const manifest = JSON.parse(template) as {
+        background?: {
+          service_worker?: string;
+          scripts?: string[];
+        };
+        content_scripts?: Array<{
+          js?: string[];
+        }>;
+      };
+
+      if (manifest.background?.service_worker) {
+        manifest.background.service_worker = resolveBuiltFile("background");
+      }
+
+      if (Array.isArray(manifest.background?.scripts)) {
+        manifest.background.scripts = [resolveBuiltFile("background")];
+      }
+
+      for (const contentScript of manifest.content_scripts ?? []) {
+        if (!Array.isArray(contentScript.js)) continue;
+
+        contentScript.js = contentScript.js.map((scriptPath) => {
+          const hasDotPrefix = scriptPath.startsWith("./");
+          const normalizedScriptPath = hasDotPrefix
+            ? scriptPath.slice(2)
+            : scriptPath;
+
+          const entryName = LEGACY_TO_ENTRY[normalizedScriptPath];
+          if (!entryName) return scriptPath;
+
+          const builtFileName = resolveBuiltFile(entryName);
+          return hasDotPrefix ? `./${builtFileName}` : builtFileName;
+        });
+      }
+
+      this.emitFile({
+        type: "asset",
+        fileName: "manifest.json",
+        source: JSON.stringify(manifest, null, 2),
+      });
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   // MINIFIED mode CSS ========
@@ -17,6 +126,7 @@ export default defineConfig(({ mode }) => {
 
   const PLUGINS = [
     react(),
+    rewriteManifestPlugin(mode),
     flattenOutput({
       removeDirs: [
         "src/pages/main",
@@ -27,52 +137,6 @@ export default defineConfig(({ mode }) => {
       filePattern: ".html",
     }),
   ];
-
-  if (mode == "firefox") {
-    PLUGINS.push(
-      viteStaticCopy({
-        targets: [
-          {
-            src: "src/manifest-firefox.json",
-            dest: ".",
-            rename: "manifest.json",
-          },
-        ],
-      })
-    );
-    console.log("Using Firefox manifest.json");
-  } else if (mode == "edge") {
-    PLUGINS.push(
-      viteStaticCopy({
-        targets: [
-          {
-            src: "src/manifest-edge.json",
-            dest: ".",
-            rename: "manifest.json",
-          },
-        ],
-      })
-    );
-    console.log("Using Edge manifest.json");
-  } else {
-    console.log("Using Chrome manifest.json");
-    if (mode !== "chrome")
-      console.warn(
-        "You are not using the 'firefox' or 'chrome' mode. Defaulting to Chrome manifest."
-      );
-
-    PLUGINS.push(
-      viteStaticCopy({
-        targets: [
-          {
-            src: "src/manifest-chrome.json",
-            dest: ".",
-            rename: "manifest.json",
-          },
-        ],
-      })
-    );
-  }
 
   return {
     plugins: PLUGINS,
@@ -103,25 +167,17 @@ export default defineConfig(({ mode }) => {
             __dirname,
             "src/content-form-watcher.js"
           ),
+          "content-undiplearn": path.resolve(
+            __dirname,
+            "src/content-undiplearn.ts"
+          ),
+          "content-absen": path.resolve(__dirname, "src/content-absen.ts"),
+          "content-job": path.resolve(__dirname, "src/content-job.ts"),
         },
         output: {
-          // manualChunks(id) {
-          //   if (id.includes("src/content-undiplearn.ts")) {
-          //     return "content-undiplearn";
-          //   }
-          // },
-
-          entryFileNames: (chunkInfo) => {
-            if (chunkInfo.name === "content") return "content.js";
-            if (chunkInfo.name === "background") return "background.js";
-            if (chunkInfo.name === "contentFt") return "content-ft.js";
-            if (chunkInfo.name === "contentOracleAcademy")
-              return "content-oracleAcademy.js";
-            if (chunkInfo.name === "content-moodle") return "content-moodle.js";
-            if (chunkInfo.name === "content-form-watcher")
-              return "content-form-watcher.js";
-            return "assets/[name]-[hash].js";
-          },
+          entryFileNames: "assets/[name]-[hash].js",
+          chunkFileNames: "assets/[name]-[hash].js",
+          assetFileNames: "assets/[name]-[hash][extname]",
           banner: `/*!
  * myudakk/SiapDips v1.0.0
  * Copyright (c) ${new Date().getFullYear()} myyudak

@@ -16,6 +16,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import HideButton from "../hideButton";
+import { resolveContentScriptPath } from "@/lib/extension/content-script-path";
 
 const AutoLearnSocial = ({
   listeners,
@@ -101,7 +102,10 @@ const AutoLearnSocial = ({
 
             await chrome.scripting.executeScript({
               target: { tabId: tab.id },
-              files: ["content-undiplearn.js"],
+              files: [
+                resolveContentScriptPath("content-undiplearn") ??
+                  "content-undiplearn.js",
+              ],
             });
           }}
         >

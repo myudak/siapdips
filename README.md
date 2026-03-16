@@ -35,9 +35,9 @@ Follow these steps to build the extension:
     ```
 4.  **Build the extension:** Run the build script to generate the extension files.
     ```bash
-    pnpm run build:full
+    pnpm run build:firefox
     ```
-    This command will build both the main extension files and the content scripts.
+    This command builds the full extension bundle (including all content scripts).
 
 ## Source Code
 

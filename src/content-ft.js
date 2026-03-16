@@ -1,6 +1,9 @@
 // content.js
 
 function createHelper() {
+  let refreshTimeoutId = null;
+  let submitTimeoutId = null;
+
   // Create the main helper card element.
   const helper = document.createElement("div");
   Object.assign(helper.style, {
@@ -172,6 +175,94 @@ function createHelper() {
     return `${timeString}.${ms}`;
   }
 
+  function showToast(text) {
+    Toastify({
+      text,
+      duration: 3000,
+      close: true,
+      position: "left",
+    }).showToast();
+  }
+
+  function parseScheduledTarget(value) {
+    if (!value || typeof value !== "string") {
+      return null;
+    }
+
+    const parts = value.split(":");
+    if (parts.length < 2 || parts.length > 3) {
+      return null;
+    }
+
+    const inputHour = Number(parts[0]);
+    const inputMinute = Number(parts[1]);
+    let inputSecond = 0;
+    let inputMillisecond = 0;
+
+    if (parts[2]) {
+      if (parts[2].includes(".")) {
+        const secParts = parts[2].split(".");
+        inputSecond = Number(secParts[0]);
+        inputMillisecond = Number(secParts[1]);
+      } else {
+        inputSecond = Number(parts[2]);
+      }
+    }
+
+    const numbers = [
+      inputHour,
+      inputMinute,
+      inputSecond,
+      inputMillisecond,
+    ];
+    const hasInvalidNumber = numbers.some((item) => Number.isNaN(item));
+
+    if (
+      hasInvalidNumber ||
+      inputHour < 0 ||
+      inputHour > 23 ||
+      inputMinute < 0 ||
+      inputMinute > 59 ||
+      inputSecond < 0 ||
+      inputSecond > 59 ||
+      inputMillisecond < 0 ||
+      inputMillisecond > 999
+    ) {
+      return null;
+    }
+
+    const now = new Date();
+    const target = new Date();
+    target.setHours(inputHour, inputMinute, inputSecond, inputMillisecond);
+
+    if (now >= target) {
+      target.setDate(target.getDate() + 1);
+    }
+
+    return target;
+  }
+
+  function getRegistrationForm() {
+    const form = document.getElementById("reg_ddart_covid");
+
+    if (!form || !(form instanceof HTMLFormElement)) {
+      showToast("Form submit FT ga ketemu");
+      return null;
+    }
+
+    return form;
+  }
+
+  function submitRegistrationForm() {
+    const form = getRegistrationForm();
+    if (!form) {
+      return false;
+    }
+
+    form.submit();
+    return true;
+  }
+
   const infoText = document.createElement("div");
   infoText.textContent =
     "This clock is local and may not accurate, use time.is for accurate time";
@@ -226,6 +317,12 @@ function createHelper() {
   scheduleIndicator.style.color = "#555";
   scheduleContainer.appendChild(scheduleIndicator);
 
+  const submitIndicator = document.createElement("div");
+  submitIndicator.textContent = "Belum Auto Submit X";
+  submitIndicator.style.fontSize = "14px";
+  submitIndicator.style.color = "#555";
+  scheduleContainer.appendChild(submitIndicator);
+
   // Button to schedule auto refresh.
   const scheduleButton = document.createElement("button");
   scheduleButton.textContent = "Gas Auto Refresh Jam";
@@ -247,45 +344,88 @@ function createHelper() {
     scheduleButton.style.backgroundColor = "#28a745";
   });
   scheduleButton.addEventListener("click", () => {
-    // Parse the time from the input (expects "HH:MM:SS.mmm" in 24h format).
-    const parts = timeInput.value.split(":");
-    const inputHour = Number(parts[0]);
-    const inputMinute = Number(parts[1]);
-    let inputSecond = 0,
-      inputMillisecond = 0;
-    if (parts[2].includes(".")) {
-      const secParts = parts[2].split(".");
-      inputSecond = Number(secParts[0]);
-      inputMillisecond = Number(secParts[1]);
-    } else {
-      inputSecond = Number(parts[2]);
+    const target = parseScheduledTarget(timeInput.value);
+    if (!target) {
+      showToast("Jam auto refresh ga valid");
+      return;
     }
 
-    const now = new Date();
-    const target = new Date();
-    target.setHours(inputHour, inputMinute, inputSecond, inputMillisecond); // Set target time today.
-    // If the target time is earlier than now, schedule for tomorrow.
-    if (now >= target) {
-      target.setDate(target.getDate() + 1);
+    const delay = target.getTime() - Date.now();
+
+    if (refreshTimeoutId) {
+      clearTimeout(refreshTimeoutId);
     }
-    const delay = target - now;
-    // Update the indicator with the scheduled time (with milliseconds).
+
     scheduleIndicator.textContent = `Auto refresh jam ${formatTimeWithMilliseconds(
       target
     )}`;
-    // Schedule the auto refresh.
-    setTimeout(() => {
+
+    refreshTimeoutId = setTimeout(() => {
+      refreshTimeoutId = null;
       location.reload();
     }, delay);
 
-    Toastify({
-      text: "Siap DIps ~~> Gas Auto Refresh Jam",
-      duration: 3000,
-      close: true,
-      position: "left",
-    }).showToast();
+    showToast("Siap DIps ~~> Gas Auto Refresh Jam");
   });
   scheduleContainer.appendChild(scheduleButton);
+
+  const submitScheduleButton = document.createElement("button");
+  submitScheduleButton.textContent = "Gas Auto Submit Jam";
+  Object.assign(submitScheduleButton.style, {
+    padding: "8px 12px",
+    fontSize: "16px",
+    cursor: "pointer",
+    border: "none",
+    borderRadius: "6px",
+    backgroundColor: "#fd7e14",
+    color: "#ffffff",
+    transition: "background-color 0.3s ease",
+    width: "100%",
+  });
+  submitScheduleButton.addEventListener("mouseenter", () => {
+    submitScheduleButton.style.backgroundColor = "#dc6a0a";
+  });
+  submitScheduleButton.addEventListener("mouseleave", () => {
+    submitScheduleButton.style.backgroundColor = "#fd7e14";
+  });
+  submitScheduleButton.addEventListener("click", () => {
+    if (!getRegistrationForm()) {
+      submitIndicator.textContent = "Belum Auto Submit X";
+      return;
+    }
+
+    const target = parseScheduledTarget(timeInput.value);
+    if (!target) {
+      showToast("Jam auto submit ga valid");
+      return;
+    }
+
+    const delay = target.getTime() - Date.now();
+
+    if (submitTimeoutId) {
+      clearTimeout(submitTimeoutId);
+    }
+
+    submitIndicator.textContent = `Auto submit jam ${formatTimeWithMilliseconds(
+      target
+    )}`;
+
+    submitTimeoutId = setTimeout(() => {
+      submitTimeoutId = null;
+      const isSubmitted = submitRegistrationForm();
+      if (!isSubmitted) {
+        submitIndicator.textContent = "Auto submit gagal";
+        return;
+      }
+
+      submitIndicator.textContent = `Submit dieksekusi ${formatTimeWithMilliseconds(
+        new Date()
+      )}`;
+    }, delay);
+
+    showToast("Siap DIps ~~> Gas Auto Submit Jam");
+  });
+  scheduleContainer.appendChild(submitScheduleButton);
   content.appendChild(scheduleContainer);
 
   // "Refresh Now" button.
@@ -312,6 +452,44 @@ function createHelper() {
     location.reload();
   });
   content.appendChild(refreshNowButton);
+
+  const submitNowButton = document.createElement("button");
+  submitNowButton.textContent = "Submit Now";
+  Object.assign(submitNowButton.style, {
+    padding: "8px 12px",
+    fontSize: "16px",
+    cursor: "pointer",
+    border: "none",
+    borderRadius: "6px",
+    backgroundColor: "#0d6efd",
+    color: "#ffffff",
+    transition: "background-color 0.3s ease",
+    width: "100%",
+  });
+  submitNowButton.addEventListener("mouseenter", () => {
+    submitNowButton.style.backgroundColor = "#0b5ed7";
+  });
+  submitNowButton.addEventListener("mouseleave", () => {
+    submitNowButton.style.backgroundColor = "#0d6efd";
+  });
+  submitNowButton.addEventListener("click", () => {
+    const isSubmitted = submitRegistrationForm();
+    if (!isSubmitted) {
+      submitIndicator.textContent = "Belum Auto Submit X";
+      return;
+    }
+
+    if (submitTimeoutId) {
+      clearTimeout(submitTimeoutId);
+      submitTimeoutId = null;
+    }
+
+    submitIndicator.textContent = `Submit manual jam ${formatTimeWithMilliseconds(
+      new Date()
+    )}`;
+    showToast("Siap DIps ~~> Submit Now");
+  });
+  content.appendChild(submitNowButton);
 
   //  button.
   const TimeIsButton = document.createElement("button");

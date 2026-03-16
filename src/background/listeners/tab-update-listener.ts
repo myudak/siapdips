@@ -14,6 +14,7 @@ import { initPBMAutomation } from "../features/pbm-automation";
 import { initFoodTruckAutoSelect } from "../features/food-truck";
 import { initTodoistSync } from "../features/todoist-sync";
 import { parseSchedule } from "../features/schedule-parser";
+import { initHackerRankCopyQuestion } from "../features/hackerrank-copy-question";
 
 export function initTabUpdateListener(): void {
   chrome.tabs.onUpdated.addListener(handleTabUpdate);
@@ -24,12 +25,18 @@ function handleTabUpdate(
   changeInfo: chrome.tabs.TabChangeInfo,
   tab: chrome.tabs.Tab
 ): void {
-  if (tab.url === undefined) return;
+  const currentUrl = changeInfo.url ?? tab.url;
+  if (!currentUrl) return;
+
+  // HACKERRANK - Copy question button on contest challenge pages
+  if (changeInfo.status === "complete" || Boolean(changeInfo.url)) {
+    initHackerRankCopyQuestion(tabId, currentUrl);
+  }
 
   // LEARN SOCIAL - Toastify injection
   if (
     changeInfo.status === "complete" &&
-    tab.url.includes("https://undip.learnsocial.online/")
+    currentUrl.includes("https://undip.learnsocial.online/")
   ) {
     injectToastify(tabId, false);
   }
@@ -37,7 +44,7 @@ function handleTabUpdate(
   // JADWAL - Schedule parsing
   if (
     changeInfo.status === "complete" &&
-    tab.url.includes("https://siap.undip.ac.id/jadwal_mahasiswa/mhs/jadwal/")
+    currentUrl.includes("https://siap.undip.ac.id/jadwal_mahasiswa/mhs/jadwal/")
   ) {
     parseSchedule(tabId);
   }
@@ -45,15 +52,14 @@ function handleTabUpdate(
   // DARK MODE and related features
   if (
     changeInfo.status === "complete" &&
-    tab.url &&
-    DARK_MODE_ALLOWED_URLS.some((url) => tab.url?.includes(url))
+    DARK_MODE_ALLOWED_URLS.some((url) => currentUrl.includes(url))
   ) {
-    console.log("BACKGROUND SCRIPT~ for:", tab.url);
+    console.log("BACKGROUND SCRIPT~ for:", currentUrl);
 
     // Inject Toastify (except for certain URLs)
     if (
-      !tab.url.includes("https://undip.learnsocial.online/") &&
-      !tab.url.includes("https://form.undip.ac.id/")
+      !currentUrl.includes("https://undip.learnsocial.online/") &&
+      !currentUrl.includes("https://form.undip.ac.id/")
     ) {
       injectToastify(tabId, true);
     }
@@ -65,24 +71,24 @@ function handleTabUpdate(
     applyCustomTheme(tabId);
 
     // Enable Ctrl+C
-    enableCtrlC(tabId, tab.url);
+    enableCtrlC(tabId, currentUrl);
 
     // Apply privacy blur
-    applyPrivacyBlur(tabId, tab.url);
+    applyPrivacyBlur(tabId, currentUrl);
 
     // Apply custom profile image
     applyCustomProfileImage(tabId);
   }
 
   // HIDE POPUP on SSO dashboard
-  if (tab.url?.includes("https://sso.undip.ac.id/pages/dashboard")) {
+  if (currentUrl.includes("https://sso.undip.ac.id/pages/dashboard")) {
     hidePopupIfEnabled(tabId);
   }
 
   // PBM AUTOMATION
   if (
     changeInfo.status === "complete" &&
-    tab.url.includes(
+    currentUrl.includes(
       "https://siap.undip.ac.id/evaluasi_perkuliahan/mhs/evaluasi"
     )
   ) {
@@ -94,7 +100,7 @@ function handleTabUpdate(
   // FOOD TRUCK
   if (
     changeInfo.status === "complete" &&
-    tab.url.includes("https://form.undip.ac.id/makanansehat/pendaftaran")
+    currentUrl.includes("https://form.undip.ac.id/makanansehat/pendaftaran")
   ) {
     initFoodTruckAutoSelect(tabId);
   }
@@ -102,7 +108,7 @@ function handleTabUpdate(
   // TODOIST SYNC
   if (
     changeInfo.status === "complete" &&
-    tab.url.includes("https://kulon2.undip.ac.id/my/")
+    currentUrl.includes("https://kulon2.undip.ac.id/my/")
   ) {
     initTodoistSync(tabId);
   }

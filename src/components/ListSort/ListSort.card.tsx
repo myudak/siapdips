@@ -25,6 +25,7 @@ import {
   BriefcaseBusinessIcon,
   ListChecks,
   GraduationCap,
+  MessageSquare,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
@@ -33,6 +34,7 @@ import SuspenderCard from "../SuspenderCard";
 import JobTrackerCard from "../JobTrackerCard";
 import TodoistSyncCard from "../TodoistSyncCard";
 import OracleAcademyCard from "../OracleAcademyCard";
+import AiChatCard from "../AiChatCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -51,6 +53,7 @@ export const cardComponents = {
   JobTrackerCard,
   TodoistSyncCard,
   OracleAcademyCard,
+  AiChatCard,
 } as const;
 
 export const cardComponentsOption: {
@@ -71,6 +74,7 @@ export const cardComponentsOption: {
   MoodleCard: ["Moodle Helper Settings", LucideSchool2],
   JobTrackerCard: ["Job Tracker", BriefcaseBusinessIcon],
   TodoistSyncCard: ["Todoist Sync", ListChecks],
+  AiChatCard: ["AI Chat", MessageSquare],
 
   SuspenderCard: ["Suspend Card", SquareSplitHorizontal],
 };

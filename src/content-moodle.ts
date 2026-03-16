@@ -2,6 +2,29 @@ console.log("myudak -- content-moodle.ts loaded");
 
 import { createHelperDefault } from "./lib/content_moodle";
 
+interface MoodleQuestionOption {
+  key: string;
+  text: string;
+  index: number;
+}
+
+interface MoodleQuestionPayload {
+  questionLabel: string;
+  questionText: string;
+  options: MoodleQuestionOption[];
+  questionType: "multiple_choice_single" | "unknown";
+}
+
+interface MoodleStructuredAnswer {
+  answerLetter: string;
+  answerText?: string;
+}
+
+const ASK_AI_SHORTCUT_KEY = "a";
+const ASK_AI_SHORTCUT_LABEL = "Alt+A";
+const ASK_AI_SHORTCUT_BOUND_KEY = "__siapDipsMoodleAskAiShortcutBound";
+const ASK_AI_BUTTON_SELECTOR = 'button[data-myudak-action="ask-ai"]';
+
 chrome.storage.local.get(["moodleHelper"], (result) => {
   if (result.moodleHelper === undefined) {
     // If setting is not found, set default value
@@ -22,12 +45,15 @@ document
 
     if (!formulation || !nomorSoal) return;
 
-    const nomorSoalText = nomorSoal.textContent?.trim() || "[No Nomor Soal]";
-    const soalText = getVisibleTextContent(formulation);
+    const questionPayload = extractQuestionPayload(question);
+    if (!questionPayload) return;
 
-    const buttonCopySoal = createCopyButton(nomorSoalText, soalText);
-    const buttonGoogleSoal = createGoogleButton(soalText);
-    const buttonAskAi = createAiButton(soalText, question);
+    const buttonCopySoal = createCopyButton(
+      questionPayload.questionLabel,
+      questionPayload.questionText
+    );
+    const buttonGoogleSoal = createGoogleButton(questionPayload.questionText);
+    const buttonAskAi = createAiButton(questionPayload, question);
 
     chrome.storage.local.get(["copySoal", "googleSoal", "askAi"], (result) => {
       if (result.copySoal) {
@@ -55,6 +81,8 @@ document
     formulation.appendChild(buttonAskAi);
   });
 
+bindAskAiShortcut();
+
 function createBaseButton(text: string): HTMLButtonElement {
   const button = document.createElement("button");
   button.textContent = text;
@@ -65,18 +93,98 @@ function createBaseButton(text: string): HTMLButtonElement {
 }
 
 function createAiButton(
-  soalText: string,
+  questionPayload: MoodleQuestionPayload,
   question: HTMLElement
 ): HTMLButtonElement {
   const button = createBaseButton("Tany AI");
+  button.dataset.myudakAction = "ask-ai";
+  button.title = `Tany AI (${ASK_AI_SHORTCUT_LABEL})`;
+  button.setAttribute("aria-label", `Tany AI (${ASK_AI_SHORTCUT_LABEL})`);
   addAiLogo(button);
 
   button.addEventListener("click", async (e: MouseEvent) => {
     e.preventDefault();
-    await handleAiButtonClick(button, soalText, question);
+    await handleAiButtonClick(button, questionPayload, question);
   });
 
   return button;
+}
+
+function isTypingTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tagName = target.tagName.toLowerCase();
+  return (
+    tagName === "input" ||
+    tagName === "textarea" ||
+    target.isContentEditable
+  );
+}
+
+function isButtonVisibleAndEnabled(button: HTMLButtonElement): boolean {
+  if (button.disabled) return false;
+  if (button.style.display === "none") return false;
+  return button.offsetParent !== null;
+}
+
+function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
+  const activeElement = document.activeElement as HTMLElement | null;
+  const focusedQuestion = activeElement?.closest<HTMLElement>('[id^="question-"]');
+  if (focusedQuestion) {
+    const focusedButton = focusedQuestion.querySelector<HTMLButtonElement>(
+      ASK_AI_BUTTON_SELECTOR
+    );
+    if (focusedButton && isButtonVisibleAndEnabled(focusedButton)) {
+      return focusedButton;
+    }
+  }
+
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(ASK_AI_BUTTON_SELECTOR)
+  ).filter(isButtonVisibleAndEnabled);
+
+  if (buttons.length === 0) return null;
+  if (buttons.length === 1) return buttons[0];
+
+  const viewportCenter = window.innerHeight / 2;
+  buttons.sort((a, b) => {
+    const distanceA = Math.abs(a.getBoundingClientRect().top - viewportCenter);
+    const distanceB = Math.abs(b.getBoundingClientRect().top - viewportCenter);
+    return distanceA - distanceB;
+  });
+
+  return buttons[0];
+}
+
+function bindAskAiShortcut(): void {
+  type WindowWithAskAiShortcut = Window & {
+    [ASK_AI_SHORTCUT_BOUND_KEY]?: boolean;
+  };
+
+  const shortcutWindow = window as WindowWithAskAiShortcut;
+  if (shortcutWindow[ASK_AI_SHORTCUT_BOUND_KEY]) return;
+
+  shortcutWindow[ASK_AI_SHORTCUT_BOUND_KEY] = true;
+
+  document.addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.defaultPrevented) return;
+    if (isTypingTarget(event.target)) return;
+
+    const key = event.key.toLowerCase();
+    const isShortcut =
+      event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.shiftKey &&
+      key === ASK_AI_SHORTCUT_KEY;
+
+    if (!isShortcut) return;
+
+    const targetButton = resolveAskAiButtonForShortcut();
+    if (!targetButton) return;
+
+    event.preventDefault();
+    targetButton.click();
+  });
 }
 
 // Helper function to create and add AI logo to button
@@ -100,21 +208,11 @@ function createAiLogoElement(): HTMLImageElement {
 // Helper function to handle the main AI button click logic
 async function handleAiButtonClick(
   button: HTMLButtonElement,
-  soalText: string,
+  questionPayload: MoodleQuestionPayload,
   question: HTMLElement
 ): Promise<void> {
   try {
     // Prevent double clicking while request is in progress
-
-    chrome.storage.local.get(["geminiApiKey"], (result) => {
-      if (!result.geminiApiKey) {
-        showToast(
-          "GEMINI API KEY belum diatur, silakan atur di settings",
-          "error"
-        );
-        return;
-      }
-    });
 
     if (button.disabled) {
       return;
@@ -155,19 +253,67 @@ async function handleAiButtonClick(
       // Remove this specific listener
       document.removeEventListener(responseEventName, responseListener);
 
+      const timeoutId = Number(button.dataset.timeoutId);
+      if (!Number.isNaN(timeoutId)) {
+        window.clearTimeout(timeoutId);
+        delete button.dataset.timeoutId;
+      }
+
       if (success && response) {
         console.log("AI Response for question:", questionId, response);
 
-        const answerLetter = extractAnswerFromResponse(response);
-        if (!answerLetter) {
+        const structuredAnswer =
+          extractStructuredAnswer(response) ??
+          (extractAnswerFromResponse(response)
+            ? { answerLetter: extractAnswerFromResponse(response) as string }
+            : null);
+
+        if (!structuredAnswer) {
           showToast("AI tidak memberikan jawaban yang valid", "error");
           setButtonLoadingState(button, false);
           return;
         }
 
-        const selectSuccess = selectAnswerOption(question, answerLetter);
+        const isValidLetter = questionPayload.options.some(
+          (option) => option.key === structuredAnswer.answerLetter
+        );
+
+        if (!isValidLetter) {
+          showToast("AI kasih pilihan yang ga ada di opsi", "error");
+          setButtonLoadingState(button, false);
+          return;
+        }
+
+        const selectSuccess = selectAnswerOption(
+          question,
+          structuredAnswer.answerLetter
+        );
         if (selectSuccess) {
-          showToast(`Done jawaban: ${answerLetter.toUpperCase()}`, "success");
+          const selectedOption = questionPayload.options.find(
+            (option) => option.key === structuredAnswer.answerLetter
+          );
+
+          if (
+            selectedOption &&
+            structuredAnswer.answerText &&
+            !normalizeForCompare(selectedOption.text).includes(
+              normalizeForCompare(structuredAnswer.answerText)
+            ) &&
+            !normalizeForCompare(structuredAnswer.answerText).includes(
+              normalizeForCompare(selectedOption.text)
+            )
+          ) {
+            console.warn(
+              "AI answer text mismatch:",
+              structuredAnswer.answerText,
+              selectedOption.text
+            );
+          }
+
+          showToast(
+            `Done jawaban: ${structuredAnswer.answerLetter.toUpperCase()}`,
+            "success"
+          );
         } else {
           showToast("Gagal memilih jawaban", "error");
         }
@@ -186,7 +332,7 @@ async function handleAiButtonClick(
     document.dispatchEvent(
       new CustomEvent("myudak-ai-question", {
         detail: {
-          question: soalText,
+          question: questionPayload,
           questionId: questionId,
           responseEventName: responseEventName, // Tell helper which event to dispatch
         },
@@ -200,6 +346,7 @@ async function handleAiButtonClick(
         setButtonLoadingState(button, false);
         showToast("Request timeout - please try again", "error");
       }
+      delete button.dataset.timeoutId;
     }, 30000); // 30 seconds timeout
 
     // Store timeout ID in case we need to clear it early
@@ -230,6 +377,30 @@ function setButtonLoadingState(
 function extractAnswerFromResponse(response: string): string | null {
   const match = response.match(/XX_CODE_FINAL_ANSWER_XX:\s*([a-zA-Z])\./);
   return match?.[1]?.toLowerCase() || null;
+}
+
+function extractStructuredAnswer(
+  response: string
+): MoodleStructuredAnswer | null {
+  const jsonMatch = response.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) return null;
+
+  try {
+    const parsed = JSON.parse(jsonMatch[0]) as {
+      answer_letter?: string;
+      answer_text?: string;
+    };
+
+    if (!parsed.answer_letter) return null;
+
+    return {
+      answerLetter: parsed.answer_letter.toLowerCase(),
+      answerText: parsed.answer_text,
+    };
+  } catch (error) {
+    console.warn("Failed to parse structured Moodle answer:", error);
+    return null;
+  }
 }
 
 // Helper function to select answer option based on letter
@@ -349,6 +520,51 @@ function createCopyButton(
   });
 
   return button;
+}
+
+function extractQuestionPayload(
+  question: HTMLElement
+): MoodleQuestionPayload | null {
+  const formulation = question.querySelector<HTMLElement>(".content .formulation");
+  const nomorSoal = question.querySelector<HTMLElement>("div.info > h3");
+  const answerContainer = question.querySelector<HTMLElement>(".answer");
+
+  if (!formulation || !nomorSoal || !answerContainer) return null;
+
+  const questionLabel = nomorSoal.textContent?.trim() || "[No Nomor Soal]";
+  const questionText = getVisibleTextContent(formulation);
+  const optionElements = Array.from(
+    answerContainer.children
+  ) as HTMLElement[];
+
+  const options = optionElements
+    .map((optionElement, index) => {
+      const key = String.fromCharCode("a".charCodeAt(0) + index);
+      const text = normalizeQuestionText(getVisibleTextContent(optionElement));
+      return {
+        key,
+        text,
+        index,
+      };
+    })
+    .filter((option) => option.text.length > 0);
+
+  if (!questionText || options.length === 0) return null;
+
+  return {
+    questionLabel,
+    questionText,
+    options,
+    questionType: "multiple_choice_single",
+  };
+}
+
+function normalizeQuestionText(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+function normalizeForCompare(text: string): string {
+  return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 function createGoogleButton(soalText: string): HTMLButtonElement {

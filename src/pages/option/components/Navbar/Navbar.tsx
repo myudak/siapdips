@@ -11,12 +11,13 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const navLinks = [
-    { href: "#Tutorials", label: "Tutorial" },
+    { href: "#quickStart", label: "Quick Start" },
     { href: "#sect1", label: "Settings" },
     { href: "#TemplatePBM", label: "Template PBM" },
     { href: "#profileSettings", label: "Profile" },
     { href: "#foodTruk", label: "FoodTruk" },
     { href: "#moodleHelper", label: "Moodle" },
+    { href: "#Tutorials", label: "Guides" },
     { href: "#todoboard", label: "TODO" },
     { href: "job.html", label: "JOB" },
   ];

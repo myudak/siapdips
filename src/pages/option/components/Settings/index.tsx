@@ -49,8 +49,11 @@ const SettingsSection = () => {
         <EvaluationTable />
       </>
       <>
-        <h1 className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center">
-          ~~ Profilee ~~
+        <h1
+          id="profileSettings"
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
+        >
+          Profile Settings
         </h1>
         <SettingcardProfile />
       </>
@@ -69,17 +72,16 @@ const SettingsSection = () => {
           className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
           ref={moodleHelperRef}
         >
-          Setting Moodle
+          Moodle AI Settings
         </h1>
         <SettingMoodle />
       </>
       <>
         <h1
-          id="moodleHelper"
+          id="jadwalSettings"
           className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
-          ref={moodleHelperRef}
         >
-          Setting jadwal
+          Jadwal Settings
         </h1>
         <SettingJadwal />
       </>

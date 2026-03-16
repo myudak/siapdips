@@ -17,6 +17,7 @@ import {
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import HideButton from "../hideButton";
+import { resolveContentScriptPath } from "@/lib/extension/content-script-path";
 
 const AutoFoodTruk = ({
   listeners,
@@ -125,7 +126,7 @@ const AutoFoodTruk = ({
 
             await chrome.scripting.executeScript({
               target: { tabId: tab.id },
-              files: ["content-ft.js"],
+              files: [resolveContentScriptPath("content-ft") ?? "content-ft.js"],
             });
           }}
         >
