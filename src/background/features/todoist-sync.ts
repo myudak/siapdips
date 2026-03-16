@@ -1,288 +1,400 @@
 /**
- * Todoist synchronization functionality for Kulon2 assignments
+ * Todoist synchronization functionality for Kulon2 assignments.
+ * Scraping runs in the page, while all Todoist API calls stay in the background.
  */
 
-const STORAGE_KEY_API_TOKEN = "todoistApiToken";
-const STORAGE_KEY_PROJECT_ID = "todoistProjectId";
-const STORAGE_KEY_IGNORE_OVERDUE = "todoistIgnoreOverdue";
+import {
+  closeTodoistTask,
+  createTodoistTask,
+  fetchTodoistTasksForProject,
+  updateTodoistTask,
+} from "./todoist-api";
+import { scrapeKulonAssignmentsFromTab } from "./kulon-assignments";
+import type { KulonAssignment } from "@/lib/kulon/shared";
+import {
+  STORAGE_KEY_TODOIST_API_TOKEN,
+  STORAGE_KEY_TODOIST_IGNORE_OVERDUE,
+  STORAGE_KEY_TODOIST_PROJECT_ID,
+  STORAGE_KEY_TODOIST_TASK_LINKS,
+  type TodoistTask,
+  type TodoistTaskLink,
+  type TodoistTaskLinkMap,
+} from "@/lib/todoist/shared";
+
+interface TodoistSyncConfig {
+  apiToken: string;
+  projectId: string;
+  ignoreOverdue: boolean;
+}
+
+interface DesiredTodoistTask {
+  content: string;
+  description: string;
+  due_datetime: string;
+}
+
+interface TodoistSyncOptions {
+  notifyIfUnconfigured?: boolean;
+  scrapedAssignments?: KulonAssignment[];
+}
 
 export async function initTodoistSync(tabId: number): Promise<void> {
-  // Fetch configuration from storage
-  const config = await chrome.storage.local.get([
-    STORAGE_KEY_API_TOKEN,
-    STORAGE_KEY_PROJECT_ID,
-    STORAGE_KEY_IGNORE_OVERDUE,
-  ]);
-
-  const apiToken = config[STORAGE_KEY_API_TOKEN];
-  const projectId = config[STORAGE_KEY_PROJECT_ID];
-  const ignoreOverdue = config[STORAGE_KEY_IGNORE_OVERDUE] || false;
-
-  // Check if configuration is complete
-  if (!apiToken || !projectId) {
+  const config = await loadTodoistSyncConfig();
+  if (!config) {
     console.warn(
       "Todoist sync skipped: API token or project ID not configured"
     );
-    chrome.scripting.executeScript({
-      target: { tabId },
-      func: () => {
-        console.warn(
-          "⚠️ Todoist sync is not configured. Please set your API token and project ID in the extension settings."
-        );
-      },
-    });
     return;
   }
 
-  // Execute the sync script with the configuration
-  chrome.scripting.executeScript({
-    target: { tabId },
-    func: syncJadwalToTodoist,
-    args: [apiToken, projectId, ignoreOverdue],
+  await runTodoistSyncForTab(tabId, { notifyIfUnconfigured: false });
+}
+
+export async function runTodoistSyncForTab(
+  tabId: number,
+  options: TodoistSyncOptions = {}
+): Promise<void> {
+  const config = await loadTodoistSyncConfig();
+  if (!config) {
+    if (options.notifyIfUnconfigured !== false) {
+      await showSyncStatus(
+        tabId,
+        "error",
+        "Siap DIps ~~> Configure Todoist first"
+      );
+    }
+    throw new Error("Todoist sync is not configured.");
+  }
+
+  await showSyncStatus(tabId, "loading", "Siap DIps ~~> Syncing Todoist...");
+
+  try {
+    const scrapedAssignments =
+      options.scrapedAssignments ?? (await scrapeKulonAssignmentsFromTab(tabId));
+
+    if (!scrapedAssignments.length) {
+      await showSyncStatus(tabId, "success", "Siap DIps ~~> Nothing to sync");
+      return;
+    }
+
+    const visibleSourceKeys = new Set(
+      scrapedAssignments.map((assignment) => assignment.sourceKey)
+    );
+
+    const syncableAssignments = config.ignoreOverdue
+      ? scrapedAssignments.filter((assignment) => {
+          const dueDate = new Date(assignment.dueIso);
+          return dueDate >= new Date();
+        })
+      : scrapedAssignments;
+
+    const links = await loadTodoistTaskLinks();
+    const projectIdsToFetch = new Set<string>([config.projectId]);
+    for (const link of Object.values(links)) {
+      projectIdsToFetch.add(link.projectId);
+    }
+
+    const tasksById = await fetchTasksByProjectIds(
+      config.apiToken,
+      Array.from(projectIdsToFetch)
+    );
+    const tasksBySourceKey = buildTaskSourceKeyIndex(tasksById);
+
+    const syncTimestamp = new Date().toISOString();
+    let createdCount = 0;
+    let updatedCount = 0;
+    let completedCount = 0;
+
+    for (const assignment of syncableAssignments) {
+      let existingLink = links[assignment.sourceKey];
+      let linkedTask = existingLink
+        ? tasksById.get(existingLink.todoistTaskId)
+        : undefined;
+
+      if (!linkedTask) {
+        const recoveredTask = tasksBySourceKey.get(assignment.sourceKey);
+        if (recoveredTask) {
+          existingLink = {
+            sourceKey: assignment.sourceKey,
+            todoistTaskId: recoveredTask.id,
+            projectId: recoveredTask.project_id,
+            lastSyncedAt: syncTimestamp,
+          };
+          links[assignment.sourceKey] = existingLink;
+          linkedTask = recoveredTask;
+        }
+      }
+
+      if (!existingLink || !linkedTask) {
+        const created = await createLinkedTodoistTask(
+          config.apiToken,
+          assignment,
+          config.projectId
+        );
+
+        links[assignment.sourceKey] = {
+          sourceKey: assignment.sourceKey,
+          todoistTaskId: created.id,
+          projectId: config.projectId,
+          lastSyncedAt: syncTimestamp,
+        };
+        tasksById.set(created.id, created);
+        tasksBySourceKey.set(assignment.sourceKey, created);
+        createdCount += 1;
+        continue;
+      }
+
+      const desiredTask = buildDesiredTodoistTask(assignment);
+      const hasChanged = hasTodoistTaskChanged(linkedTask, desiredTask);
+
+      if (hasChanged) {
+        const updatedTask = await updateLinkedTodoistTask(
+          config.apiToken,
+          existingLink.todoistTaskId,
+          assignment
+        );
+        tasksById.set(updatedTask.id, updatedTask);
+        tasksBySourceKey.set(assignment.sourceKey, updatedTask);
+        updatedCount += 1;
+      }
+
+      links[assignment.sourceKey] = {
+        ...existingLink,
+        lastSyncedAt: syncTimestamp,
+      };
+    }
+
+    for (const [sourceKey, link] of Object.entries(links)) {
+      if (visibleSourceKeys.has(sourceKey)) {
+        continue;
+      }
+
+      const linkedTask = tasksById.get(link.todoistTaskId);
+      if (!linkedTask) {
+        delete links[sourceKey];
+        continue;
+      }
+
+      await completeLinkedTodoistTask(config.apiToken, link);
+      tasksById.delete(link.todoistTaskId);
+      tasksBySourceKey.delete(sourceKey);
+      delete links[sourceKey];
+      completedCount += 1;
+    }
+
+    await saveTodoistTaskLinks(links);
+
+    const summary = [
+      createdCount > 0 ? `created ${createdCount}` : null,
+      updatedCount > 0 ? `updated ${updatedCount}` : null,
+      completedCount > 0 ? `completed ${completedCount}` : null,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    await showSyncStatus(
+      tabId,
+      "success",
+      summary
+        ? `Siap DIps ~~> Sync complete (${summary})`
+        : "Siap DIps ~~> Already up to date"
+    );
+  } catch (error) {
+    console.error("Todoist sync failed:", error);
+    await showSyncStatus(tabId, "error", "Siap DIps ~~> Sync failed");
+    throw error;
+  }
+}
+
+export async function createLinkedTodoistTask(
+  apiToken: string,
+  assignment: KulonAssignment,
+  projectId: string
+): Promise<TodoistTask> {
+  const desiredTask = buildDesiredTodoistTask(assignment);
+  return createTodoistTask(apiToken, {
+    ...desiredTask,
+    project_id: projectId,
   });
 }
 
-function syncJadwalToTodoist(apiToken: string, projectId: string, ignoreOverdue: boolean) {
-  // Configuration from parameters
-  const TODOIST_API_TOKEN = apiToken;
-  const TODOIST_PROJECT_ID = projectId;
-  const IGNORE_OVERDUE = ignoreOverdue;
-  const TODOIST_API_BASE = "https://api.todoist.com/rest/v2";
-  const DRY_RUN = false;
+export async function updateLinkedTodoistTask(
+  apiToken: string,
+  taskId: string,
+  assignment: KulonAssignment
+): Promise<TodoistTask> {
+  return updateTodoistTask(apiToken, taskId, buildDesiredTodoistTask(assignment));
+}
 
-  interface ScrapedAssignment {
-    sourceId: string;
-    title: string;
-    date: string;
-    time: string;
-    dueIso: string;
-    course: string;
-    url: string;
+export async function completeLinkedTodoistTask(
+  apiToken: string,
+  link: TodoistTaskLink
+): Promise<void> {
+  await closeTodoistTask(apiToken, link.todoistTaskId);
+}
+
+async function loadTodoistSyncConfig(): Promise<TodoistSyncConfig | null> {
+  const config = await chrome.storage.local.get([
+    STORAGE_KEY_TODOIST_API_TOKEN,
+    STORAGE_KEY_TODOIST_PROJECT_ID,
+    STORAGE_KEY_TODOIST_IGNORE_OVERDUE,
+  ]);
+
+  const apiToken = String(config[STORAGE_KEY_TODOIST_API_TOKEN] || "").trim();
+  const projectId = String(config[STORAGE_KEY_TODOIST_PROJECT_ID] || "").trim();
+  const ignoreOverdue = Boolean(config[STORAGE_KEY_TODOIST_IGNORE_OVERDUE]);
+
+  if (!apiToken || !projectId) {
+    return null;
   }
 
-  interface TodoistDue {
-    date?: string | null;
-    datetime?: string | null;
-    timezone?: string | null;
+  return {
+    apiToken,
+    projectId,
+    ignoreOverdue,
+  };
+}
+
+async function loadTodoistTaskLinks(): Promise<TodoistTaskLinkMap> {
+  const result = await chrome.storage.local.get(STORAGE_KEY_TODOIST_TASK_LINKS);
+  const links = result[STORAGE_KEY_TODOIST_TASK_LINKS];
+
+  if (!links || typeof links !== "object") {
+    return {};
   }
 
-  interface TodoistTask {
-    id: string;
-    content: string;
-    description?: string;
-    due?: TodoistDue | null;
-    project_id: string;
-    [key: string]: unknown;
+  return links as TodoistTaskLinkMap;
+}
+
+async function saveTodoistTaskLinks(links: TodoistTaskLinkMap): Promise<void> {
+  await chrome.storage.local.set({
+    [STORAGE_KEY_TODOIST_TASK_LINKS]: links,
+  });
+}
+
+async function fetchTasksByProjectIds(
+  apiToken: string,
+  projectIds: string[]
+): Promise<Map<string, TodoistTask>> {
+  const tasksById = new Map<string, TodoistTask>();
+
+  for (const projectId of projectIds) {
+    const tasks = await fetchTodoistTasksForProject(apiToken, projectId);
+    for (const task of tasks) {
+      tasksById.set(task.id, task);
+    }
   }
 
-  interface IntegrationMarker {
-    sourceId: string;
-    titleWithoutPrefix: string;
-  }
+  return tasksById;
+}
 
-  interface DesiredTodoistTask {
-    content: string;
-    description?: string;
-    project_id: string;
-    due_datetime: string;
-  }
+function buildTaskSourceKeyIndex(
+  tasksById: Map<string, TodoistTask>
+): Map<string, TodoistTask> {
+  const tasksBySourceKey = new Map<string, TodoistTask>();
 
-  interface CreatePlan {
-    scraped: ScrapedAssignment;
-    payload: DesiredTodoistTask;
-  }
-
-  interface UpdatePlan {
-    scraped: ScrapedAssignment;
-    taskId: string;
-    payload: Partial<DesiredTodoistTask>;
-  }
-
-  let loadingToastEl: HTMLElement | null = null;
-  let resultToastEl: HTMLElement | null = null;
-  let resultToastTimer: number | null = null;
-
-  function parseAssignmentsFromPage(): ScrapedAssignment[] {
-    const rootf = document.querySelector<HTMLElement>(
-      '[data-region="event-list-content"]'
-    );
-    if (!rootf) {
-      console.error("Cannot find [data-region='event-list-content']");
-      return [];
+  for (const task of tasksById.values()) {
+    const sourceKey = extractSourceKeyFromTask(task);
+    if (!sourceKey) {
+      continue;
     }
 
-    const blocks = rootf.querySelectorAll<HTMLElement>(
-      '[data-region="event-list-content-date"], [data-region="event-list-item"]'
-    );
+    tasksBySourceKey.set(sourceKey, task);
+  }
 
-    let currentDateTimestamp: number | null = null;
-    const parsed: ScrapedAssignment[] = [];
+  return tasksBySourceKey;
+}
 
-    blocks.forEach((el) => {
-      const region = el.getAttribute("data-region");
+function extractSourceKeyFromTask(task: TodoistTask): string | null {
+  const description = task.description || "";
+  const match = description.match(/^sourceKey=(.+)$/m);
+  return match?.[1]?.trim() || null;
+}
 
-      if (region === "event-list-content-date") {
-        const ts = el.getAttribute("data-timestamp");
-        currentDateTimestamp = ts ? Number(ts) : null;
-        return;
-      }
-
-      if (region === "event-list-item" && currentDateTimestamp) {
-        const timeEl = el.querySelector<HTMLElement>("small");
-        const timeText = (timeEl?.textContent || "").trim();
-
-        let hours = 0;
-        let minutes = 0;
-        if (timeText.includes(":")) {
-          const [h, m] = timeText.split(":").map((x) => parseInt(x, 10));
-          if (!Number.isNaN(h)) hours = h;
-          if (!Number.isNaN(m)) minutes = m;
-        }
-
-        const titleLink =
-          el.querySelector<HTMLAnchorElement>(".event-name a");
-        const rawTitle = (titleLink?.textContent || "").trim();
-        const url = titleLink?.href || "";
-
-        const courseEl = el.querySelector<HTMLElement>(
-          ".event-name-container small"
-        );
-        const course = (courseEl?.textContent || "").trim();
-
-        let sourceId: string | null = null;
-        if (url) {
-          const match = url.match(/[?&]id=(\d+)/);
-          if (match) sourceId = match[1];
-        }
-
-        if (!sourceId) {
-          console.warn(
-            "Could not extract sourceId from URL, skipping:",
-            url
-          );
-          return;
-        }
-
-        const dateObj = new Date(currentDateTimestamp * 1000);
-        dateObj.setHours(hours, minutes, 0, 0);
-
-        const yyyy = dateObj.getFullYear();
-        const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
-        const dd = String(dateObj.getDate()).padStart(2, "0");
-        const dateText = `${yyyy}-${mm}-${dd}`;
-
-        parsed.push({
-          sourceId,
-          title: rawTitle,
-          date: dateText,
-          time: timeText,
-          dueIso: dateObj.toISOString(),
-          course,
-          url,
-        });
-      }
+async function showSyncStatus(
+  tabId: number,
+  kind: "loading" | "success" | "error",
+  message: string
+): Promise<void> {
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: renderTodoistSyncToast,
+      args: [kind, message],
     });
+  } catch (error) {
+    console.warn("Unable to show Todoist sync status on page:", error);
+  }
+}
 
-    console.log("Scraped assignments:", parsed);
-    return parsed;
+function buildDesiredTodoistTask(
+  assignment: KulonAssignment
+): DesiredTodoistTask {
+  const descriptionLines = [
+    `sourceKey=${assignment.sourceKey}`,
+    `Source ID: ${assignment.sourceId}`,
+    `Due: ${formatFullDate(assignment.dueIso)}`,
+  ];
+
+  if (assignment.course) {
+    descriptionLines.push(`Course: ${assignment.course}`);
   }
 
-  async function fetchTodoistTasksForProject(): Promise<TodoistTask[]> {
-    const resp = await fetch(
-      `${TODOIST_API_BASE}/tasks?project_id=${encodeURIComponent(
-        TODOIST_PROJECT_ID
-      )}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TODOIST_API_TOKEN}`,
-        },
-      }
-    );
-
-    if (!resp.ok) {
-      const t = await resp.text();
-      throw new Error(`Failed to fetch tasks: ${resp.status} ${t}`);
-    }
-
-    const tasks = (await resp.json()) as TodoistTask[];
-    console.log("Todoist tasks in project:", tasks);
-    return tasks;
+  if (assignment.url) {
+    descriptionLines.push(`URL: ${assignment.url}`);
   }
 
-  function parseIntegrationMarker(
-    task: TodoistTask
-  ): IntegrationMarker | null {
-    const desc = task.description || "";
-    const match = desc.match(/sourceId=(\d+)/);
-    if (!match) return null;
+  return {
+    content: assignment.title,
+    description: descriptionLines.join("\n"),
+    due_datetime: assignment.dueIso,
+  };
+}
 
-    return {
-      sourceId: match[1],
-      titleWithoutPrefix: task.content,
-    };
+function hasTodoistTaskChanged(
+  task: TodoistTask,
+  desiredTask: DesiredTodoistTask
+): boolean {
+  const currentDueValue = task.due?.datetime ?? task.due?.date ?? null;
+  const normalizedCurrentDue = normalizeDueValue(currentDueValue);
+  const normalizedDesiredDue = normalizeDueValue(desiredTask.due_datetime);
+
+  return (
+    task.content !== desiredTask.content ||
+    (task.description || "") !== desiredTask.description ||
+    normalizedCurrentDue !== normalizedDesiredDue
+  );
+}
+
+function normalizeDueValue(value: string | null): string | null {
+  if (!value) {
+    return null;
   }
 
-  function formatFullDate(isoString: string): string {
-    const date = new Date(isoString);
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value;
   }
 
-  function buildDesiredTodoistTask(
-    scraped: ScrapedAssignment
-  ): DesiredTodoistTask {
-    const descriptionLines = [`sourceId=${scraped.sourceId}`];
+  return parsedDate.toISOString();
+}
 
-    // Add formatted full date
-    const fullDate = formatFullDate(scraped.dueIso);
-    descriptionLines.push(`📅 ${fullDate}`);
+function formatFullDate(isoString: string): string {
+  return new Date(isoString).toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
-    if (scraped.course) descriptionLines.push(scraped.course);
-    if (scraped.url) descriptionLines.push(scraped.url);
-
-    return {
-      content: scraped.title,
-      description: descriptionLines.join("\n"),
-      project_id: TODOIST_PROJECT_ID,
-      due_datetime: scraped.dueIso,
-    };
-  }
-
-  function waitForElement(
-    selector: string,
-    timeout = 10000
-  ): Promise<Element> {
-    return new Promise((resolve, reject) => {
-      const existing = document.querySelector(selector);
-      if (existing) return resolve(existing);
-
-      const observer = new MutationObserver(() => {
-        const el = document.querySelector(selector);
-        if (el) {
-          observer.disconnect();
-          resolve(el);
-        }
-      });
-
-      observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-      });
-
-      setTimeout(() => {
-        observer.disconnect();
-        reject(new Error(`Timeout waiting for ${selector}`));
-      }, timeout);
-    });
-  }
-
-  function injectSyncToastStyles() {
-    if (document.getElementById("siap-dips-sync-toast-style")) return;
+function renderTodoistSyncToast(
+  kind: "loading" | "success" | "error",
+  message: string
+): void {
+  if (!document.getElementById("siap-dips-sync-toast-style")) {
     const style = document.createElement("style");
     style.id = "siap-dips-sync-toast-style";
     style.textContent = `
@@ -325,226 +437,33 @@ function syncJadwalToTodoist(apiToken: string, projectId: string, ignoreOverdue:
     document.head.appendChild(style);
   }
 
-  function getToastContainer(): HTMLElement {
-    let container = document.getElementById(
-      "siap-dips-toast-container"
-    ) as HTMLElement | null;
-    if (!container) {
-      container = document.createElement("div");
-      container.id = "siap-dips-toast-container";
-      container.className = "siap-dips-toast-container";
-      document.body.appendChild(container);
-    }
-    return container;
+  let container = document.getElementById(
+    "siap-dips-toast-container"
+  ) as HTMLElement | null;
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "siap-dips-toast-container";
+    container.className = "siap-dips-toast-container";
+    document.body.appendChild(container);
   }
 
-  function removeToast(el: HTMLElement | null) {
-    if (el && el.parentNode) {
-      el.parentNode.removeChild(el);
-    }
-  }
+  const existingToast = document.getElementById(
+    "siap-dips-sync-toast"
+  ) as HTMLElement | null;
+  existingToast?.remove();
 
-  function showLoadingToast() {
-    injectSyncToastStyles();
-    removeToast(loadingToastEl);
-    loadingToastEl = document.createElement("div");
-    loadingToastEl.className = "siap-dips-toast siap-dips-toast--loading";
-    loadingToastEl.innerHTML =
-      '<span class="toast-spinner" aria-hidden="true"></span><span>Siap DIps ~~> Syncing…</span>';
-    loadingToastEl.setAttribute("role", "status");
-    loadingToastEl.setAttribute("aria-live", "polite");
-    getToastContainer().appendChild(loadingToastEl);
-  }
+  const toast = document.createElement("div");
+  toast.id = "siap-dips-sync-toast";
+  toast.className = `siap-dips-toast siap-dips-toast--${kind}`;
+  toast.innerHTML =
+    kind === "loading"
+      ? `<span class="toast-spinner" aria-hidden="true"></span><span>${message}</span>`
+      : `<span>${message}</span>`;
+  container.appendChild(toast);
 
-  function showResultToast(message: string, isSuccess: boolean) {
-    injectSyncToastStyles();
-    removeToast(loadingToastEl);
-    loadingToastEl = null;
-    if (resultToastTimer !== null) {
-      clearTimeout(resultToastTimer);
-    }
-    removeToast(resultToastEl);
-
-    resultToastEl = document.createElement("div");
-    resultToastEl.className = `siap-dips-toast ${
-      isSuccess ? "siap-dips-toast--success" : "siap-dips-toast--error"
-    }`;
-    resultToastEl.textContent = message;
-    resultToastEl.setAttribute("role", "status");
-    resultToastEl.setAttribute("aria-live", "polite");
-    getToastContainer().appendChild(resultToastEl);
-
-    resultToastTimer = window.setTimeout(() => {
-      removeToast(resultToastEl);
-      resultToastEl = null;
-      resultToastTimer = null;
+  if (kind !== "loading") {
+    window.setTimeout(() => {
+      toast.remove();
     }, 3200);
   }
-
-  async function syncKulon2ToTodoist(): Promise<void> {
-    try {
-      showLoadingToast();
-      console.log("=== Kulon2 → Todoist sync starting ===");
-
-      await waitForElement('[data-region="event-list-item"]');
-
-      let scraped = parseAssignmentsFromPage();
-      if (!scraped.length) {
-        console.warn("No assignments scraped, aborting.");
-        showResultToast("Siap DIps ~~> Nothing to sync", true);
-        return;
-      }
-
-      // Filter out overdue tasks if setting is enabled
-      if (IGNORE_OVERDUE) {
-        const now = new Date();
-        const originalCount = scraped.length;
-        scraped = scraped.filter((assignment) => {
-          const dueDate = new Date(assignment.dueIso);
-          return dueDate >= now;
-        });
-        const filteredCount = originalCount - scraped.length;
-        if (filteredCount > 0) {
-          console.log(`⏭️ Filtered out ${filteredCount} overdue assignment(s)`);
-        }
-        if (!scraped.length) {
-          console.warn("All assignments are overdue, nothing to sync.");
-          showResultToast("Siap DIps ~~> All tasks overdue (ignored)", true);
-          return;
-        }
-      }
-
-      const todoistTasks = await fetchTodoistTasksForProject();
-
-      const existingBySourceId = new Map<
-        string,
-        { task: TodoistTask; marker: IntegrationMarker }
-      >();
-      const otherTasks: TodoistTask[] = [];
-
-      for (const task of todoistTasks) {
-        const marker = parseIntegrationMarker(task);
-        if (marker) {
-          existingBySourceId.set(marker.sourceId, { task, marker });
-        } else {
-          otherTasks.push(task);
-        }
-      }
-
-      console.log("Existing integration tasks:", existingBySourceId);
-      console.log("Other tasks in project (ignored for sync):", otherTasks);
-
-      const toCreate: CreatePlan[] = [];
-      const toUpdate: UpdatePlan[] = [];
-      const seenSourceIds = new Set<string>();
-
-      for (const scrapedItem of scraped) {
-        seenSourceIds.add(scrapedItem.sourceId);
-        const desired = buildDesiredTodoistTask(scrapedItem);
-        const existing = existingBySourceId.get(scrapedItem.sourceId);
-
-        if (!existing) {
-          toCreate.push({ scraped: scrapedItem, payload: desired });
-          continue;
-        }
-
-        const task = existing.task;
-        const currentDue = task.due?.datetime ?? task.due?.date ?? null;
-        const desiredDue = desired.due_datetime;
-
-        const changed =
-          task.content !== desired.content ||
-          (task.description || "") !== (desired.description || "") ||
-          (currentDue || null) !== (desiredDue || null);
-
-        if (changed) {
-          toUpdate.push({
-            scraped: scrapedItem,
-            taskId: task.id,
-            payload: {
-              content: desired.content,
-              description: desired.description,
-              due_datetime: desired.due_datetime,
-            },
-          });
-        }
-      }
-
-      const stale: { sourceId: string; task: TodoistTask }[] = [];
-      for (const [sourceId, info] of existingBySourceId.entries()) {
-        if (!seenSourceIds.has(sourceId)) {
-          stale.push({ sourceId, task: info.task });
-        }
-      }
-
-      console.log("Will create:", toCreate);
-      console.log("Will update:", toUpdate);
-      console.log(
-        "Stale tasks (present in Todoist but not on page):",
-        stale
-      );
-
-      if (DRY_RUN) {
-        console.log("DRY_RUN = true → No changes sent to Todoist.");
-        console.log("Set DRY_RUN = false in the script to actually sync.");
-        showResultToast("Siap DIps ~~> DRY RUN", true);
-        return;
-      }
-
-      for (const plan of toCreate) {
-        try {
-          const resp = await fetch(`${TODOIST_API_BASE}/tasks`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${TODOIST_API_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(plan.payload),
-          });
-          if (!resp.ok) {
-            const t = await resp.text();
-            console.error("Create failed:", resp.status, t, plan);
-          } else {
-            const created = (await resp.json()) as TodoistTask;
-            console.log("Created task:", created.content, "->", created.id);
-          }
-        } catch (createErr) {
-          console.error("Error creating task:", createErr, plan);
-        }
-      }
-
-      for (const plan of toUpdate) {
-        try {
-          const resp = await fetch(
-            `${TODOIST_API_BASE}/tasks/${plan.taskId}`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${TODOIST_API_TOKEN}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(plan.payload),
-            }
-          );
-          if (!resp.ok) {
-            const t = await resp.text();
-            console.error("Update failed:", resp.status, t, plan);
-          } else {
-            const updated = (await resp.json()) as TodoistTask;
-            console.log("Updated task:", updated.content, "->", updated.id);
-          }
-        } catch (updateErr) {
-          console.error("Error updating task:", updateErr, plan);
-        }
-      }
-
-      console.log("=== Kulon2 → Todoist sync finished ===");
-      showResultToast("Siap DIps ~~> Sync Complete ✅", true);
-    } catch (err) {
-      console.error("Sync error:", err);
-      showResultToast("Siap DIps ~~> Sync Failed ⚠️", false);
-    }
-  }
-
-  syncKulon2ToTodoist();
 }

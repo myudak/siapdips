@@ -41,43 +41,92 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["assets/*.wasm"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "assets/*.wasm"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "content_scripts": [
     {
-      "matches": ["https://siap.undip.ac.id/pages/mhs/dashboard/*"],
-      "js": ["./content.js"]
+      "matches": [
+        "https://siap.undip.ac.id/pages/mhs/dashboard/*"
+      ],
+      "js": [
+        "./content.js"
+      ]
     },
     {
-      "matches": ["https://undip.learnsocial.online/*"],
-      "js": ["libs/toastify.js", "./content-undiplearn.js"],
-      "css": ["libs/toastify.css"]
+      "matches": [
+        "https://undip.learnsocial.online/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-undiplearn.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
     },
     {
-      "matches": ["https://academy.oracle.com/pls/*"],
-      "js": ["libs/toastify.js", "./content-oracleAcademy.js"],
-      "css": ["libs/toastify.css"]
+      "matches": [
+        "https://academy.oracle.com/pls/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-oracleAcademy.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
     },
     {
-      "matches": ["https://form.undip.ac.id/makanansehat/*"],
-      "js": ["libs/toastify.js", "./content-ft.js"],
-      "css": ["libs/toastify.css"]
+      "matches": [
+        "https://form.undip.ac.id/makanansehat/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-ft.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
     },
     {
-      "matches": ["https://siap.undip.ac.id/master_perkuliahan/mhs/absensi/*"],
-      "js": ["libs/jsQR.js", "libs/toastify.js", "./content-absen.js"],
-      "css": ["libs/toastify.css"]
+      "matches": [
+        "https://siap.undip.ac.id/master_perkuliahan/mhs/absensi/*"
+      ],
+      "js": [
+        "libs/jsQR.js",
+        "libs/toastify.js",
+        "./content-absen.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
     },
     {
-      "matches": ["https://*/mod/quiz/*"],
-      "js": ["libs/marked.min.js", "libs/toastify.js", "./content-moodle.js"],
-      "css": ["libs/toastify.css"]
+      "matches": [
+        "https://*/mod/quiz/*"
+      ],
+      "js": [
+        "libs/marked.min.js",
+        "libs/toastify.js",
+        "./content-moodle.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
     },
     {
-      "matches": ["<all_urls>"],
-      "js": ["./content-form-watcher.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "./content-form-watcher.js"
+      ],
       "run_at": "document_idle"
     },
     {
@@ -122,7 +171,9 @@
         "*://*/posting/*",
         "*://*/postings/*"
       ],
-      "js": ["./content-job.js"],
+      "js": [
+        "./content-job.js"
+      ],
       "run_at": "document_idle"
     }
   ],
@@ -132,5 +183,8 @@
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
   }
 }

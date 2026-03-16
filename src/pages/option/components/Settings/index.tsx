@@ -9,15 +9,18 @@ import KanbanBoard from "./TodoBoard";
 import SettingMoodle from "./Settingcard.moodle";
 import SettingJadwal from "./Settingcard.jadwal";
 import TodoistSettings from "./Settingcard.todoist";
+import SettingcardNewTab from "./Settingcard.newtab";
 
 const SettingsSection = () => {
   const settingsRef = useRef<null | HTMLDivElement>(null);
   const PBMTableRef = useRef<null | HTMLDivElement>(null);
   const moodleHelperRef = useRef<null | HTMLDivElement>(null);
+  const newTabDashboardRef = useRef<null | HTMLDivElement>(null);
 
   useScrollToHashSection("PBMTable", PBMTableRef);
   useScrollToHashSection("sect1", settingsRef);
   useScrollToHashSection("moodleHelper", moodleHelperRef);
+  useScrollToHashSection("newTabDashboard", newTabDashboardRef);
 
   return (
     <div
@@ -84,6 +87,16 @@ const SettingsSection = () => {
           Jadwal Settings
         </h1>
         <SettingJadwal />
+      </>
+      <>
+        <h1
+          id="newTabDashboard"
+          ref={newTabDashboardRef}
+          className="text-lg sm:text-xl lg:text-2xl pt-4 sm:pt-5 lg:pt-6 font-bold text-slate-900 dark:text-white text-center"
+        >
+          🪟 New Tab Dashboard
+        </h1>
+        <SettingcardNewTab />
       </>
       <>
         <h1

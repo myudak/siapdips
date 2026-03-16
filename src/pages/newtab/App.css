@@ -1,0 +1,205 @@
+.newtab-shell {
+  --newtab-accent-strong: #0f8bd7;
+  --newtab-accent-soft: rgba(14, 165, 233, 0.18);
+  --newtab-accent-surface: rgba(14, 165, 233, 0.1);
+  --newtab-accent-ring: rgba(14, 165, 233, 0.28);
+  --newtab-accent-chip: #0369a1;
+  --newtab-panel: rgba(255, 255, 255, 0.8);
+  --newtab-panel-strong: rgba(255, 255, 255, 0.92);
+  --newtab-border: rgba(148, 163, 184, 0.28);
+  --newtab-border-strong: rgba(148, 163, 184, 0.42);
+  --newtab-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+  --newtab-gap: 1.25rem;
+  --newtab-padding: 1.25rem;
+  --newtab-radius: 1.5rem;
+  --newtab-font: "Segoe UI Variable", "Aptos", "Trebuchet MS", sans-serif;
+  --newtab-title-font: var(--newtab-font);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.14), transparent 34%),
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.03), transparent 35%);
+  color: hsl(var(--foreground));
+  font-family: var(--newtab-font);
+}
+
+.dark .newtab-shell {
+  --newtab-panel: rgba(15, 23, 42, 0.76);
+  --newtab-panel-strong: rgba(15, 23, 42, 0.9);
+  --newtab-border: rgba(148, 163, 184, 0.14);
+  --newtab-border-strong: rgba(148, 163, 184, 0.24);
+  --newtab-shadow: 0 30px 90px rgba(2, 6, 23, 0.5);
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(74, 222, 128, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.72), rgba(2, 6, 23, 0.94));
+}
+
+.newtab-shell[data-background-style="paper"] {
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.11), transparent 28%),
+    linear-gradient(180deg, rgba(250, 245, 235, 0.96), rgba(255, 255, 255, 0.88));
+}
+
+.dark .newtab-shell[data-background-style="paper"] {
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(24, 24, 27, 0.98), rgba(15, 23, 42, 0.95));
+}
+
+.newtab-shell[data-background-style="grid"] {
+  background:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(2, 132, 199, 0.06), rgba(255, 255, 255, 0.9));
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.dark .newtab-shell[data-background-style="grid"] {
+  background:
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.9), rgba(3, 7, 18, 0.98));
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.newtab-shell[data-density="compact"] {
+  --newtab-gap: 0.9rem;
+  --newtab-padding: 1rem;
+}
+
+.newtab-shell[data-density="airy"] {
+  --newtab-gap: 1.5rem;
+  --newtab-padding: 1.5rem;
+}
+
+.newtab-shell[data-typography="editorial"] {
+  --newtab-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --newtab-title-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+
+.newtab-shell[data-typography="mono"] {
+  --newtab-font: "IBM Plex Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  --newtab-title-font: "IBM Plex Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.newtab-heading,
+.newtab-module-title,
+.newtab-number {
+  font-family: var(--newtab-title-font);
+}
+
+.newtab-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--newtab-gap);
+}
+
+.newtab-module {
+  min-width: 0;
+}
+
+.newtab-module--wide {
+  grid-column: 1 / -1;
+}
+
+.newtab-panel {
+  border: 1px solid var(--newtab-border);
+  background: var(--newtab-panel);
+  border-radius: var(--newtab-radius);
+  box-shadow: var(--newtab-shadow);
+  backdrop-filter: blur(14px);
+}
+
+.newtab-panel--hero {
+  background:
+    linear-gradient(135deg, var(--newtab-accent-surface), transparent 42%),
+    var(--newtab-panel-strong);
+  border-color: var(--newtab-border-strong);
+}
+
+.newtab-panel-content {
+  padding: var(--newtab-padding);
+}
+
+.newtab-accent-kicker {
+  color: var(--newtab-accent-chip);
+  letter-spacing: 0.22em;
+}
+
+.newtab-accent-chip {
+  border-color: transparent;
+  background: var(--newtab-accent-surface);
+  color: var(--newtab-accent-chip);
+}
+
+.newtab-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(var(--newtab-gap) * 0.75);
+}
+
+.newtab-summary-card {
+  border: 1px solid var(--newtab-border);
+  background: rgba(255, 255, 255, 0.38);
+  border-radius: 1.1rem;
+  padding: calc(var(--newtab-padding) * 0.9);
+}
+
+.dark .newtab-summary-card {
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.newtab-summary-icon {
+  border: 1px solid var(--newtab-border);
+  background: var(--newtab-accent-surface);
+  color: var(--newtab-accent-chip);
+}
+
+.newtab-task-card {
+  border: 1px solid var(--newtab-border);
+  background: rgba(255, 255, 255, 0.44);
+  border-radius: 1.15rem;
+}
+
+.dark .newtab-task-card {
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.newtab-empty-card {
+  border: 1px dashed var(--newtab-border-strong);
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 1.25rem;
+}
+
+.dark .newtab-empty-card {
+  background: rgba(15, 23, 42, 0.28);
+}
+
+.newtab-linked-badge {
+  border-color: transparent;
+  background: var(--newtab-accent-soft);
+  color: var(--newtab-accent-chip);
+}
+
+.newtab-muted-line {
+  border-color: var(--newtab-border);
+}
+
+@media (max-width: 1200px) {
+  .newtab-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .newtab-module-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .newtab-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

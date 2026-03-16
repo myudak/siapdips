@@ -26,6 +26,7 @@ import {
   ListChecks,
   GraduationCap,
   MessageSquare,
+  LayoutDashboard,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
@@ -35,6 +36,7 @@ import JobTrackerCard from "../JobTrackerCard";
 import TodoistSyncCard from "../TodoistSyncCard";
 import OracleAcademyCard from "../OracleAcademyCard";
 import AiChatCard from "../AiChatCard";
+import NewTabDashboardCard from "../NewTabDashboardCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -46,7 +48,7 @@ export const cardComponents = {
   AutopbmCard,
   AutoLearnSocial,
   AutoFoodTruk,
-  HidePopupcard, // Lainnya
+  HidePopupcard,
   QrReader,
   MoodleCard,
   SuspenderCard,
@@ -54,6 +56,7 @@ export const cardComponents = {
   TodoistSyncCard,
   OracleAcademyCard,
   AiChatCard,
+  NewTabDashboardCard,
 } as const;
 
 export const cardComponentsOption: {
@@ -69,13 +72,13 @@ export const cardComponentsOption: {
   AutopbmCard: ["PBM Auto", Calendar],
   AutoLearnSocial: ["Auto Learn Social {Helper}", LeafyGreen],
   AutoFoodTruk: ["Food Truk {Helper}", SaladIcon],
-  HidePopupcard: ["Lainnya", MoreHorizontal], // etc
+  HidePopupcard: ["Lainnya", MoreHorizontal],
   QrReader: ["QR Code Reader", QrCodeIcon],
   MoodleCard: ["Moodle Helper Settings", LucideSchool2],
   JobTrackerCard: ["Job Tracker", BriefcaseBusinessIcon],
   TodoistSyncCard: ["Todoist Sync", ListChecks],
+  NewTabDashboardCard: ["New Tab Dashboard", LayoutDashboard],
   AiChatCard: ["AI Chat", MessageSquare],
-
   SuspenderCard: ["Suspend Card", SquareSplitHorizontal],
 };
 

@@ -17,6 +17,7 @@ const Navbar = () => {
     { href: "#profileSettings", label: "Profile" },
     { href: "#foodTruk", label: "FoodTruk" },
     { href: "#moodleHelper", label: "Moodle" },
+    { href: "#newTabDashboard", label: "New Tab" },
     { href: "#Tutorials", label: "Guides" },
     { href: "#todoboard", label: "TODO" },
     { href: "job.html", label: "JOB" },

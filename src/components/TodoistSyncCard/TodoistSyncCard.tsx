@@ -20,9 +20,12 @@ import {
 import { useEffect, useState } from "react";
 import HideButton from "../hideButton";
 import { toast } from "sonner";
-
-const STORAGE_KEY_API_TOKEN = "todoistApiToken";
-const STORAGE_KEY_PROJECT_ID = "todoistProjectId";
+import {
+  STORAGE_KEY_TODOIST_API_TOKEN,
+  STORAGE_KEY_TODOIST_PROJECT_ID,
+  type TodoistSyncTabMessage,
+  type TodoistSyncTabResponse,
+} from "@/lib/todoist/shared";
 
 const TodoistSyncCard = ({
   listeners,
@@ -37,15 +40,17 @@ const TodoistSyncCard = ({
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
   useEffect(() => {
-    checkConfiguration();
+    void checkConfiguration();
   }, []);
 
   const checkConfiguration = async () => {
     const config = await chrome.storage.local.get([
-      STORAGE_KEY_API_TOKEN,
-      STORAGE_KEY_PROJECT_ID,
+      STORAGE_KEY_TODOIST_API_TOKEN,
+      STORAGE_KEY_TODOIST_PROJECT_ID,
     ]);
-    const configured = !!(config[STORAGE_KEY_API_TOKEN] && config[STORAGE_KEY_PROJECT_ID]);
+    const configured = Boolean(
+      config[STORAGE_KEY_TODOIST_API_TOKEN] && config[STORAGE_KEY_TODOIST_PROJECT_ID]
+    );
     setIsConfigured(configured);
   };
 
@@ -62,15 +67,22 @@ const TodoistSyncCard = ({
 
       if (!currentTab.url?.includes("kulon2.undip.ac.id/my/")) {
         toast.error("Please navigate to Kulon2 assignments page first");
-        setIsSyncing(false);
         return;
       }
 
-      // Trigger the sync by sending a message to the background script
-      chrome.tabs.reload(tabId);
-      toast.success("Syncing... Check the page for status");
+      const response = (await chrome.runtime.sendMessage({
+        type: "todoistSyncTab",
+        tabId,
+      } satisfies TodoistSyncTabMessage)) as TodoistSyncTabResponse;
+
+      if (!response.ok) {
+        toast.error(response.error || "Todoist sync failed");
+        return;
+      }
+
+      toast.success("Todoist sync complete");
     } catch (error) {
-      console.error("Sync error:", error);
+      console.error("Todoist sync error:", error);
       toast.error("Failed to sync. Please try again.");
     } finally {
       setIsSyncing(false);
@@ -120,7 +132,9 @@ const TodoistSyncCard = ({
             onClick={handleSyncNow}
             disabled={!isConfigured || isSyncing}
           >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isSyncing ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 mr-2 ${isSyncing ? "animate-spin" : ""}`}
+            />
             {isSyncing ? "Syncing..." : "Sync Now"}
           </Button>
           <Button

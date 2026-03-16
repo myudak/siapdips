@@ -12,7 +12,12 @@ import { applyCustomProfileImage } from "../features/profile-customizer";
 import { hidePopupIfEnabled } from "../features/popup-hider";
 import { initPBMAutomation } from "../features/pbm-automation";
 import { initFoodTruckAutoSelect } from "../features/food-truck";
-import { initTodoistSync } from "../features/todoist-sync";
+import {
+  isTodoistSyncConfigured,
+  refreshKulonAssignmentsCacheFromTab,
+  shouldProcessKulonVisit,
+} from "../features/kulon-assignments";
+import { runTodoistSyncForTab } from "../features/todoist-sync";
 import { parseSchedule } from "../features/schedule-parser";
 import { initHackerRankCopyQuestion } from "../features/hackerrank-copy-question";
 
@@ -56,7 +61,6 @@ function handleTabUpdate(
   ) {
     console.log("BACKGROUND SCRIPT~ for:", currentUrl);
 
-    // Inject Toastify (except for certain URLs)
     if (
       !currentUrl.includes("https://undip.learnsocial.online/") &&
       !currentUrl.includes("https://form.undip.ac.id/")
@@ -64,40 +68,27 @@ function handleTabUpdate(
       injectToastify(tabId, true);
     }
 
-    // Apply progress bar fix
     applyProgressBarFix(tabId);
-
-    // Apply custom theme
     applyCustomTheme(tabId);
-
-    // Enable Ctrl+C
     enableCtrlC(tabId, currentUrl);
-
-    // Apply privacy blur
     applyPrivacyBlur(tabId, currentUrl);
-
-    // Apply custom profile image
     applyCustomProfileImage(tabId);
   }
 
-  // HIDE POPUP on SSO dashboard
   if (currentUrl.includes("https://sso.undip.ac.id/pages/dashboard")) {
     hidePopupIfEnabled(tabId);
   }
 
-  // PBM AUTOMATION
   if (
     changeInfo.status === "complete" &&
     currentUrl.includes(
       "https://siap.undip.ac.id/evaluasi_perkuliahan/mhs/evaluasi"
     )
   ) {
-    // anjing
     console.log("ANJING");
     initPBMAutomation(tabId);
   }
 
-  // FOOD TRUCK
   if (
     changeInfo.status === "complete" &&
     currentUrl.includes("https://form.undip.ac.id/makanansehat/pendaftaran")
@@ -105,11 +96,29 @@ function handleTabUpdate(
     initFoodTruckAutoSelect(tabId);
   }
 
-  // TODOIST SYNC
   if (
     changeInfo.status === "complete" &&
     currentUrl.includes("https://kulon2.undip.ac.id/my/")
   ) {
-    initTodoistSync(tabId);
+    void handleKulonAssignmentsVisit(tabId);
   }
+}
+
+async function handleKulonAssignmentsVisit(tabId: number): Promise<void> {
+  const shouldProcess = await shouldProcessKulonVisit();
+  if (!shouldProcess) {
+    return;
+  }
+
+  const assignments = await refreshKulonAssignmentsCacheFromTab(tabId);
+  const todoistConfigured = await isTodoistSyncConfigured();
+
+  if (!todoistConfigured) {
+    return;
+  }
+
+  await runTodoistSyncForTab(tabId, {
+    notifyIfUnconfigured: false,
+    scrapedAssignments: assignments,
+  });
 }
