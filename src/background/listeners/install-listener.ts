@@ -3,6 +3,7 @@
  */
 
 import { setupAlarmsFromStorage } from "../utils/alarm-manager";
+import { restoreSebHeaderRuleFromStorage } from "../features/seb-header";
 
 export function initInstallListener(): void {
   chrome.runtime.onInstalled.addListener(handleInstall);
@@ -12,6 +13,7 @@ export function initInstallListener(): void {
 function handleInstall(details: chrome.runtime.InstalledDetails): void {
   // INIT SiapDips Suspender
   setupAlarmsFromStorage();
+  void restoreSebHeaderRuleFromStorage();
 
   // Context Menus
   chrome.contextMenus.create({
@@ -33,4 +35,5 @@ function handleInstall(details: chrome.runtime.InstalledDetails): void {
 
 function handleStartup(): void {
   setupAlarmsFromStorage();
+  void restoreSebHeaderRuleFromStorage();
 }

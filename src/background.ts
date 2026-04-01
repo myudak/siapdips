@@ -3,9 +3,6 @@
  * Main entry point that wires all modules together
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 console.log("myudak lagi cooking...");
 
 // Import utilities
@@ -17,6 +14,7 @@ import { initTabUpdateListener } from "./background/listeners/tab-update-listene
 import { initAlarmListener } from "./background/listeners/alarm-listener";
 import { initContextMenuListener } from "./background/listeners/context-menu-listener";
 import { initMessageListener } from "./background/listeners/message-listener";
+import { restoreSebHeaderRuleFromStorage } from "./background/features/seb-header";
 
 // Initialize SiapDips Suspender
 setupAlarmsFromStorage();
@@ -30,3 +28,6 @@ initTabUpdateListener();
 initAlarmListener();
 initContextMenuListener();
 initMessageListener();
+
+// Restore persisted dynamic features that need runtime reattachment.
+void restoreSebHeaderRuleFromStorage();

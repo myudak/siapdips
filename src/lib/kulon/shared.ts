@@ -55,14 +55,14 @@ export const NEW_TAB_MODULE_DESCRIPTIONS: Record<NewTabModuleId, string> = {
 
 export const NEW_TAB_PRESET_LABELS: Record<NewTabPresetId, string> = {
   campusDawn: "Campus Dawn",
-  paperDesk: "Paper Desk",
-  nightLab: "Night Lab",
+  paperDesk: "Study Cafe",
+  nightLab: "Late Night",
 };
 
 export const NEW_TAB_PRESET_DESCRIPTIONS: Record<NewTabPresetId, string> = {
-  campusDawn: "Airy aurora gradients with a calm campus-blue accent.",
-  paperDesk: "Warm editorial paper feel with roomy spacing.",
-  nightLab: "Sharper grid energy with compact spacing and mono tone.",
+  campusDawn: "Bubbly aurora gradients with a vibrant sky-blue accent.",
+  paperDesk: "Warm textured paper feel with roomy spacing and editorial type.",
+  nightLab: "Playful dark theme with sharp grid energy and vivid contrasts.",
 };
 
 export const NEW_TAB_PRESET_CONFIGS: Record<
@@ -182,31 +182,31 @@ export function getNewTabAccentVariables(
     }
   > = {
     sky: {
-      strong: "#0f8bd7",
-      soft: "rgba(14, 165, 233, 0.18)",
-      surface: "rgba(14, 165, 233, 0.10)",
-      ring: "rgba(14, 165, 233, 0.28)",
+      strong: "#0284c7", /* Punchier sky blue */
+      soft: "rgba(14, 165, 233, 0.2)",
+      surface: "rgba(14, 165, 233, 0.12)",
+      ring: "rgba(14, 165, 233, 0.3)",
       chip: "#0369a1",
     },
     emerald: {
-      strong: "#0f9f6e",
-      soft: "rgba(16, 185, 129, 0.18)",
-      surface: "rgba(16, 185, 129, 0.10)",
-      ring: "rgba(16, 185, 129, 0.28)",
+      strong: "#059669", /* Punchier emerald */
+      soft: "rgba(16, 185, 129, 0.2)",
+      surface: "rgba(16, 185, 129, 0.12)",
+      ring: "rgba(16, 185, 129, 0.3)",
       chip: "#047857",
     },
     amber: {
-      strong: "#c77a12",
-      soft: "rgba(245, 158, 11, 0.18)",
-      surface: "rgba(245, 158, 11, 0.10)",
-      ring: "rgba(245, 158, 11, 0.28)",
+      strong: "#d97706", /* Richer amber */
+      soft: "rgba(245, 158, 11, 0.2)",
+      surface: "rgba(245, 158, 11, 0.12)",
+      ring: "rgba(245, 158, 11, 0.3)",
       chip: "#b45309",
     },
     slate: {
       strong: "#475569",
-      soft: "rgba(100, 116, 139, 0.18)",
-      surface: "rgba(100, 116, 139, 0.10)",
-      ring: "rgba(100, 116, 139, 0.28)",
+      soft: "rgba(100, 116, 139, 0.2)",
+      surface: "rgba(100, 116, 139, 0.12)",
+      ring: "rgba(100, 116, 139, 0.3)",
       chip: "#334155",
     },
   };

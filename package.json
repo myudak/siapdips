@@ -9,6 +9,7 @@
     "build:firefox": "vite build --mode firefox",
     "build:chrome": "vite build --mode chrome",
     "build:edge": "vite build --mode edge",
+    "test:seb": "node --test --experimental-strip-types tests/seb-hash.test.mjs",
     "watch:chrome": "vite build --mode chrome --watch",
     "watch:firefox": "vite build --mode firefox --watch",
     "watch:edge": "vite build --mode edge --watch",

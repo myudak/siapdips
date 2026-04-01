@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Siap Dips: Your Campus Companion",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": [
     "activeTab",
     "scripting",
     "storage",
+    "declarativeNetRequest",
     "alarms",
     "tabs",
     "contextMenus"

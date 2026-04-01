@@ -8,6 +8,12 @@ import {
   CloseThoseTabsNow,
 } from "../utils/tab-suspender";
 import {
+  activateSebHeaderProfile,
+  clearSebHeaderProfile,
+  deactivateSebHeaderProfile,
+  getSebHeaderStatus,
+} from "../features/seb-header";
+import {
   fetchTodoistProjects,
   isTodoistApiError,
   validateTodoistToken,
@@ -36,6 +42,10 @@ import type {
   TodoistSyncTabResponse,
   TodoistValidateTokenResponse,
 } from "@/lib/todoist/shared";
+import type {
+  SebRuntimeMessage,
+  SebStatusResponse,
+} from "@/lib/seb/shared";
 
 export function initMessageListener(): void {
   chrome.runtime.onMessage.addListener(handleMessage);
@@ -46,6 +56,7 @@ type RuntimeMessage =
   | { type: "suspendAllTabsNow" }
   | { type: "closeAllTabsNow" }
   | { type: "hackerrankSetEditorCode"; tabId?: number; code?: string }
+  | SebRuntimeMessage
   | TodoistRuntimeMessage
   | KulonRuntimeMessage;
 
@@ -91,6 +102,26 @@ function handleMessage(
 
   if (message.type === "todoistFetchProjects") {
     handleTodoistFetchProjects(message.apiToken, sendResponse);
+    return true;
+  }
+
+  if (message.type === "sebGetStatus") {
+    handleSebGetStatus(sendResponse);
+    return true;
+  }
+
+  if (message.type === "sebActivateProfile") {
+    handleSebActivateProfile(message.profile, sendResponse);
+    return true;
+  }
+
+  if (message.type === "sebDeactivateProfile") {
+    handleSebDeactivateProfile(sendResponse);
+    return true;
+  }
+
+  if (message.type === "sebClearProfile") {
+    handleSebClearProfile(sendResponse);
     return true;
   }
 
@@ -196,6 +227,110 @@ async function handleKulonDashboardRefresh(
           ? error.message
           : "Failed to refresh Kulon dashboard.",
     } satisfies KulonDashboardRefreshResponse);
+  }
+}
+
+async function handleSebGetStatus(
+  sendResponse: (response?: unknown) => void
+): Promise<void> {
+  try {
+    sendResponse((await getSebHeaderStatus()) satisfies SebStatusResponse);
+  } catch (error) {
+    sendResponse({
+      ok: false,
+      supported: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to load SEB header status.",
+    } satisfies SebStatusResponse);
+  }
+}
+
+async function handleSebActivateProfile(
+  profile: Parameters<typeof activateSebHeaderProfile>[0],
+  sendResponse: (response?: unknown) => void
+): Promise<void> {
+  try {
+    sendResponse({
+      ok: true,
+      supported: true,
+      profile: await activateSebHeaderProfile(profile),
+    } satisfies SebStatusResponse);
+  } catch (error) {
+    const status = await getSebHeaderStatus().catch(() => ({
+      ok: false,
+      supported: false,
+      profile: null,
+    }));
+
+    sendResponse({
+      ok: false,
+      supported: status.supported,
+      profile: status.profile,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to activate SEB header rewriting.",
+    } satisfies SebStatusResponse);
+  }
+}
+
+async function handleSebDeactivateProfile(
+  sendResponse: (response?: unknown) => void
+): Promise<void> {
+  try {
+    const profile = await deactivateSebHeaderProfile();
+    const status = await getSebHeaderStatus();
+    sendResponse({
+      ok: true,
+      supported: status.supported,
+      profile: profile ?? status.profile,
+    } satisfies SebStatusResponse);
+  } catch (error) {
+    const status = await getSebHeaderStatus().catch(() => ({
+      ok: false,
+      supported: false,
+      profile: null,
+    }));
+
+    sendResponse({
+      ok: false,
+      supported: status.supported,
+      profile: status.profile,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to disable SEB header rewriting.",
+    } satisfies SebStatusResponse);
+  }
+}
+
+async function handleSebClearProfile(
+  sendResponse: (response?: unknown) => void
+): Promise<void> {
+  try {
+    await clearSebHeaderProfile();
+    const status = await getSebHeaderStatus();
+    sendResponse({
+      ok: true,
+      supported: status.supported,
+      profile: null,
+    } satisfies SebStatusResponse);
+  } catch (error) {
+    const status = await getSebHeaderStatus().catch(() => ({
+      ok: false,
+      supported: false,
+      profile: null,
+    }));
+
+    sendResponse({
+      ok: false,
+      supported: status.supported,
+      profile: status.profile,
+      error:
+        error instanceof Error ? error.message : "Failed to clear SEB profile.",
+    } satisfies SebStatusResponse);
   }
 }
 

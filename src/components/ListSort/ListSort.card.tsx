@@ -27,6 +27,7 @@ import {
   GraduationCap,
   MessageSquare,
   LayoutDashboard,
+  ShieldCheck,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
@@ -37,6 +38,7 @@ import TodoistSyncCard from "../TodoistSyncCard";
 import OracleAcademyCard from "../OracleAcademyCard";
 import AiChatCard from "../AiChatCard";
 import NewTabDashboardCard from "../NewTabDashboardCard";
+import SebHeaderCard from "../SebHeaderCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -57,6 +59,7 @@ export const cardComponents = {
   OracleAcademyCard,
   AiChatCard,
   NewTabDashboardCard,
+  SebHeaderCard,
 } as const;
 
 export const cardComponentsOption: {
@@ -78,6 +81,7 @@ export const cardComponentsOption: {
   JobTrackerCard: ["Job Tracker", BriefcaseBusinessIcon],
   TodoistSyncCard: ["Todoist Sync", ListChecks],
   NewTabDashboardCard: ["New Tab Dashboard", LayoutDashboard],
+  SebHeaderCard: ["SEB Config Header", ShieldCheck],
   AiChatCard: ["AI Chat", MessageSquare],
   SuspenderCard: ["Suspend Card", SquareSplitHorizontal],
 };

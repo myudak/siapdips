@@ -1,205 +1,198 @@
-.newtab-shell {
-  --newtab-accent-strong: #0f8bd7;
-  --newtab-accent-soft: rgba(14, 165, 233, 0.18);
-  --newtab-accent-surface: rgba(14, 165, 233, 0.1);
-  --newtab-accent-ring: rgba(14, 165, 233, 0.28);
-  --newtab-accent-chip: #0369a1;
-  --newtab-panel: rgba(255, 255, 255, 0.8);
-  --newtab-panel-strong: rgba(255, 255, 255, 0.92);
-  --newtab-border: rgba(148, 163, 184, 0.28);
-  --newtab-border-strong: rgba(148, 163, 184, 0.42);
-  --newtab-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
-  --newtab-gap: 1.25rem;
-  --newtab-padding: 1.25rem;
-  --newtab-radius: 1.5rem;
-  --newtab-font: "Segoe UI Variable", "Aptos", "Trebuchet MS", sans-serif;
-  --newtab-title-font: var(--newtab-font);
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@600;800;900&family=Plus+Jakarta+Sans:wght@500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+/* Focus everything on the "Analog Protocol" neo-brutalist variables */
+:root {
+  --brutal-bg: #09090b; /* Near black */
+  --brutal-surface: #18181b; /* Very dark grey */
+  --brutal-surface-dim: #27272a; 
+  --brutal-ink: #f4f4f5; /* Off-white for borders, shadows, text */
+  
+  --brutal-primary: #00fd00; /* Electric Green */
+  --brutal-secondary: #ff3385; /* Hotter Pink for dark mode */
+  
+  --brutal-font-display: 'Epilogue', sans-serif;
+  --brutal-font-body: 'Plus Jakarta Sans', sans-serif;
+  --brutal-font-mono: 'Space Grotesk', monospace;
+  
+  --brutal-border-width: 3px;
+}
+
+/* Base application shell styling (replaces soft newtab-shell) */
+.brutal-shell {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(14, 165, 233, 0.14), transparent 34%),
-    radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.03), transparent 35%);
-  color: hsl(var(--foreground));
-  font-family: var(--newtab-font);
+  background-color: var(--brutal-bg);
+  color: var(--brutal-ink);
+  font-family: var(--brutal-font-body);
+  /* The cool dotted hacker grid background */
+  background-image: radial-gradient(var(--brutal-surface-dim) 1.5px, transparent 1.5px);
+  background-size: 20px 20px;
+  background-position: 0 0;
 }
 
-.dark .newtab-shell {
-  --newtab-panel: rgba(15, 23, 42, 0.76);
-  --newtab-panel-strong: rgba(15, 23, 42, 0.9);
-  --newtab-border: rgba(148, 163, 184, 0.14);
-  --newtab-border-strong: rgba(148, 163, 184, 0.24);
-  --newtab-shadow: 0 30px 90px rgba(2, 6, 23, 0.5);
-  background:
-    radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 28%),
-    radial-gradient(circle at top right, rgba(74, 222, 128, 0.12), transparent 24%),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.72), rgba(2, 6, 23, 0.94));
+.brutal-shell * {
+  border-radius: 0 !important; /* The 0px radius rule is absolute */
 }
 
-.newtab-shell[data-background-style="paper"] {
-  background:
-    radial-gradient(circle at top left, rgba(245, 158, 11, 0.11), transparent 28%),
-    linear-gradient(180deg, rgba(250, 245, 235, 0.96), rgba(255, 255, 255, 0.88));
+/* Typography Classes */
+.font-display { font-family: var(--brutal-font-display); }
+.font-mono { font-family: var(--brutal-font-mono); }
+.font-body { font-family: var(--brutal-font-body); }
+
+/* Core Layout Containers */
+.brutal-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.dark .newtab-shell[data-background-style="paper"] {
-  background:
-    radial-gradient(circle at top left, rgba(245, 158, 11, 0.08), transparent 28%),
-    linear-gradient(180deg, rgba(24, 24, 27, 0.98), rgba(15, 23, 42, 0.95));
+/* Brutal Card Module */
+.brutal-card {
+  background-color: var(--brutal-bg);
+  border: var(--brutal-border-width) solid var(--brutal-ink);
+  box-shadow: 6px 6px 0 var(--brutal-ink);
+  position: relative;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.newtab-shell[data-background-style="grid"] {
-  background:
-    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(2, 132, 199, 0.06), rgba(255, 255, 255, 0.9));
-  background-size: 28px 28px, 28px 28px, auto;
+.brutal-card-surface {
+  background-color: var(--brutal-surface);
 }
 
-.dark .newtab-shell[data-background-style="grid"] {
-  background:
-    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.9), rgba(3, 7, 18, 0.98));
-  background-size: 28px 28px, 28px 28px, auto;
+.brutal-card-primary {
+  background-color: var(--brutal-primary);
 }
 
-.newtab-shell[data-density="compact"] {
-  --newtab-gap: 0.9rem;
-  --newtab-padding: 1rem;
+.brutal-card-secondary {
+  background-color: var(--brutal-secondary);
 }
 
-.newtab-shell[data-density="airy"] {
-  --newtab-gap: 1.5rem;
-  --newtab-padding: 1.5rem;
+/* Buttons */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--brutal-font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px solid var(--brutal-ink);
+  box-shadow: 4px 4px 0 var(--brutal-ink);
+  background-color: var(--brutal-surface-dim);
+  color: var(--brutal-ink);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
 }
 
-.newtab-shell[data-typography="editorial"] {
-  --newtab-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --newtab-title-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--brutal-ink);
 }
 
-.newtab-shell[data-typography="mono"] {
-  --newtab-font: "IBM Plex Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
-  --newtab-title-font: "IBM Plex Mono", "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+.brutal-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--brutal-ink);
 }
 
-.newtab-heading,
-.newtab-module-title,
-.newtab-number {
-  font-family: var(--newtab-title-font);
+.brutal-btn-primary {
+  background-color: var(--brutal-primary);
 }
 
-.newtab-module-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--newtab-gap);
+.brutal-btn-secondary {
+  background-color: var(--brutal-secondary);
 }
 
-.newtab-module {
-  min-width: 0;
+/* Badges / Stickers */
+.brutal-badge {
+  font-family: var(--brutal-font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 2px solid var(--brutal-ink);
+  background-color: var(--brutal-primary);
+  color: var(--brutal-ink);
+  padding: 0.1rem 0.5rem;
+  display: inline-block;
 }
 
-.newtab-module--wide {
-  grid-column: 1 / -1;
+.brutal-badge-secondary {
+  background-color: var(--brutal-secondary);
 }
 
-.newtab-panel {
-  border: 1px solid var(--newtab-border);
-  background: var(--newtab-panel);
-  border-radius: var(--newtab-radius);
-  box-shadow: var(--newtab-shadow);
-  backdrop-filter: blur(14px);
+.brutal-badge-surface {
+  background-color: var(--brutal-surface);
 }
 
-.newtab-panel--hero {
-  background:
-    linear-gradient(135deg, var(--newtab-accent-surface), transparent 42%),
-    var(--newtab-panel-strong);
-  border-color: var(--newtab-border-strong);
+/* Forms & Inputs */
+.brutal-input-wrapper {
+  position: relative;
+  display: flex;
 }
 
-.newtab-panel-content {
-  padding: var(--newtab-padding);
+.brutal-input {
+  width: 100%;
+  font-family: var(--brutal-font-mono);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--brutal-ink);
+  background: var(--brutal-surface);
+  border: var(--brutal-border-width) solid var(--brutal-ink);
+  padding: 1rem 1.5rem;
+  box-shadow: 8px 8px 0 var(--brutal-ink);
+  outline: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.newtab-accent-kicker {
-  color: var(--newtab-accent-chip);
-  letter-spacing: 0.22em;
+.brutal-input::placeholder {
+  color: var(--brutal-ink);
+  opacity: 0.4;
 }
 
-.newtab-accent-chip {
-  border-color: transparent;
-  background: var(--newtab-accent-surface);
-  color: var(--newtab-accent-chip);
+.brutal-input-label {
+  position: absolute;
+  top: -0.75rem;
+  left: 1rem;
+  background-color: var(--brutal-ink);
+  color: var(--brutal-primary);
+  font-family: var(--brutal-font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  letter-spacing: 0.05em;
+  z-index: 10;
 }
 
-.newtab-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: calc(var(--newtab-gap) * 0.75);
+/* Status Terminal Component */
+.brutal-terminal {
+  background-color: var(--brutal-ink);
+  color: var(--brutal-primary);
+  font-family: var(--brutal-font-mono);
+  border: var(--brutal-border-width) solid var(--brutal-ink);
+  box-shadow: 6px 6px 0 var(--brutal-surface-dim);
+  padding: 1.5rem;
 }
 
-.newtab-summary-card {
-  border: 1px solid var(--newtab-border);
-  background: rgba(255, 255, 255, 0.38);
-  border-radius: 1.1rem;
-  padding: calc(var(--newtab-padding) * 0.9);
+.brutal-terminal-text {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.dark .newtab-summary-card {
-  background: rgba(15, 23, 42, 0.34);
+/* Modifiers */
+.brutal-divider {
+  border-bottom: 2px solid var(--brutal-ink);
 }
 
-.newtab-summary-icon {
-  border: 1px solid var(--newtab-border);
-  background: var(--newtab-accent-surface);
-  color: var(--newtab-accent-chip);
+.brutal-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--brutal-ink);
+  cursor: pointer;
 }
 
-.newtab-task-card {
-  border: 1px solid var(--newtab-border);
-  background: rgba(255, 255, 255, 0.44);
-  border-radius: 1.15rem;
-}
-
-.dark .newtab-task-card {
-  background: rgba(15, 23, 42, 0.34);
-}
-
-.newtab-empty-card {
-  border: 1px dashed var(--newtab-border-strong);
-  background: rgba(255, 255, 255, 0.28);
-  border-radius: 1.25rem;
-}
-
-.dark .newtab-empty-card {
-  background: rgba(15, 23, 42, 0.28);
-}
-
-.newtab-linked-badge {
-  border-color: transparent;
-  background: var(--newtab-accent-soft);
-  color: var(--newtab-accent-chip);
-}
-
-.newtab-muted-line {
-  border-color: var(--newtab-border);
-}
-
-@media (max-width: 1200px) {
-  .newtab-summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 1024px) {
-  .newtab-module-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .newtab-summary-grid {
-    grid-template-columns: 1fr;
-  }
+.brutal-icon-btn:hover {
+  opacity: 0.7;
 }
