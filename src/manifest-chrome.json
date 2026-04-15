@@ -97,6 +97,18 @@
     },
     {
       "matches": [
+        "https://dyandraglobalstore-02.com/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-dyandra.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
+    },
+    {
+      "matches": [
         "https://siap.undip.ac.id/master_perkuliahan/mhs/absensi/*"
       ],
       "js": [

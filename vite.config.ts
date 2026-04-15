@@ -8,6 +8,7 @@ import flattenOutput from "vite-plugin-flatten-output";
 const ENTRY_FILE_BY_NAME = {
   content: "content.js",
   contentFt: "content-ft.js",
+  "content-dyandra": "content-dyandra.js",
   contentOracleAcademy: "content-oracleAcademy.js",
   "content-moodle": "content-moodle.js",
   "content-form-watcher": "content-form-watcher.js",
@@ -16,6 +17,10 @@ const ENTRY_FILE_BY_NAME = {
   "content-job": "content-job.js",
   background: "background.js",
 } as const;
+
+const CONTENT_ENTRY_NAMES = new Set(
+  Object.keys(ENTRY_FILE_BY_NAME).filter((entryName) => entryName !== "background")
+);
 
 const LEGACY_TO_ENTRY = Object.fromEntries(
   Object.entries(ENTRY_FILE_BY_NAME).map(([entryName, fileName]) => [
@@ -56,6 +61,14 @@ function rewriteManifestPlugin(mode: string): Plugin {
       for (const outputFile of Object.values(bundle)) {
         if (outputFile.type === "chunk" && outputFile.isEntry) {
           entryFileNames.set(outputFile.name, outputFile.fileName);
+
+          if (
+            CONTENT_ENTRY_NAMES.has(outputFile.name) &&
+            !outputFile.code.startsWith("import ") &&
+            !outputFile.code.startsWith("export ")
+          ) {
+            outputFile.code = `(() => {\n${outputFile.code}\n})();`;
+          }
         }
       }
 
@@ -159,6 +172,10 @@ export default defineConfig(({ mode }) => {
           newtab: path.resolve(__dirname, "src/pages/newtab/newtab.html"),
           content: path.resolve(__dirname, "src/content.js"),
           contentFt: path.resolve(__dirname, "src/content-ft.js"),
+          "content-dyandra": path.resolve(
+            __dirname,
+            "src/content-dyandra.ts"
+          ),
           contentOracleAcademy: path.resolve(
             __dirname,
             "src/content-oracleAcademy.ts"

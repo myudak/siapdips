@@ -28,6 +28,7 @@ import {
   MessageSquare,
   LayoutDashboard,
   ShieldCheck,
+  Radar,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
@@ -39,6 +40,7 @@ import OracleAcademyCard from "../OracleAcademyCard";
 import AiChatCard from "../AiChatCard";
 import NewTabDashboardCard from "../NewTabDashboardCard";
 import SebHeaderCard from "../SebHeaderCard";
+import DyandraLoketCard from "../DyandraLoketCard";
 
 export const cardComponents = {
   NavigationCard,
@@ -60,6 +62,7 @@ export const cardComponents = {
   AiChatCard,
   NewTabDashboardCard,
   SebHeaderCard,
+  DyandraLoketCard,
 } as const;
 
 export const cardComponentsOption: {
@@ -82,6 +85,7 @@ export const cardComponentsOption: {
   TodoistSyncCard: ["Todoist Sync", ListChecks],
   NewTabDashboardCard: ["New Tab Dashboard", LayoutDashboard],
   SebHeaderCard: ["SEB Config Header", ShieldCheck],
+  DyandraLoketCard: ["Dyandra Loket Helper", Radar],
   AiChatCard: ["AI Chat", MessageSquare],
   SuspenderCard: ["Suspend Card", SquareSplitHorizontal],
 };
