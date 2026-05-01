@@ -26,7 +26,6 @@ import {
   ListChecks,
   GraduationCap,
   MessageSquare,
-  LayoutDashboard,
   ShieldCheck,
   Radar,
 } from "lucide-react";
@@ -38,7 +37,6 @@ import JobTrackerCard from "../JobTrackerCard";
 import TodoistSyncCard from "../TodoistSyncCard";
 import OracleAcademyCard from "../OracleAcademyCard";
 import AiChatCard from "../AiChatCard";
-import NewTabDashboardCard from "../NewTabDashboardCard";
 import SebHeaderCard from "../SebHeaderCard";
 import DyandraLoketCard from "../DyandraLoketCard";
 
@@ -60,7 +58,6 @@ export const cardComponents = {
   TodoistSyncCard,
   OracleAcademyCard,
   AiChatCard,
-  NewTabDashboardCard,
   SebHeaderCard,
   DyandraLoketCard,
 } as const;
@@ -83,7 +80,6 @@ export const cardComponentsOption: {
   MoodleCard: ["Moodle Helper Settings", LucideSchool2],
   JobTrackerCard: ["Job Tracker", BriefcaseBusinessIcon],
   TodoistSyncCard: ["Todoist Sync", ListChecks],
-  NewTabDashboardCard: ["New Tab Dashboard", LayoutDashboard],
   SebHeaderCard: ["SEB Config Header", ShieldCheck],
   DyandraLoketCard: ["Dyandra Loket Helper", Radar],
   AiChatCard: ["AI Chat", MessageSquare],

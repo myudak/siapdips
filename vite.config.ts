@@ -146,7 +146,6 @@ export default defineConfig(({ mode }) => {
         "src/pages/option",
         "src/pages/suspended",
         "src/pages/job",
-        "src/pages/newtab",
       ],
       filePattern: ".html",
     }),
@@ -169,7 +168,6 @@ export default defineConfig(({ mode }) => {
             "src/pages/suspended/suspended.html"
           ),
           job: path.resolve(__dirname, "src/pages/job/job.html"),
-          newtab: path.resolve(__dirname, "src/pages/newtab/newtab.html"),
           content: path.resolve(__dirname, "src/content.js"),
           contentFt: path.resolve(__dirname, "src/content-ft.js"),
           "content-dyandra": path.resolve(

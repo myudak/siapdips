@@ -196,8 +196,5 @@
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
-  },
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
   }
 }

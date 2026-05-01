@@ -114,8 +114,8 @@ const TutorialSection = () => {
             Guides buat fitur yang pengen dipakai beneran
           </h2>
           <p className="mt-4 text-muted-foreground text-base sm:text-lg">
-            Bagian ini buat dalemin fitur tertentu tanpa harus baca semuanya
-            dari awal sampai bawah.
+            Quick start di atas buat orientasi. Bagian ini buat dalemin fitur
+            tertentu tanpa harus baca semuanya dari awal sampai bawah.
           </p>
         </div>
 
@@ -183,10 +183,10 @@ const TutorialSection = () => {
           <Button
             variant="outline"
             onClick={() => {
-              window.location.href = "#sect1";
+              window.location.href = "#quickStart";
             }}
           >
-            Back to settings
+            Back to quick start
           </Button>
         </div>
       </div>
