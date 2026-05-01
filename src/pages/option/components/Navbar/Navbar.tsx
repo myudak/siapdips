@@ -11,7 +11,6 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const navLinks = [
-    { href: "#quickStart", label: "Quick Start" },
     { href: "#sect1", label: "Settings" },
     { href: "#TemplatePBM", label: "Template PBM" },
     { href: "#profileSettings", label: "Profile" },

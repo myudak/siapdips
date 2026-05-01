@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Settings2 } from "lucide-react";
 import { Icons } from "../Navbar/Navbar.logo";
 import { VERSION, LAST_UPDATE } from "@/constants/storage";
 
@@ -31,19 +31,14 @@ const HeaderSection = () => {
               See whats new
             </a>
           </p>
-          <div className="mt-6 flex justify-center">
-            <Badge variant="secondary" className="px-3 py-1">
-              First time install? Click quick start dulu
-            </Badge>
-          </div>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Button
-              onClick={() => (window.location.href = "#quickStart")}
+              onClick={() => (window.location.href = "#sect1")}
               size="lg"
               className="gap-2 rounded-full px-7 shadow-lg shadow-primary/20 transition-transform hover:scale-[1.03]"
             >
-              <Sparkles className="h-4 w-4" />
-              See what SiapDiPS can do
+              <Settings2 className="h-4 w-4" />
+              Open settings
               <ArrowRight className="h-4 w-4" />
             </Button>
             <Button
