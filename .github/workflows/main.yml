@@ -52,7 +52,7 @@ jobs:
           printf '%s' '${{ secrets.CRX_PRIVATE_KEY }}' > dist.pem
           test -s dist.pem
 
-          "${{ steps.setup-chrome.outputs.chrome-path }}" --pack-extension=dist --pack-extension-key=dist.pem
+          "${{ steps.setup-chrome.outputs.chrome-path }}" --no-sandbox --pack-extension=dist --pack-extension-key=dist.pem
           mv dist.crx "${{ steps.release.outputs.asset_name }}"
 
       - name: Install Chrome Web Store CLI
