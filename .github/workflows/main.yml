@@ -12,7 +12,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]') # Only runs manually or if commit message contains '[deploy]'
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]') || contains(github.event.head_commit.message, '[release]') # Runs manually, on '[deploy]', or on '[release]' for CRX release upload only
 
     steps:
       - name: Checkout Repository
@@ -56,9 +56,11 @@ jobs:
           mv dist.crx "${{ steps.release.outputs.asset_name }}"
 
       - name: Install Chrome Web Store CLI
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         run: npm install -g chrome-webstore-upload-cli
 
       - name: Upload to Chrome Web Store
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         run: |
           echo "Uploading extension..."
           chrome-webstore-upload upload --source dist \
