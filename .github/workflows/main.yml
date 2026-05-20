@@ -1,21 +1,25 @@
 name: Deploy Chrome Extension
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main # Adjust if needed
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[deploy]') # Only runs if commit message contains '[deploy]'
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]') || contains(github.event.head_commit.message, '[release]') # Runs manually, on '[deploy]', or on '[release]' for CRX release upload only
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -26,10 +30,37 @@ jobs:
           echo "Building extension..."
           NODE_ENV=production npm run build
 
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Prepare Release Metadata
+        id: release
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="v${VERSION}"
+          ASSET_NAME="siapdips-${TAG}.crx"
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "asset_name=${ASSET_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Pack CRX
+        run: |
+          trap 'rm -f dist.pem' EXIT
+          install -m 600 /dev/null dist.pem
+          printf '%s' '${{ secrets.CRX_PRIVATE_KEY }}' > dist.pem
+          test -s dist.pem
+
+          "${{ steps.setup-chrome.outputs.chrome-path }}" --no-sandbox --pack-extension=dist --pack-extension-key=dist.pem
+          mv dist.crx "${{ steps.release.outputs.asset_name }}"
+
       - name: Install Chrome Web Store CLI
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         run: npm install -g chrome-webstore-upload-cli
 
       - name: Upload to Chrome Web Store
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         run: |
           echo "Uploading extension..."
           chrome-webstore-upload upload --source dist \
@@ -37,6 +68,18 @@ jobs:
             --client-id ${{ secrets.CLIENT_ID }} \
             --client-secret ${{ secrets.CLIENT_SECRET }} \
             --refresh-token ${{ secrets.REFRESH_TOKEN }}
+
+      - name: Upload CRX to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          name: ${{ steps.release.outputs.tag }}
+          files: ${{ steps.release.outputs.asset_name }}
+          fail_on_unmatched_files: true
+          overwrite_files: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Publish Extension
       #   run: |
