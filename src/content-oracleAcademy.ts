@@ -6,6 +6,7 @@ const AUTO_NEXT_KEY = "oracleAcademyAutoNextEnabled";
 const CUSTOM_QA_KEY = "oracleAcademyCustomQA";
 
 let autoNextTimer: number | null = null;
+let autoNextMissCount = 0;
 let customQa: Record<string, string> = {};
 
 /**
@@ -90,8 +91,8 @@ function findAnswerForQuestion(questionRaw: string): string | null {
     }
   }
 
-  console.warn("[Oracle Academy] QA lookup miss. Question norm:", questionNorm);
-  console.warn(
+  console.debug("[Oracle Academy] QA lookup miss. Question norm:", questionNorm);
+  console.debug(
     "[Oracle Academy] QA keys (sample):",
     entries.slice(0, 5).map((e) => e.keyNorm)
   );
@@ -131,7 +132,7 @@ function getAutoHelperEnabled(): Promise<boolean> {
       }
       chrome.storage.local.get(AUTO_HELPER_KEY, (res) => {
         if (chrome.runtime.lastError) {
-          console.warn(
+          console.debug(
             "[Oracle Academy] Failed to read oracleAcademyHelperEnabled:",
             chrome.runtime.lastError.message
           );
@@ -141,7 +142,7 @@ function getAutoHelperEnabled(): Promise<boolean> {
         resolve(res[AUTO_HELPER_KEY] ?? true);
       });
     } catch (err) {
-      console.warn("[Oracle Academy] Storage read error:", err);
+      console.debug("[Oracle Academy] Storage read error:", err);
       resolve(true);
     }
   });
@@ -156,7 +157,7 @@ function getAutoNextEnabled(): Promise<boolean> {
       }
       chrome.storage.local.get(AUTO_NEXT_KEY, (res) => {
         if (chrome.runtime.lastError) {
-          console.warn(
+          console.debug(
             "[Oracle Academy] Failed to read oracleAcademyAutoNextEnabled:",
             chrome.runtime.lastError.message
           );
@@ -166,8 +167,29 @@ function getAutoNextEnabled(): Promise<boolean> {
         resolve(res[AUTO_NEXT_KEY] ?? false);
       });
     } catch (err) {
-      console.warn("[Oracle Academy] Storage read error:", err);
+      console.debug("[Oracle Academy] Storage read error:", err);
       resolve(false);
+    }
+  });
+}
+
+function setStoredBoolean(key: string, value: boolean): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!chrome?.storage?.local) {
+        resolve();
+        return;
+      }
+
+      chrome.storage.local.set({ [key]: value }, () => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        resolve();
+      });
+    } catch (err) {
+      reject(err);
     }
   });
 }
@@ -185,7 +207,7 @@ async function loadCustomQa(): Promise<void> {
       );
     }
   } catch (err) {
-    console.warn("[Oracle Academy] Failed to load custom QA:", err);
+    console.debug("[Oracle Academy] Failed to load custom QA:", err);
   }
 }
 
@@ -206,7 +228,7 @@ async function saveCustomQaPair(
     }
     showToast("Saved to custom QA.", "success");
   } catch (err) {
-    console.warn("[Oracle Academy] Failed to save custom QA:", err);
+    console.debug("[Oracle Academy] Failed to save custom QA:", err);
     showToast("Failed to save custom QA.", "error");
   }
 }
@@ -236,18 +258,27 @@ function clickNextButtonOnce(): boolean {
     document.querySelector<HTMLButtonElement>("#nextModButton") ||
     document.querySelector<HTMLButtonElement>('button[data-otel-label="NEXT"]');
   if (!btn) {
-    console.warn("[Oracle Academy] Next button not found.");
     return false;
   }
   btn.click();
+  autoNextMissCount = 0;
   console.log("[Oracle Academy] Next button clicked.");
   return true;
 }
 
 function startAutoNextLoop(intervalMs = 1500) {
   stopAutoNextLoop();
+  autoNextMissCount = 0;
   autoNextTimer = window.setInterval(() => {
-    clickNextButtonOnce();
+    const clicked = clickNextButtonOnce();
+    if (clicked) return;
+
+    autoNextMissCount += 1;
+    if (autoNextMissCount >= 5) {
+      stopAutoNextLoop();
+      void setStoredBoolean(AUTO_NEXT_KEY, false);
+      showToast("Auto Next stopped. Next button not found.", "info");
+    }
   }, intervalMs);
   console.log("[Oracle Academy] Auto-next loop started.");
 }
@@ -256,6 +287,7 @@ function stopAutoNextLoop() {
   if (autoNextTimer !== null) {
     clearInterval(autoNextTimer);
     autoNextTimer = null;
+    autoNextMissCount = 0;
     console.log("[Oracle Academy] Auto-next loop stopped.");
   }
 }
@@ -263,7 +295,6 @@ function stopAutoNextLoop() {
 function copyQuestionText(): boolean {
   const questionEl = getQuestionElement();
   if (!questionEl) {
-    console.warn("[Oracle Academy] Question element not found for copy.");
     showToast("Question element not found.", "error");
     return false;
   }
@@ -291,7 +322,7 @@ function copyQuestionText(): boolean {
       document.body.removeChild(ta);
       showToast("Question copied.", "success");
     } catch (err) {
-      console.warn("[Oracle Academy] Clipboard fallback failed:", err);
+      console.debug("[Oracle Academy] Clipboard fallback failed:", err);
       showToast("Failed to copy question.", "error");
       return false;
     }
@@ -358,7 +389,7 @@ function copyQaJson(): boolean {
       document.body.removeChild(ta);
       showToast("Q&A JSON copied.", "success");
     } catch (err) {
-      console.warn("[Oracle Academy] Clipboard fallback failed:", err);
+      console.debug("[Oracle Academy] Clipboard fallback failed:", err);
       showToast("Failed to copy Q&A JSON.", "error");
       return false;
     }
@@ -374,7 +405,6 @@ function answerCurrentQuestion(): boolean {
   const questionRaw = getQuestionText();
 
   if (!questionRaw) {
-    console.warn("[Oracle Academy] Question element not found.");
     showToast("Question element not found.", "error");
     return false;
   }
@@ -383,7 +413,7 @@ function answerCurrentQuestion(): boolean {
   const answerText = findAnswerForQuestion(questionRaw);
   if (!answerText) {
     const preview = normalizeText(questionRaw).slice(0, 160);
-    console.warn(
+    console.debug(
       "[Oracle Academy] No matching answer in QA bank. Question:",
       preview
     );
@@ -398,9 +428,6 @@ function answerCurrentQuestion(): boolean {
   );
 
   if (!choiceButtons.length) {
-    console.warn(
-      "[Oracle Academy] No choice buttons found (.choice-SelectArea)."
-    );
     showToast("Choices not found.", "error");
     return false;
   }
@@ -466,7 +493,7 @@ function answerCurrentQuestion(): boolean {
   }
 
   if (!clicked) {
-    console.warn(
+    console.debug(
       "[Oracle Academy] Could not match the answer text:",
       answerText
     );
@@ -479,7 +506,7 @@ function answerCurrentQuestion(): boolean {
         ).trim()
       )
     );
-    console.warn("[Oracle Academy] Available normalized choices:", available);
+    console.debug("[Oracle Academy] Available normalized choices:", available);
     showToast(`Answer "${answerText}" not found in choices.`, "error");
     return false;
   }
@@ -489,7 +516,7 @@ function answerCurrentQuestion(): boolean {
       `Selected ${matchedCount}/${effectiveExpected.length} expected choices.`,
       "error"
     );
-    console.warn(
+    console.debug(
       "[Oracle Academy] Not all expected answers were selected.",
       matchedCount,
       effectiveExpected.length
@@ -503,7 +530,6 @@ function answerCurrentQuestion(): boolean {
     submitBtn.click();
     showToast("Answer submitted.", "success");
   } else {
-    console.warn("[Oracle Academy] Submit button (#quiz-submit) not found.");
     showToast("Submit button not found.", "error");
     return false;
   }
@@ -533,13 +559,25 @@ function createHelper(): void {
   });
 
   const heading = document.createElement("div");
-  heading.textContent = "Siap DiPS · Oracle Academy";
   Object.assign(heading.style, {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
     fontWeight: "700",
     marginBottom: "10px",
     fontSize: "16px",
     cursor: "move",
   });
+
+  const titleText = document.createElement("span");
+  titleText.textContent = "Siap DiPS · Oracle Academy";
+  Object.assign(titleText.style, {
+    lineHeight: "1.2",
+  });
+
+  heading.appendChild(createLogoSiapDips());
+  heading.appendChild(createLogoMyudak());
+  heading.appendChild(titleText);
   panel.appendChild(heading);
 
   const note = document.createElement("p");
@@ -551,6 +589,136 @@ function createHelper(): void {
     lineHeight: "1.4",
   });
   panel.appendChild(note);
+
+  const toggleButtonBaseStyle: Partial<CSSStyleDeclaration> = {
+    width: "100%",
+    padding: "8px 10px",
+    border: "1px solid #d1d5db",
+    borderRadius: "8px",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontSize: "13px",
+    transition:
+      "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
+    marginBottom: "8px",
+  };
+
+  const setToggleButtonState = (
+    buttonEl: HTMLButtonElement,
+    label: string,
+    enabled: boolean
+  ) => {
+    buttonEl.textContent = `${label}: ${enabled ? "ON" : "OFF"}`;
+    buttonEl.style.background = enabled ? "#dcfce7" : "#f9fafb";
+    buttonEl.style.color = enabled ? "#166534" : "#374151";
+    buttonEl.style.borderColor = enabled ? "#86efac" : "#d1d5db";
+  };
+
+  let helperEnabledState = true;
+  let autoNextEnabledState = false;
+
+  const autoHelperToggle = document.createElement("button");
+  Object.assign(autoHelperToggle.style, toggleButtonBaseStyle);
+  setToggleButtonState(autoHelperToggle, "Auto helper on page", true);
+  autoHelperToggle.addEventListener("mouseenter", () => {
+    autoHelperToggle.style.boxShadow = "0 8px 16px rgba(0,0,0,0.08)";
+    autoHelperToggle.style.transform = "translateY(-1px)";
+  });
+  autoHelperToggle.addEventListener("mouseleave", () => {
+    autoHelperToggle.style.boxShadow = "none";
+    autoHelperToggle.style.transform = "translateY(0)";
+  });
+  autoHelperToggle.addEventListener("click", async () => {
+    helperEnabledState = !helperEnabledState;
+    setToggleButtonState(
+      autoHelperToggle,
+      "Auto helper on page",
+      helperEnabledState
+    );
+
+    try {
+      await setStoredBoolean(AUTO_HELPER_KEY, helperEnabledState);
+      showToast(
+        helperEnabledState
+          ? "Auto helper enabled."
+          : "Auto helper disabled for next page load.",
+        "success"
+      );
+    } catch (err) {
+      console.debug("[Oracle Academy] Failed to save auto helper state:", err);
+      showToast("Failed to save auto helper state.", "error");
+    }
+  });
+  panel.appendChild(autoHelperToggle);
+
+  const autoNextToggle = document.createElement("button");
+  Object.assign(autoNextToggle.style, toggleButtonBaseStyle);
+  setToggleButtonState(autoNextToggle, "Auto Next", false);
+  autoNextToggle.addEventListener("mouseenter", () => {
+    autoNextToggle.style.boxShadow = "0 8px 16px rgba(0,0,0,0.08)";
+    autoNextToggle.style.transform = "translateY(-1px)";
+  });
+  autoNextToggle.addEventListener("mouseleave", () => {
+    autoNextToggle.style.boxShadow = "none";
+    autoNextToggle.style.transform = "translateY(0)";
+  });
+  autoNextToggle.addEventListener("click", async () => {
+    autoNextEnabledState = !autoNextEnabledState;
+    setToggleButtonState(autoNextToggle, "Auto Next", autoNextEnabledState);
+
+    if (autoNextEnabledState) {
+      startAutoNextLoop();
+    } else {
+      stopAutoNextLoop();
+    }
+
+    try {
+      await setStoredBoolean(AUTO_NEXT_KEY, autoNextEnabledState);
+      showToast(
+        autoNextEnabledState ? "Auto Next enabled." : "Auto Next disabled.",
+        "success"
+      );
+    } catch (err) {
+      console.debug("[Oracle Academy] Failed to save auto next state:", err);
+      showToast("Failed to save auto next state.", "error");
+    }
+  });
+  panel.appendChild(autoNextToggle);
+
+  const nextOnceBtn = document.createElement("button");
+  nextOnceBtn.textContent = "Next once";
+  Object.assign(nextOnceBtn.style, {
+    width: "100%",
+    padding: "8px 10px",
+    border: "1px solid #bfdbfe",
+    borderRadius: "8px",
+    background: "#eff6ff",
+    color: "#1d4ed8",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontSize: "13px",
+    transition:
+      "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
+    marginBottom: "8px",
+  });
+  nextOnceBtn.addEventListener("mouseenter", () => {
+    nextOnceBtn.style.boxShadow = "0 8px 16px rgba(37,99,235,0.12)";
+    nextOnceBtn.style.transform = "translateY(-1px)";
+    nextOnceBtn.style.background = "#dbeafe";
+  });
+  nextOnceBtn.addEventListener("mouseleave", () => {
+    nextOnceBtn.style.boxShadow = "none";
+    nextOnceBtn.style.transform = "translateY(0)";
+    nextOnceBtn.style.background = "#eff6ff";
+  });
+  nextOnceBtn.addEventListener("click", () => {
+    const clicked = clickNextButtonOnce();
+    showToast(
+      clicked ? "Next clicked." : "Next button not found.",
+      clicked ? "success" : "error"
+    );
+  });
+  panel.appendChild(nextOnceBtn);
 
   const copyBtn = document.createElement("button");
   copyBtn.textContent = "Copy Question";
@@ -664,10 +832,55 @@ function createHelper(): void {
     cursor: "pointer",
     color: "#6b7280",
   });
-  close.addEventListener("click", () => panel.remove());
+  const handleStorageChange = (
+    changes: { [key: string]: chrome.storage.StorageChange },
+    areaName: string
+  ) => {
+    if (areaName !== "local") return;
+
+    if (AUTO_HELPER_KEY in changes) {
+      helperEnabledState = Boolean(changes[AUTO_HELPER_KEY].newValue);
+      setToggleButtonState(
+        autoHelperToggle,
+        "Auto helper on page",
+        helperEnabledState
+      );
+    }
+
+    if (AUTO_NEXT_KEY in changes) {
+      autoNextEnabledState = Boolean(changes[AUTO_NEXT_KEY].newValue);
+      setToggleButtonState(autoNextToggle, "Auto Next", autoNextEnabledState);
+    }
+  };
+
+  close.addEventListener("click", () => {
+    if (chrome?.storage?.onChanged) {
+      chrome.storage.onChanged.removeListener(handleStorageChange);
+    }
+    panel.remove();
+  });
   panel.appendChild(close);
 
   document.body.appendChild(panel);
+
+  Promise.all([getAutoHelperEnabled(), getAutoNextEnabled()])
+    .then(([helperEnabled, nextEnabled]) => {
+      helperEnabledState = helperEnabled;
+      autoNextEnabledState = nextEnabled;
+      setToggleButtonState(
+        autoHelperToggle,
+        "Auto helper on page",
+        helperEnabledState
+      );
+      setToggleButtonState(autoNextToggle, "Auto Next", autoNextEnabledState);
+    })
+    .catch((err) => {
+      console.debug("[Oracle Academy] Failed to hydrate helper controls:", err);
+    });
+
+  if (chrome?.storage?.onChanged) {
+    chrome.storage.onChanged.addListener(handleStorageChange);
+  }
 
   // Simple drag handling using the heading as the handle.
   let dragging = false;
@@ -699,6 +912,62 @@ function createHelper(): void {
     document.addEventListener("mouseup", onMouseUp);
     panel.classList.add("dragging");
   });
+}
+
+function createLogoSiapDips(): SVGSVGElement {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg.setAttribute("viewBox", "0 0 283.46 283.46");
+  svg.setAttribute("width", "20");
+  svg.setAttribute("height", "20");
+  svg.setAttribute("class", "stroke-black dark:stroke-white");
+
+  const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path1.setAttribute(
+    "d",
+    "m94.86,34.25l1.76,30.39c-8.19-.18-14.5-.15-18.92.09-14.12.82-21.15,6.09-21.11,15.79.05,9.27,7.4,13.87,22.06,13.8,7.22-.04,14.6-1.8,22.13-5.28,4.84-2.29,11.88-6.91,21.12-13.85l22.56-15.31c12.25-8.25,22.41-14.18,30.48-17.78,11.08-4.9,21.96-7.38,32.63-7.43,14.01-.07,25.24,3.65,33.69,11.16,9.42,8.25,14.16,19.55,14.23,33.89.07,14.66-5.16,25.68-15.69,33.06-8.17,5.86-19.04,8.93-32.62,9.21-1.08,0-4.8.02-11.16.05l-3.22-30.22c9.59-.05,16.33-.35,20.21-.91,9.26-1.34,13.88-5.62,13.84-12.84-.04-8.63-6.96-12.9-20.76-12.83-7.76.04-14.92,1.85-21.48,5.44-3.98,2.18-12.52,7.66-25.63,16.46l-22.73,15.63c-21.49,14.87-42.21,22.36-62.15,22.46-11.86.06-21.57-2.43-29.14-7.46-11.25-7.38-16.91-19.75-17-37.11-.08-16.39,5.47-28.7,16.64-36.95,5.91-4.45,12.2-7.28,18.88-8.5,5.38-.89,11.96-1.35,19.72-1.39,3.56-.02,7.44.13,11.65.43Z"
+  );
+  path1.setAttribute("class", "stroke-black dark:stroke-white top-path");
+  path1.setAttribute("style", "stroke-miterlimit: 10; stroke-width: 14px;");
+
+  const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path2.setAttribute(
+    "d",
+    "m252.41,161.34l.16,32.99c1.47,35.68-15.37,53.92-50.51,54.74l-119.17.58c-35.15-.48-52.16-18.56-51.04-54.25l-.16-32.99,220.72-1.07Zm-191.95,31.82l.02,3.88c.04,9.06,2.07,15.14,6.07,18.24,3.03,2.25,8.42,3.41,16.19,3.48l119.17-.58c8.84-.15,14.81-2.01,17.92-5.58,2.68-3.25,4.05-8.7,4.13-16.35l-.02-3.88-163.48.79Z"
+  );
+  path2.setAttribute("class", "stroke-black dark:stroke-white bottom-path");
+  path2.setAttribute("style", "stroke-miterlimit: 10; stroke-width: 14px;");
+
+  svg.appendChild(path1);
+  svg.appendChild(path2);
+
+  return svg;
+}
+
+function createLogoMyudak(): SVGSVGElement {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 595.28 595.28");
+  svg.setAttribute("width", "20");
+  svg.setAttribute("height", "20");
+  Object.assign(svg.style, { cursor: "pointer" });
+
+  const polygons = [
+    "206.43 406.96 297.66 564.99 297.65 565.01 115 565.01 206.32 406.83 206.34 406.8 206.43 406.96",
+    "571.62 90.47 480.3 248.65 388.99 406.8 297.75 248.78 297.66 248.63 388.97 90.47 571.62 90.47",
+    "297.65 248.65 115 248.65 23.67 90.47 206.32 90.47 297.65 248.65",
+  ];
+
+  polygons.forEach((points) => {
+    const polygon = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "polygon"
+    );
+    polygon.setAttribute("points", points);
+    polygon.setAttribute("fill", "currentColor");
+    svg.appendChild(polygon);
+  });
+
+  return svg;
 }
 
 async function initOracleAcademyHelper() {

@@ -600,8 +600,8 @@ export function createHelper(): HTMLElement {
   const intervalLabel = createFieldLabel("Interval refresh (ms)");
   intervalInput = createInputBase();
   intervalInput.type = "number";
-  intervalInput.min = "500";
-  intervalInput.step = "500";
+  intervalInput.min = "100";
+  intervalInput.step = "100";
   intervalInput.placeholder = "3000";
   intervalInput.addEventListener("change", () => {
     if (!intervalInput) return;

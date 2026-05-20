@@ -6,7 +6,7 @@ export const STORAGE_KEY_DYANDRA_AUTO_REFRESH_ENABLED =
   "dyandraAutoRefreshEnabled";
 
 export const DEFAULT_DYANDRA_REFRESH_INTERVAL_MS = 3000;
-export const MIN_DYANDRA_REFRESH_INTERVAL_MS = 500;
+export const MIN_DYANDRA_REFRESH_INTERVAL_MS = 100;
 export const MAX_DYANDRA_REFRESH_INTERVAL_MS = 60000;
 
 export interface DyandraHelperConfig {

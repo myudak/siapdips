@@ -16,21 +16,43 @@ function handleInstall(details: chrome.runtime.InstalledDetails): void {
   void restoreSebHeaderRuleFromStorage();
 
   // Context Menus
-  chrome.contextMenus.create({
-    id: "suspend-tab",
-    title: "💤 Suspend this tab",
-    contexts: ["page"],
-  });
-  chrome.contextMenus.create({
-    id: "close-all-suspend-tab",
-    title: "😶‍🌫️ Close all suspended tabs",
-    contexts: ["page"],
+  chrome.contextMenus.removeAll(() => {
+    if (chrome.runtime.lastError) {
+      console.debug(
+        "[SiapDips] Context menu cleanup skipped:",
+        chrome.runtime.lastError.message
+      );
+    }
+
+    createContextMenuItem({
+      id: "suspend-tab",
+      title: "💤 Suspend this tab",
+      contexts: ["page"],
+    });
+    createContextMenuItem({
+      id: "close-all-suspend-tab",
+      title: "😶‍🌫️ Close all suspended tabs",
+      contexts: ["page"],
+    });
   });
 
   // On boarding
   if (details.reason === "install") {
     chrome.runtime.openOptionsPage();
   }
+}
+
+function createContextMenuItem(
+  item: chrome.contextMenus.CreateProperties
+): void {
+  chrome.contextMenus.create(item, () => {
+    if (chrome.runtime.lastError) {
+      console.debug(
+        "[SiapDips] Context menu create skipped:",
+        chrome.runtime.lastError.message
+      );
+    }
+  });
 }
 
 function handleStartup(): void {

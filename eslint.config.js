@@ -18,6 +18,7 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
+      'no-dupe-keys': 'error',
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',

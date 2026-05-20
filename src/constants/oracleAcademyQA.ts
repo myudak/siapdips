@@ -33,9 +33,6 @@ export const ORACLE_QA_BANK = {
   "Consider your school library. It will have a database with transaction details of the books that are borrowed by students. Is a detail of one student borrowing one book considered Data or Information?":
     "Data",
 
-  "Databases are used in most countries and by most governments. Life, as we know it, would change drastically if we no longer had access to databases. True or False?":
-    "True",
-
   "The work of E.F. Codd in the early 1970s led to the development of Relational databases. True or False?":
     "True",
 
@@ -249,12 +246,7 @@ export const ORACLE_QA_BANK = {
   "Which of the following are used to show a relationship on an erd? (choose three) mark for review":
     "Crow's foot.|Solid line.|Dashed line.",
 
-  "Every time you shop online, it is likely you will be accessing a database. True or False?":
-    "True",
-
   "Most of the well known Internet search engines use databases to store data. True or False?":
-    "True",
-  "Most of the well know Internet search engines use databases to store data. True or False?":
     "True",
 
   // Section 4 – Business rules, constraints, subtypes/supertypes
@@ -985,4 +977,399 @@ export const ORACLE_QA_BANK = {
 
   "As a database designer, you do not need to worry about where in the datamodel you store a particular attribute; as long as you get it onto the ERD, your job is done. True or False?":
     "False",
+  "The DESCRIBE command returns all rows from a table. True or False?": "False",
+  "Which statement best describes how arithmetic expressions are handled?": "Division and multiplication operations are handled before subtraction and addition operations.",
+  "The EMPLOYEES table contains these columns: SALARY NUMBER(7,2) BONUS NUMBER(7,2) COMMISSION_PCT NUMBER(2,2) All three columns contain values greater than zero. There is one row of data in the table and the values are as follows: Salary = 500, Bonus = 50, Commission_pct = .5 Evaluate these two SQL statements: 1. SELECT salary + bonus + commission_pct * salary - bonus AS income FROM employees; 2. SELECT (salary + bonus ) + commission_pct * (salary - bonus) income FROM employees; What will be the result?": "Statement 2 will return a higher value than statement 1.",
+  "Which SQL statement will return an error?": "SEL * FR sky;",
+  "If you want to see just a subset of the columns in a table, you use what symbol?": "None of the above; instead of using a symbol, you name the columns for which you want to see data.",
+  "If the EMPLOYEES table has the following columns, and you want to write a SELECT statement to return the employee last name and department number for employee number 176, which of the following SQL statements should you use? Name Type Length EMPLOYEE_ID NUMBER 22 FIRST_NAME VARCHAR2 20 LAST_NAME VARCHAR2 25 EMAIL VARCHAR2 25 PHONE_NUMBER VARCHAR2 20 SALARY NUMBER 22 COMMISSION_PCT NUMBER 22 MANAGER_ID NUMBER 22 DEPARTMENT_ID NUMBER 22": "SELECT last_name, department_id FROM employees WHERE employee_id = 176;",
+  "Which example would limit the number of rows returned?": "SELECT title FROM d_songs WHERE type_code = 88;",
+  "To restrict the rows returned from an SQL Query, you should use the _____ clause:": "WHERE",
+  "Which of the following is NOT BEING DONE in this SQL statement? SELECT first_name || ' ' || last_name \"Name\" FROM employees;": "Concatenating first name, middle name and last name",
+  "In order to eliminate duplicate rows use the ________ keyword": "DISTINCT",
+  "The EMPLOYEES table contains these columns: LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) EMAIL VARCHAR2(50) You are writing a SELECT statement to retrieve the names of employees that have an email address. SELECT last_name||', '||first_name \"Employee Name\" FROM employees; Which WHERE clause should you use to complete this statement?": "WHERE email IS NOT NULL;",
+  "When using the \"LIKE\" operator, the % and _ symbols can be used to do a pattern- matching, wild card search. True or False?": "True",
+  "The EMPLOYEES table includes these columns: EMPLOYEE_ID NUMBER(4) NOT NULL LAST_NAME VARCHAR2(15) NOT NULL FIRST_NAME VARCHAR2(10) NOT NULL HIRE_DATE DATE NOT NULL You want to produce a report that provides the last names, first names, and hire dates of those employees who were hired between March 1, 2000, and August 30, 2000. Which statements can you issue to accomplish this task?": "SELECT last_name, first_name, hire_date FROM employees WHERE hire_date BETWEEN '01-Mar-2000' AND '30-Aug-2000';",
+  "The PLAYERS table contains these columns: PLAYERS TABLE: LAST_NAME VARCHAR2 (20) FIRST_NAME VARCHAR2 (20) SALARY NUMBER(8,2) TEAM_ID NUMBER(4) MANAGER_ID NUMBER(9) POSITION_ID NUMBER(4) You must display the player name, team id, and salary for players whose salary is in the range from 25000 through 100000 and whose team id is in the range of 1200 through 1500. The results must be sorted by team id from lowest to highest and then further sorted by salary from highest to lowest. Which statement should you use to display the desired result?": "SELECT last_name, first_name, team_id, salary FROM players WHERE salary BETWEEN 25000 AND 100000 AND team_id BETWEEN 1200 AND 1500 ORDER BY team_id, salary DESC;",
+  "The following statement represents a multi-row function. True or False? SELECT MAX(salary) FROM employees": "True",
+  "The PLAYERS table contains these columns: PLAYERS TABLE: LAST_NAME VARCHAR2 (20) FIRST_NAME VARCHAR2 (20) SALARY NUMBER(8,2) TEAM_ID NUMBER(4) MANAGER_ID NUMBER(9) POSITION_ID NUMBER(4) You want to display all players' names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which statement should you use to achieve the required results?": "SELECT last_name, first_name FROM players WHERE position_id >= 6900 ORDER BY last_name, first_name;",
+  "Evaluate this SQL statement: SELECT e.employee_id, e.last_name, e.first_name, m.manager_id FROM employees e, employees m ORDER BY e.last_name, e.first_name WHERE e.employee_id = m.manager_id; This statement fails when executed. Which change will correct the problem?": "Reorder the clauses in the query.",
+  "Which columns can be added to the ORDER BY clause in the following SELECT statement? (Choose Three) SELECT first_name, last_name, salary, hire_date FROM employees WHERE department_id = 50 ORDER BY ?????;": "Any column in the EMPLOYEES table, any expression in the SELECT list or any ALIAS in the SELECT list|All columns in the EMPLOYEES table|last_name, first_name",
+  "Evaluate this SQL statement: SELECT product_id, product_name, price FROM products ORDER BY product_name, price; What occurs when the statement is executed?": "The results are sorted alphabetically and then numerically.",
+  "What value will the following SQL statement return? SELECT employee_id FROM employees WHERE employee_id BETWEEN 100 AND 150 OR employee_id IN(119, 175, 205) AND (employee_id BETWEEN 150 AND 200);": "100, 101, 102, 103, 104, 107, 124, 141, 142, 143, 144, 149",
+  "Which of the following would be returned by this SQL statement: SELECT First_name, last_name, department_id FROM employees WHERE department_id IN(50,80) AND first_name LIKE ' C% ' OR last_name LIKE ' %s% '": "All of the above",
+  "You issue this SQL statement: SELECT ROUND (1282.248, -2) FROM dual; What value does this statement produce?": "1300",
+  "The answer to the following script is 456. True or False? SELECT TRUNC(ROUND(456.98)) FROM dual;": "False",
+  "If hire_date has a value of '03-Jul-2003', then what is the output from this code? SELECT ROUND(hire_date, 'Year') FROM employees;": "01-Jan-2004",
+  "Evaluate this SELECT statement: SELECT SYSDATE + 30 FROM dual; Which value is returned by the query?": "The current date plus 30 days.",
+  "The STYLES table contains this data: STYLE_ID STYLE_NAME CATEGORY COST 895840 SANDAL 85940 12.00 968950 SANDAL 85909 10.00 869506 SANDAL 89690 15.00 809090 LOAFER 89098 10.00 890890 LOAFER 89789 14.00 857689 HEEL 85940 11.00 758960 SANDAL 86979 12.00 You query the database and return the value 79. Which script did you use?": "SELECT SUBSTR(category, -2,2) FROM styles WHERE style_id = 758960;",
+  "You query the database with this SQL statement: SELECT CONCAT(last_name, (SUBSTR(LOWER(first_name), 4))) \"Default Password\" FROM employees; Which function will be evaluated first?": "LOWER",
+  "Which statement about group functions is true?": "NVL, NVL2, and COALESCE can be used with group functions to replace null values.",
+  "You need to replace null values in the DEPT_ID column with the text N/A. Which functions should you use?": "TO_CHAR and NVL",
+  "If quantity is a number datatype, what is the result of this statement? SELECT NVL(200/quantity, 'zero') FROM inventory;": "The statement fails",
+  "The PRODUCT table contains this column: PRICE NUMBER(7,2) Evaluate this statement: SELECT NVL(10 / price, '0') FROM PRODUCT; What would happen if the PRICE column contains null values?": "A value of 0 would be displayed.",
+  "Which function compares two expressions?": "NULLIF",
+  "With the following data in Employees (last_name, commission_pct, manager_id) what is the result of the following statement? DATA: King, null, null Kochhar, null, 100 Vargas, null, 124 Zlotkey, .2, 100 SELECT last_name, NVL2(commission_pct, manager_id, -1) comm FROM employees ;": "King, -1 Kochhar, -1 Vargas, -1 Zlotkey, 100",
+  "For the given data from Employees (last_name, manager_id) what is the result of the following statement: DATA:( King, null Kochhar, 100 De Haan, 100 Hunold, 102 Ernst, 103) SELECT last_name, DECODE(manager_id, 100, 'King', 'A N Other') \"Works For?\" FROM employees": "King, A N Other Kochhar, King De Haan, King Hunold, A N Other Ernst, A N Other",
+  "Which statement will return a listing of last names, salaries, and a rating of 'Low', 'Medium', 'Good' or 'Excellent' depending on the salary value?": "SELECT last_name,salary, (CASE WHEN salary<5000 THEN 'Low' WHEN salary<10000 THEN 'Medium' WHEN salary<20000 THEN 'Good' ELSE 'Excellent' END) qualified_salary FROM employees;",
+  "The EMPLOYEES table contains these columns: EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2 (25) FIRST_NAME VARCHAR2 (25) HIRE_DATE DATE You need to display HIRE_DATE values in this format: January 28, 2000 Which SQL statement could you use?": "SELECT TO_CHAR(hire_date, 'Month DD, YYYY') FROM employees;",
+  "Which SQL Statement should you use to display the prices in this format: \"$00.30\"?": "SELECT TO_CHAR(price, '$99,900.99') FROM product;",
+  "Which statement will return the salary (for example, the salary of 6000) from the Employees table in the following format? $6000.00": "SELECT TO_CHAR(salary, '$99999.00') SALARY FROM employees",
+  "Which functions allow you to perform explicit data type conversions?": "TO_CHAR, TO_DATE, TO_NUMBER",
+  "Sysdate is 12-May-2004. You need to store the following date: 7-Dec-89 Which statement about the date format for this value is true?": "The RR date format will interpret the year as 1989, and the YY date format will interpret the year as 2089",
+  "Which statement concerning single row functions is true?": "Single row functions can be nested.",
+  "Will the following statement return one row? SELECT MAX(salary), MIN(Salary), AVG(SALARY) FROM employees;": "Yes, it will return the highest salary, the lowest salary, and the average salary from all employees.",
+  "ROUND and TRUNC functions can be used with which of the following Datatypes?": "Dates and numbers",
+  "The PRICE table contains this data: PRODUCT_ID MANUFACTURER_ID 86950 59604 You query the database and return the value 95. Which script did you use?": "SELECT SUBSTR(product_id, 3, 2) FROM price WHERE manufacturer_id = 59604;",
+  "You query the database with this SQL statement: SELECT LOWER(SUBSTR(CONCAT(last_name, first_name)), 1, 5) \"ID\" FROM employee; In which order are the functions evaluated?": "CONCAT, SUBSTR, LOWER",
+  "CASE and DECODE evaluate expressions in a similar way to IF-THEN-ELSE logic. However, DECODE is specific to Oracle syntax. True or False?": "True",
+  "When executed, which statement displays a zero if the TUITION_BALANCE value is zero and the HOUSING_BALANCE value is null?": "SELECT NVL (tuition_balance + housing_balance, 0) \"Balance Due\" FROM student_accounts;",
+  "If you use the RR format when writing a query using the date 27-Oct-17 and the year is 2001, what year would be the result?": "2017",
+  "The EMPLOYEES table contains these columns: EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2 (25) FIRST_NAME VARCHAR2 (25) SALARY NUMBER(6) You need to create a report to display the salaries of all employees. Which SQL Statement should you use to display the salaries in format: \"$45,000.00\"?": "SELECT TO_CHAR(salary, '$999,999.00') FROM employees;",
+  "Which best describes the TO_CHAR function?": "The TO_CHAR function can be used to display dates and numbers according to formatting conventions that are supported by Oracle.",
+  "Which SELECT statement implements a self join?": "SELECT p.part_id, t.product_id FROM part p, part t WHERE p.part_id = t.product_id;",
+  "Hierarchical queries MUST use the LEVEL pseudo column. True or False?": "False",
+  "Below find the structures of the PRODUCTS and VENDORS tables: PRODUCTS PRODUCT_ID NUMBER PRODUCT_NAME VARCHAR2 (25) VENDOR_ID NUMBER CATEGORY_ID NUMBER VENDORS VENDOR_ID NUMBER VENDOR_NAME VARCHAR2 (25) ADDRESS VARCHAR2 (30) CITY VARCHAR2 (25) REGION VARCHAR2 (10) POSTAL_CODE VARCHAR2 (11) You want to create a query that will return an alphabetical list of products, including the product name and associated vendor name, for all products that have a vendor assigned. Which two queries could you use?": "SELECT p.product_name, v.vendor_name FROM products p JOIN vendors v USING (vendor_id) ORDER BY p.product_name;|SELECT p.product_name, v.vendor_name FROM products p NATURAL JOIN vendors v ORDER BY p.product_name;",
+  "You need to join all the rows in the EMPLOYEES table to all the rows in the EMP_REFERENCE table. Which type of join should you create?": "A cross join",
+  "Which of the following conditions will cause an error on a NATURAL JOIN?": "If the columns having the same names have different data types, then an error is returned.",
+  "What is another name for a simple join or an inner join?": "Equijoin",
+  "The following statement is an example of what kind of join? SELECT car.vehicle_id, driver.name FROM car LEFT OUTER JOIN driver ON (driver_id) ;": "Outer Join",
+  "Will the following statement work? SELECT department_name, last_name FROM employees, departments WHERE department_id = department_id;": "No, Oracle will return a Column Ambiguously Defined error.",
+  "When joining 3 tables in a SELECT statement, how many join conditions are needed in the WHERE clause?": "2",
+  "Evaluate this SELECT statement: SELECT p.player_id, m.last_name, m.first_name, t.team_name FROM player p LEFT OUTER JOIN player m ON (p.manager_id = m.player_id) LEFT OUTER JOIN team t ON (p.team_id = t.team_id); Which join is evaluated first?": "The self-join of the player table",
+  "Evaluate this SELECT statement: SELECT COUNT(*) FROM products; Which statement is true?": "The number of rows in the table is displayed.",
+  "The VENDORS table contains these columns: VENDOR_ID NUMBER Primary Key NAME VARCHAR2(30) LOCATION_ID NUMBER ORDER_DT DATE ORDER_AMOUNT NUMBER(8,2) Which two clauses represent valid uses of aggregate functions for this table?": "SELECT MIN(AVG(order_amount))|SELECT SUM(order_amount)",
+  "Which group function would you use to display the highest salary value in the EMPLOYEES table?": "MAX",
+  "The difference between UNION and UNION ALL is": "UNION will remove duplicates; UNION ALL returns all rows from all queries including the duplicates.",
+  "Examine the following statement: SELECT department_id, manager_id, job_id, SUM(salary) FROM employees GROUP BY GROUPING SETS(.......); Select the correct GROUP BY GROUPING SETS clause from the following list:": "GROUP BY GROUPING SETS ((department_id, manager_id), (department_id, job_id), (manager_id, job_id))",
+  "CUBE can be applied to all aggregate functions including AVG, SUM, MIN, MAX, and COUNT. True or False?": "True",
+  "Group functions can be nested to a depth of?": "Two",
+  "Evaluate this SELECT statement: SELECT MIN(hire_date), department_id FROM employees GROUP BY department_id; Which values are displayed?": "The earliest hire date in each department",
+  "Which statement about the GROUP BY clause is true?": "To exclude rows before dividing them into groups using the GROUP BY clause, you should use a WHERE clause.",
+  "Which of the following best describes the meaning of the ANY operator?": "Compare value to each value returned by the subquery",
+  "Which statement about the ANY operator, when used with a multiple-row subquery, is true?": "The ANY operator compares every value returned by the subquery.",
+  "Evaluate this SELECT statement: SELECT player_id, name FROM players WHERE team_id IN (SELECT team_id FROM teams WHERE team_id > 300 AND salary_cap > 400000); What would happen if the inner query returned a NULL value?": "No rows would be returned by the outer query.",
+  "Which comparison operator can only be used with a single-row subquery?": "<>",
+  "Which operator can be used with a multiple-row subquery?": "IN",
+  "Table aliases must be used when you are writing correlated subqueries. (True or false?)": "False",
+  "You want to create a list of all albums that have been produced by the company. The list should include the title of the album, the artist's name, and the date the album was released. The ALBUMS table includes the following columns: ALB_TITLE VARCHAR2(150) NOT NULL ALB_ARTIST VARCHAR2(150) NOT NULL ALB_DATE DATE NOT NULL Which statement can you use to retrieve the necessary information?": "SELECT alb_title; alb_artist; alb_date FROM albums;",
+  "The following is a valid SQL SELECT statement. True or False? SELECT first_name || ' ' || last_name alias AS Employee_Name FROM employees:": "False",
+  "Evaluate this SELECT statement: SELECT last_name, first_name, salary FROM employees; How will the heading for the FIRST_NAME column appear in the display by default in Oracle Application Express?": "The heading will display as uppercase and centered.",
+  "What does the following SQL SELECT statement return? SELECT UPPER( SUBSTR('Database Programming', INSTR('Database Programming','P'),20)) FROM dual;": "PROGRAMMING",
+  "Consider the following data in the Employees table: (last_name, commission_pct, manager_id) DATA: King, null, null Kochhar, null, 100 Vargas, null, 124 Zlotkey, .2, 100 What is the result of the following statement: SELECT last_name, COALESCE(commission_pct, manager_id, -1) comm FROM employees ;": "Zlotkey, .2",
+  "Which statement is true about SQL functions?": "a, b and c are true.",
+  "Which query represents the correct syntax for a left outer join?": "SELECT companyname, orderdate, total FROM customers c LEFT OUTER JOIN orders o ON c.cust_id = o.cust_id;",
+  "A join between tables where the result set includes matching values from both tables but does NOT return any unmatched rows could be called which of the following? (Choose three)": "Simple join|Self join|Equijoin",
+  "The join column must be included in the select statement when you use the NATURAL JOIN clause. True or False?": "False",
+  "You can do nonequi-joins with ANSI-Syntax. True or False?": "True",
+  "Which SELECT statement implements a self join? [duplicate variant 2]": "SELECT e.employee_id, m.manager_id FROM employees e, employees m WHERE m.employee_id = e.manager_id;",
+  "You need to create a report that lists all employees in department 10 (Sales) whose salary is not equal to $25,000 per year. Which query should you issue to accomplish this task?": "SELECT last_name, first_name, salary FROM employees WHERE salary != 25000 AND dept_id = 10;",
+  "You have two tables named EMPLOYEES and SALES. You want to identify the sales representatives who have generated at least $100,000 in revenue. Which query should you issue?": "SELECT e.first_name, e.last_name, s.sales FROM employees e, sales s WHERE e.employee_id = s.employee_id AND revenue >= 100000;",
+  "The EMPLOYEES table contains these columns: EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(20) FIRST_NAME VARCHAR2(20) SALARY NUMBER(9,2) HIRE_DATE DATE BONUS NUMBER(7,2) COMM_PCT NUMBER(4,2) Which three functions could be used with the HIRE_DATE, LAST_NAME, or SALARY columns? (Choose three.)": "COUNT|MAX|MIN",
+  "What command can be used to create a new row in a table in the database?": "INSERT",
+ "Evaluate this SELECT statement: SELECT employee_id, last_name, first_name, salary 'Yearly Salary' FROM employees WHERE salary IS NOT NULL ORDER BY last_name, 3; Which clause contains an error?": "SELECT employee_id, last_name, first_name, salary 'Yearly Salary'",
+  "What is the result of the following query? SELECT ADD_MONTHS ('11-Jan-1994',6) FROM dual;": "11-Jul-1994",
+  "You issue this SQL statement: SELECT TRUNC(751.367,-1) FROM dual; Which value does this statement display?": "750",
+  "Which of the following is a conditional expression used in SQL?": "CASE",
+  "Which of the following General Functions will return the first non-null expression in the expression list?": "COALESCE",
+  "The STYLES table contains this data: STYLE_ID STYLE_NAME CATEGORY COST 895840 SANDAL 85940 12.00 968950 SANDAL 85909 10.00 869506 SANDAL 89690 15.00 809090 LOAFER 89098 10.00 890890 LOAFER 89789 14.00 857689 HEEL 85940 11.00 758960 SANDAL 86979 Evaluate this SELECT statement: SELECT style_id, style_name, category, cost FROM styles WHERE style_name LIKE 'SANDAL' AND NVL(cost, 0) < 15.00 ORDER BY category, cost; Which result will the query provide?": "STYLE_ID STYLE_NAME CATEGORY COST 968950 SANDAL 85909 10.00 895840 SANDAL 85940 12.00 758960 SANDAL 86979",
+  "Which two statements concerning SQL functions are true? (Choose two.)": "Conversion functions convert a value from one data type to another data type.|Not all date functions return date values.",
+  "Which statement about a self join is true?": "Table aliases must be used to qualify table names.",
+  "Given the following descriptions of the employees and jobs tables, which of the following scripts will display each employee's possible minimum and maximum salaries based on their job title? EMPLOYEES Table: Name Null? Type EMPLOYEE_ID NOT NULL NUMBER (6) FIRST_NAME VARCHAR2 (20) LAST_NAME NOT NULL VARCHAR2 (25) EMAIL NOT NULL VARCHAR2 (25) PHONE_NUMBER VARCHAR2 (20) HIRE_DATE NOT NULL DATE JOB_ID NOT NULL VARCHAR2 (10) SALARY NUMBER (8,2) COMMISSION_PCT NUMBER (2,2) MANAGER_ID NUMBER (6) DEPARTMENT_ID NUMBER (4) JOBS Table: Name Null? Type JOB_ID NOT NULL VARCHAR2 (10) JOB_TITLE NOT NULL VARCHAR2 (35) MIN_SALARY NUMBER (6) MAX_SALARY NUMBER (6)": "SELECT first_name, last_name, job_id, min_salary, max_salary FROM employees NATURAL JOIN jobs;",
+  "Evaluate this SELECT statement: SELECT a.lname || ', ' || a.fname as \"Patient\", b.lname || ', ' || b.fname as \"Physician\", c.admission FROM patient a JOIN physician b ON (b.physician_id = c.physician_id) JOIN admission c ON (a.patient_id = c.patient_id); Which clause generates an error?": "ON (b.physician_id = c.physician_id);",
+  "Which statement about a natural join is true?": "Columns with the same names must have the same precision and datatype.",
+  "Which operator is typically used in a nonequijoin?": ">=, <=, or BETWEEN ...AND",
+  "What happens when you create a Cartesian product?": "All rows from one table are joined to all rows of another table",
+  "Given the following data in the employees table (employee_id, salary, commission_pct) DATA: (143, 2600, null 144, 2500, null 149, 10500, .2 174, 11000, .3 176, 8600, .2 178, 7000, .15) What is the result of the following statement: SELECT SUM(commission_pct), COUNT(salary) FROM employees WHERE employee_id IN( 143,144,149,174,176,178);": "SUM = .85 and COUNT = 6",
+  "The following statement will work, even though it contains more than one GROUP function: SELECT AVG(salary), MAX(salary), MIN(salary), SUM(salary) FROM employees; True or False?": "True",
+  "Evaluate this SELECT statement: SELECT COUNT(*) FROM employees WHERE salary > 30000; Which result will the query display?": "The number of rows in the EMPLOYEES table that have a salary greater than 30000",
+  "When using SET operators, the number of columns and the data types of the columns must be identical in all of the SELECT statements used in the query. True or False.": "True",
+  "The PRODUCTS table contains these columns: PRODUCT_ID NUMBER(9) PK CATEGORY_ID VARCHAR2(10) LOCATION_ID NUMBER(9) DESCRIPTION VARCHAR2(30) COST NUMBER(7,2) PRICE NUMBER(7,2) QUANTITY NUMBER You display the total of the extended costs for each product category by location. You need to include only the products that have a price less than $25.00. The extended cost of each item equals the quantity value multiplied by the cost value. Which SQL statement will display the desired result?": "SELECT category_id, SUM(cost * quantity) TOTAL, location_id FROM products WHERE price < 25.00 GROUP BY category_id, location_id;",
+  "If a select list contains both a column as well as a group function then what clause is required?": "GROUP BY clause",
+  "Read the following SELECT statement. Choose the column or columns that must be included in the GROUP BY clause. SELECT COUNT(last_name), grade, gender FROM STUDENTS GROUP_BY ?????;": "grade, gender",
+  "If you want to include subtotals and grand totals for all columns mentioned in a GROUP BY clause, you should use which of the following extensions to the GROUP BY clause?": "CUBE",
+  "What would happen if you attempted to use a single-row operator with a multiple-row subquery?": "An error would be returned.",
+  "Examine the structures of the PARTS and MANUFACTURERS tables: PARTS: PARTS_ID VARCHAR2(25) PK PARTS_NAME VARCHAR2(50) MANUFACTURERS_ID NUMBER COST NUMBER(5,2) PRICE NUMBER(5,2) MANUFACTURERS: ID NUMBER PK NAME VARCHAR2(30) LOCATION VARCHAR2(20) Assume that the tables have been populated with data including 100 rows in the PARTS table, and 20 rows in the MANUFACTURERS table. Which SQL statement correctly uses a subquery?": "SELECT parts_name, price, cost FROM parts WHERE manufacturers_id IN (SELECT id FROM manufacturers m JOIN parts p ON (m.id = p.manufacturers_id));",
+  "When a multiple-row subquery uses the NOT IN operator (equivalent to <>ALL), if one of the values returned by the inner query is a null value, the entire query returns:": "No rows returned",
+  "Which of the following is TRUE regarding the order of subquery execution?": "The subquery executes once before the main query.",
+  "If the subquery returns no rows, will the outer query return any values?": "No, because the subquery will be treated like a null value.",
+  "Evaluate this SELECT statement: SELECT (salary * raise_percent) raise FROM employees; If the RAISE_PERCENT column only contains null values, what will the statement return?": "Only null values",
+  "The following statement represents a multi-row function. True or False? SELECT UPPER(last_name) FROM employees;": "False",
+  "Evaluate this SELECT statement: SELECT * FROM employees WHERE department_id = 34 OR department_id = 45 OR department_id = 67; Which operator is the equivalent of the OR conditions used in this SELECT statement?": "IN",
+  "Evaluate this SELECT statement: SELECT last_name, first_name, department_id, manager_id FROM employees; You need to sort data by manager id values and then alphabetically by employee last name and first name values. Which ORDER BY clause could you use?": "ORDER BY manager_id, last_name, first_name",
+
+
+
+
+
+
+  "You query the database with this SQL statement:\nSELECT *\nFROM transaction\nWHERE product_id = 4569;\n\nWhich SQL SELECT statement capabilities are achieved when this statement is executed?":
+    "Selection and projection only",
+
+  "SELECT * FROM departments; is a:":
+    "Statement",
+
+  "The order of operator precedence is":
+    "* / + –",
+
+
+
+
+  "All computers in the world speak the same languages, so you only need to learn one programming language – Oracle SQL. True or False?":
+    "False",
+
+  "What command do you use to add rows to a table":
+    "INSERT",
+"The explanation below is a column integrity constraint:\nA column must contain only values consistent with the defined data format of the column. True or False?":
+    "True",
+
+  "Identify all of the incorrect statements that complete this sentence: A primary key is: (Choose three)":
+    "A single column that uniquely identifies each column in a table|A set of columns in one table that uniquely identifies each row in another table|Only one column that must be null",
+
+  "The explanation below is a User Defined integrity rule and must therefore be manually coded, the Database cannot enforce this rule automatically:\nA primary key must be unique, and no part of the primary key can be null. True or False?":
+    "False",
+
+  "The text below is an example of what constraint type:\nThe value in the manager_id column of the EMPLOYEES table must match a value in the employee_id column in the EMPLOYEES table.":
+    "Referential integrity",
+
+  "It is possible to implement non-transferability via a simple Foreign Key Relationship. True or False?":
+    "False",
+
+  "Many to many relationships are implemented via a structure called a: ________________":
+    "Intersection Table",
+
+  "Which of the following are reasons why you should consider using a Subtype Implementation?":
+    "Business functionality and business rules, access paths and frequency of access are all very different between subtypes.",
+
+  "Evaluate this SELECT statement:\nSELECT (salary * raise_percent) raise\nFROM employees;\n\nIf the RAISE_PERCENT column only contains null values, what will the statement return?":
+    "Only null values",
+
+  "What would you use in the SELECT clause to return all the columns in the table?":
+    "An asterisk (*)",
+
+  "When you use the SELECT clause to list one or two columns only from a table and no WHERE clause, which SQL capability is used?":
+    "Projection only",
+
+  "In a SELECT clause, what is the result of 2 + 3 * 2?":
+    "8",
+
+  "You query the database with this SQL statement:\nSELECT * FROM students;\n\nWhy would you use this statement?":
+    "To view data",
+
+  "Any Non-UID must be dependant on the entire UID. True or False?":
+    "True",
+
+  "When is an entity in 2nd Normal Form?":
+    "When all non-UID attributes are dependent upon the entire UID.",
+
+  "What does the DISTINCT keyword do when it is used in a SELECT clause?":
+    "Eliminates duplicate rows in the result",
+
+  "Which symbol represents the not equal to condition?":
+    "!=",
+
+  "Which statement best describes how column headings are displayed by default in Oracle Application Express:":
+    "Column headings are displayed centered and in uppercase.",
+
+  "What will the result of the following SELECT statement be:\nSELECT last_name, salary, salary + 300\nFROM employees;\nHow will the heading for the SALARY column appear in the display by default in Oracle Application Express?":
+    "Display the last name, salary and the results of adding 300 to each salary for all the employees",
+
+  "The PLAYERS table contains these columns:\nPLAYER_ID NUMBER(9)\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2 (20)\nTEAM_ID NUMBER (4)\nMANAGER_ID NUMBER (9)\nPOSITION_ID NUMBER (4)\n\nWhich SELECT statement should you use if you want to display unique combinations of the TEAM_ID and MANAGER_ID columns?":
+    "SELECT DISTINCT team_id, manager_id FROM players;",
+
+  "The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9) PrimaryKey\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nDEPARTMENT_ID NUMBER(5) NOT NULL\nMANAGER_ID NUMBER(9) NOT NULL\n\nEvaluate these two SELECT statements:\n1. SELECT DISTINCT employee_id, department_id, manager_id FROM employees;\n2. SELECT employee_id, department_id, manager_id FROM employees;\n\nWhich of the following statements is true?":
+    "The two statements will display the same data.",
+
+  "The STUDENT table contains these columns:\nSTUDENT_ID NUMBER(10) Primary Key\nLAST_NAME VARCHAR2(25)\nFIRST_NAME VARCHAR2(25)\nMAIN_SUBJECT_ID NUMBER(3)\nADVISOR_ID NUMBER(5)\n\nEvaluate this statement:\nSELECT DISTINCT advisor_id, main_subject_id\nFROM student;\n\nWhich statement is true?":
+    "Each MAIN_SUBJECT_ID can be displayed more than once per ADVISOR_ID.",
+
+  "The EMPLOYEES table includes these columns:\nEMPLOYEE_ID NUMBER(4) NOT NULL\nLAST_NAME VARCHAR2(15) NOT NULL\nFIRST_NAME VARCHAR2(10) NOT NULL\nHIRE_DATE DATE NOT NULL\n\nYou want to produce a report that provides the first names, last names and hire dates of those employees who were hired between March 1, 2000, and August 30, 2000. Which statements can you issue to accomplish this task?":
+    "SELECT last_name, first_name, hire_date\nFROM employees\nWHERE hire_date BETWEEN ’01-MAR-00′ AND ’30-AUG-00′;",
+
+  "The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\nYou want to display all players’ names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which statement should you use to achieve the required results?":
+    "SELECT last_name, first_name\nFROM players\nWHERE position_id >= 6900\nORDER BY last_name, first_name;",
+
+  "Evaluate this SELECT statement:\nSELECT *\nFROM employees\nWHERE salary > 30000\nAND department_id = 10\nOR email IS NOT NULL;\nWhich statement is true?":
+    "The AND condition will be evaluated before the OR condition.",
+
+  "You need to create a report to display all employees that were hired on or after January 1, 1996. The data should display in this format:\nEmployee Start Date and Salary\n14837 – Smith 10-MAY-92 / 5000\n\nWhich SELECT statement could you use?":
+    "SELECT employee_id ||’ – ‘|| last_name „Employee”,\nhire_date ||’ / ‘|| salary „Start Date and Salary”\nFROM employees\nWHERE hire_date <= ’01-JAN-96’;",
+
+  "You attempt to query the database with this SQL statement:\nSELECT product_id „Product Number”, category_id „Category”, price „Price”\nFROM products\nWHERE „Category” = 5570\nORDER BY „Product Number”;\n\nThis statement fails when executed. Which clause contains a syntax error?":
+    "WHERE „Category” = 5570",
+
+  "Evaluate this SELECT statement:\nSELECT employee_id, last_name, first_name, salary ‘Yearly Salary’\nFROM employees\nWHERE salary IS NOT NULL\nORDER BY last_name, 3;\n\nWhich clause contains an error?":
+    "SELECT employee_id, last_name, first_name, salary ‘Yearly Salary’",
+
+  "Which comparison condition means „Less Than or Equal To?”":
+    "„<=”",
+ "Which SQL keyword specifies that an alias will be substituted for a column name in the output of a SQL query?": "AS",
+  "The SQL SELECT statement is capable of:": "Selection and projection",
+  "What is a NULL value?": "An unknown value",
+  "In which clause of a SELECT statement would you specify the name of the table or tables being queried?": "The FROM clause",
+  "In the real world, databases used by businesses generally have a single table. True or False?": "False",
+  "What language is used to query data in a Relational Database?": "SQL",
+  "Databases are used in most countries and by most governments. Life, as we know it, would change drastically if we no longer had access to databases. True or False?": "True",
+  "Most of the well know Internet search engines use databases to store data. True or False?": "True",
+  "A Relational Database generally contains two or more tables. True or False?": "True",
+  "What command can be used to show information about the structure of a table?": "DESCRIBE",
+  "What command retrieves data from the database?": "SELECT",
+  "All computers in the world speak the same languages, so you only need to learn one programming language - Oracle SQL. True or False?": "False",
+  "What command will return data from the database to you?": "SELECT",
+  "Every time you shop online, it is likely you will be accessing a database. True or False?": "True",
+  "Every row in a relational database table is unique.": "True",
+  "The basic storage structure in a Relational Database is a _________:": "Table",
+  "Columns in a database table contain data with the same _________:": "Type",
+  "In the default order of precedence, which operator would be evaluated first?": "Multiplications and Divisions are at the same level and would be evaluated first based on left to right order",
+  "The SELECT statement retrieves information from the database. In a SELECT statement, you can do all of the following EXCEPT:": "Manipulation",
+  "When listing columns in the SELECT list, what should you use to separate the columns?": "Commas",
+  "If a SQL statement returns data from two or more tables, which SQL capability is being used?": "Joining",
+  "There is only one kind of software used by all computers. True or False?": "False",
+  "The _______ clause can be added to a SELECT statement to return a subset of the data.": "WHERE",
+  "You cannot use computers unless you completely understand exactly how they work. True or False?": "False",
+  "What command can be added to a select statement to return a subset of the data?": "WHERE",
+  "The EMPLOYEES table contains these columns:\nSALARY NUMBER(7,2)\nBONUS NUMBER(7,2)\nCOMMISSION_PCT NUMBER(2,2)\n\nAll three columns contain values greater than zero.\nThere is one row of data in the table and the values are as follows:\nSalary = 500, Bonus = 50, Commission_pct = .5\n\nEvaluate these two SQL statements:\n\n1.\nSELECT salary + bonus + commission_pct * salary - bonus AS income\nFROM employees;\n\n2.\nSELECT (salary + bonus ) + commission_pct * (salary - bonus) income\nFROM employees;\n\nWhat will be the result?": "Statement 2 will return a higher value than statement 1.",
+  "Examine the follolowing SELECT statement.\nSELECT *\nFROM employees;\n\nThis statement will retrieve all the rows in the employees table. True or False?": "True",
+"Which of the following are true? (Choose Two)": "Date values are format-sensitive|Date values are enclosed in single quotation marks",
+  "Which of the following would be returned by this SELECT statement:\nSELECT last_name, salary\nFROM employees\nWHERE salary < 3500;": "LAST_NAME  SALARY\nDavies 3100",
+  "How can you write \"not equal to\" in the WHERE-clause?": "All of the above",
+  "Which query would give the following result?\nLAST_NAME  FIRST_NAME DEPARTMENT_ID\nKing     Steven  90": "SELECT last_name, first_name, department_id\nFROM employees\nWHERE last_name = 'King';",
+  "Which SELECT statement will display both unique and non-unique combinations of the MANAGER_ID and DEPARTMENT_ID values from the EMPLOYEES table?": "SELECT manager_id, department_id FROM employees;",
+  "Where in a SQL statement can you not use arithmetic operators?": "FROM",
+  "Which clause would you include in a SELECT statement to restrict the data returned to only the employees in department 10?": "WHERE",
+  "The concatenation operator ...": "All of the above",
+  "You need to display employees whose salary is in the range of 30000 and 50000. Which comparison operator should you use?": "BETWEEN...AND...",
+  "Which comparison condition would you use to select rows that match a character pattern?": "LIKE",
+  "Which of the following WHERE clauses would not select the number 10?": "WHERE hours <>10",
+  "When using the \"LIKE\" operator, the % and _ symbols can be used to do a pattern-matching, wild card search. True or False?": "True",
+  "Which of the following are examples of comparison operators used in the WHERE clause?": "All of the above",
+  "If you write queries using the BETWEEN operator, it does not matter in what order you enter the values, i.e. BETWEEN low value AND high value will give the same result as BETWEEN high value and low value. True or False?": "False",
+  "The EMPLOYEES table contains these columns:\nLAST_NAME VARCHAR2(25)\nFIRST_NAME VARCHAR2(25)\nEMAIL VARCHAR2(50)\n\nYou are writing a SELECT statement to retrieve the names of employees that have an email address.\n\nSELECT last_name||', '||first_name \"Employee Name\"\nFROM employees;\n\nWhich WHERE clause should you use to complete this statement?": "WHERE email IS NOT NULL;",
+  "You need write a SELECT statement that should only return rows that contain 34, 46, or 48 for the DEPARTMENT_ID column. Which operator should you use in the WHERE clause to compare the DEPARTMENT_ID column to this specific list of values?": "IN",
+  "You need to write a SELECT statement that should only return rows that contain 34, 46, or 48 for the DEPARTMENT_ID column. Which operator should you use in the WHERE clause to compare the DEPARTMENT_ID column to this specific list of values?": "IN",
+  "You want to retrieve a list of customers whose last names begin with the letters 'Fr' . Which keyword should you include in the WHERE clause of your SELECT statement to achieve the desired result?": "LIKE",
+  "Evaluate this SELECT statement:\nSELECT *\nFROM employees\nWHERE department_id IN(10, 20, 30)\nAND salary > 20000;\n\nWhich values would cause the logical condition to return TRUE?": "DEPARTMENT_ID = 10 and SALARY = 20001",
+  "Which two statements would select salaries that are greater than or equal to 2500 and less than or equal to 3500? (Choose two)": "WHERE salary BETWEEN 2500 AND 3500|WHERE salary >= 2500 AND salary <= 3500",
+  "You need to display employees with salaries that are at least 30000 or higher. Which comparison operator should you use?": ">=",
+  "You need to display only unique combinations of the LAST_NAME and MANAGER_ID columns in the EMPLOYEES table. Which keyword should you include in the SELECT clause?": "DISTINCT",
+  "You need to display employees whose salary is in the range of 10000 through 25000 for employees in department 50 . What does the WHERE clause look like?": "WHERE department_id = 50\nAND salary BETWEEN 10000 AND 25000",
+  "You need to combine the FIRST_NAME and LAST_NAME columns in the EMPLOYEES table and display the columns as a combined character string. Which operator should you use?": "||",
+  "The Concatenation Operator does which of the following?": "Links two or more columns or literals to form a single output column",
+  "Which operator is used to combine columns of character strings to other columns?": "||",
+  "You need to display all the rows in the EMPLOYEES table that contain a null value in the DEPARTMENT_ID column. Which comparison operator should you use?": "IS NULL",
+  "Which of the following commands will display the last name concatenated with the job ID from the employees table, separated by a comma and space, and label the resulting column \"Employee and Title\"?": "SELECT last_name||', '||job_id \"Employee and Title\" FROM employees;",
+  "The following is a valid SQL SELECT statement. True or False?\nSELECT first_name || ' ' || last_name alias AS Employee_Name\nFROM employees:": "False",
+  "When using the LIKE condition to search for _ symbols, which character can you use as the default ESCAPE option?": "\\",
+  "Which comparison operator searches for a specified character pattern?": "LIKE",
+  "When using the LIKE condition, which symbol represents any sequence of characters of any length--zero, one, or more characters?": "%",
+  "Which of the following elements cannot be included in a WHERE clause?": "A column alias",
+  "You want to retrieve a list of customers whose last names begin with the letters 'Fr' . Which symbol should you include in the WHERE clause of your SELECT statement to achieve the desired result?": "%",
+  "If the EMPLOYEES table has the following columns, and you want to write a SELECT statement to return the employee last name and department number for employee number 176, which of the following SQL statements should you use?\nName Type Length\nEMPLOYEE_ID NUMBER 22\nFIRST_NAME VARCHAR2 20\nLAST_NAME VARCHAR2 25\nEMAIL VARCHAR2 25\nPHONE_NUMBER VARCHAR2 20\nSALARY NUMBER 22\nCOMMISSION_PCT NUMBER 22\nMANAGER_ID NUMBER 22\nDEPARTMENT_ID NUMBER 22": "SELECT last_name, department_id\nFROM employees\nWHERE employee_id = 176;",
+  "You need to display all the values in the EMAIL column that contains the underscore (_) character as part of that email address. The WHERE clause in your SELECT statement contains the LIKE operator. What must you include in the LIKE operator?": "The ESCAPE option (\\) and one or more percent signs (%)",
+
+  "SELECT last_name, salary, salary + 300\nFROM employees;": "Display the last name, salary, and the results of adding 300 to each salary for all the employees",
+  "SELECT orderid, orderdate, total\nFROM orders;": "WHERE city = 'Chicago';",
+
+  "You need to display all the employees whose last names (of any length) start with the letters 'Sm' . Which WHERE clause should you use?": "WHERE last_name LIKE 'Sm%'",
+  "Which of the following is true of the ORDER BY clause? (Choose Two)": "Must be the last clause of the SQL statement | Defaults to an ascending order (ASC)"
+  ,
+  "You attempt to query the database with this SQL statement:": "WHERE \"Category\" = 5570",
+
+  "Which of the following would be returned by this SQL statement:\nSELECT First_name, last_name, department_id\nFROM employees\nWHERE department_id IN(50,80)\nAND first_name LIKE ‘ C% ‘\nOR last_name LIKE ‘ %s% ‘":
+    "All of the above",
+
+  "What value will the following SQL statement return?\nSELECT employee_id\nFROM employees\nWHERE employee_id BETWEEN 100 AND 150\nOR employee_id IN(119, 175, 205)\nAND (employee_id BETWEEN 150 AND 200);":
+    "100, 101, 102, 103, 104, 107, 124, 141, 142, 143, 144, 149",
+
+  "What clause must you place in a SQL statement to have your results sorted from highest to lowest salary?":
+    "ORDER BY salary DESC",
+  "The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\n\nYou must display the player name, team id, and salary for players whose salary is in the range from 25000 through 100000 and whose team id is in the range of 1200 through 1500. The results must be sorted by team id from lowest to highest and then further sorted by salary from highest to lowest. Which statement should you use to display the desired result?": "SELECT last_name, first_name, team_id, salary\nFROM players\nWHERE salary BETWEEN 25000 AND 100000\nAND team_id BETWEEN 1200 AND 1500\nORDER BY team_id, salary DESC;",
+  "Evaluate this SQL statement:\nSELECT e.employee_id, e.last_name, e.first_name, m.manager_id\nFROM employees e, employees m\nORDER BY e.last_name, e.first_name\nWHERE e.employee_id = m.manager_id;\n\nThis statement fails when executed. Which change will correct the problem?": "Reorder the clauses in the query.",
+  "Will the following statement return one row?\nSELECT MAX(salary), MIN(Salary), AVG(SALARY)\nFROM employees;": "Yes, it will return the highest salary, the lowest salary, and the average salary from all employees.",
+  "The function COUNT is a single row function. True or False?": "False",
+  "The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9) PK\nLAST_NAME VARCHAR2(25)\nFIRST_NAME VARCHAR2(25)\nDEPARTMENT_ID NUMBER(9)\nCompare these two SQL statements:\n\n1.\nSELECT DISTINCT department_id DEPT, last_name, first_name\nFROM employees\nORDER BY department_id;\n\n2.\nSELECT department_id DEPT, last_name, first_name\nFROM employees\nORDER BY DEPT;\n\nHow will the results differ?": "The statements will sort on different column values.",
+  "Which columns can be added to the ORDER BY clause in the following SELECT statement? (Choose Three)\nSELECT first_name, last_name, salary, hire_date\nFROM employees\nWHERE department_id = 50\nORDER BY ?????;": "last_name, first_name|Any column in the EMPLOYEES table, any expression in the SELECT list or any ALIAS in the SELECT list|All columns in the EMPLOYEES table",
+  "Which SELECT statement should you use to limit the display of product information to those products with a price of less than 50?": "SELECT product_id, product_name\nFROM products\nWHERE price < 50;",
+  "Evaluate this SQL statement:\nSELECT product_id, product_name, price\nFROM products\nORDER BY product_name, price;\n\nWhat occurs when the statement is executed?": "The results are sorted alphabetically and then numerically.",
+  "Evaluate this SELECT statement:\nSELECT last_name, first_name, salary\nFROM employees;\n\nHow will the results of this query be sorted?": "The database will display the rows in whatever order it finds it in the database, so no particular order.",
+  "Evaluate this SELECT statement:\nSELECT *\nFROM employees\nWHERE department_id = 34\nOR department_id = 45\nOR department_id = 67;\n\nWhich operator is the equivalent of the OR conditions used in this SELECT statement?": "IN",
+  "From left to right, what is the correct order of Precedence?": "Arithmetic, Concatenation, Comparison, OR",
+  "What will be the results of the following selection?\nSELECT *\nFROM employees\nWHERE last_name NOT LIKE 'A%' AND last_name NOT LIKE 'B%'": "All last names that do not begin with A or B",
+  "The ORDER BY clause always comes last. True or False?": "True",
+  "Which symbol in the WHERE clause means \"Not Equal To\"? (Choose Two)": "<>|NOT IN (..)",
+  "Which comparison condition means \"Less Than or Equal To\"?": "\"<=\"",
+  "You attempt to query the database with this SQL statement:\nSELECT product_id \"Product Number\", category_id \"Category\", price \"Price\"\nFROM products\nWHERE \"Category\" = 5570\nORDER BY \"Product Number\";\n\nThis statement fails when executed. Which clause contains a syntax error?": "WHERE \"Category\" = 5570",
+  "Which of the following is true of the ORDER BY clause:? (Choose Two)": "Must be the last clause of the SQL statement|Defaults to an ascending order (ASC)",
+  "Evaluate this SELECT statement:\nSELECT first_name, last_name, email\nFROM employees\nORDER BY last_name;\n\nWhich statement is true?": "The rows will be sorted alphabetically by the LAST_NAME values.",
+  "Evaluate this SELECT statement:\nSELECT last_name, first_name, email\nFROM employees\nORDER BY email;\n\nIf the EMAIL column contains null values, which statement is true?": "Null email values will be displayed last in the result.",
+  "The following statement represents a multi-row function. True or False?\nSELECT MAX(salary)\nFROM employees": "True",
+  "The conversion function TO_CHAR is a single row function. True or False?": "True",
+  "The following statement represents a multi-row function. True or False?\nSELECT UPPER(last_name)\nFROM employees;": "False",
+  "Which of the following statements best describes the rules of precedence when using SQL?": "The order in which the expressions are evaluated and calculated",
+  "Which of the following best describes the meaning of the LIKE operator?": "Match a character pattern.",
+  "Which statement about the ORDER BY clause is true?": "You can use a column alias in the ORDER BY clause.",
+  "Find the clause that will give the same results as:\nSELECT *\nFROM d_cds\nWHERE cd_id NOT IN(90, 91, 92);": "WHERE cd_id != 90 and cd_id != 91 and cd_id != 92;",
+  "The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\n\nYou want to display all players' names with position 6900 or greater.\nYou want the players names to be displayed alphabetically by last name and then by first name.\nWhich statement should you use to achieve the required results?": "SELECT last_name, first_name\nFROM players\nWHERE position_id >= 6900\nORDER BY last_name, first_name;",
+  "Which of the following are TRUE regarding the logical AND operator?": "TRUE AND FALSE return FALSE",
+  "Which statement about the default sort order is true?": "The earliest date values are displayed first.",
+  "Evaluate this SELECT statement:\nSELECT employee_id, last_name, first_name, salary 'Yearly Salary'\nFROM employees\nWHERE salary IS NOT NULL\nORDER BY last_name, 3;\n\nWhich clause contains an error?": "SELECT employee_id, last_name, first_name, salary 'Yearly Salary'",
+  "A column alias can be specified in an ORDER BY Clause. True or False?": "True",
+  "Which of the following would be returned by this SQL statement:\nSELECT First_name, last_name, department_id\nFROM employees\nWHERE department_id IN(50,80)\nAND first_name LIKE ' C% '\nOR last_name LIKE ' %s% '": "All of the above",
+  "You query the database with this SQL statement:\nSELECT price\nFROM products\nWHERE price IN(1, 25, 50, 250)\nAND (price BETWEEN 25 AND 40 OR price > 50);\n\nWhich two values could the statement return? (Choose two.)": "25|250",
+  "Which logical operator returns TRUE if either condition is true?": "OR",
+  "Which statement about the logical operators is true?": "The order of operator precedence is NOT, AND, and OR.",
+  "Which clause would you include in a SELECT statement to sort the rows returned by the LAST_NAME column?": "ORDER BY",
+  "Evaluate this SELECT statement:\nSELECT last_name, first_name, department_id, manager_id\nFROM employees;\n\nYou need to sort data by manager id values and then alphabetically by employee last name and first name values. Which ORDER BY clause could you use?": "ORDER BY manager_id, last_name, first_name",
+  "Evaluate this SELECT statement:\nSELECT *\nFROM employees\nWHERE salary > 30000\nAND department_id = 10\nOR email IS NOT NULL;\n\nWhich statement is true?": "The AND condition will be evaluated before the OR condition.",
+  "You need to create a report to display all employees that were hired on or before January 1, 1996. The data should display in this format:\nEmployee Start Date and Salary\n14837 - Smith 10-May-1992 / 5000\nWhich SELECT statement could you use?": "SELECT employee_id ||' - '|| last_name \"Employee\",\nhire_date ||' / '|| salary \"Start Date and Salary\"\nFROM employees\nWHERE hire_date <= '01-Jan-1996';",
+  "Which of the following are examples of logical operators that might be used in a WHERE clause. (Choose Two)": "AND, OR|NOT",
+  "You need to change the default sort order of the ORDER BY clause so that the data is displayed in reverse alphabetical order. Which keyword should you include in the ORDER BY clause?": "DESC",
+  "Which of the following is earliest in the rules of precedence?": "Arithmetic operator",
+  "Which number function may be used to determine if a value is odd or even?": "MOD",
+  "What is the result of the following SQL Statement:\nSELECT ROUND(45.923,-1)\nFROM DUAL;": "50",
+  "Which two functions can be used to manipulate number or date column values, but NOT character column values? (Choose two.)": "ROUND|TRUNC",
+  "Evaluate this function: MOD (25, 2) Which value is returned?": "1",
+  "Which script displays '01-May-2004' when the HIRE_DATE value is '20-May-2004'?": "SELECT TRUNC(hire_date, 'MONTH')\nFROM employees;",
+  "You need to display the current year as a character value (for example: Two Thousand and One). Which element would you use?": "YEAR",
+  "What is the result of the following query?\nSELECT ADD_YEARS ('11-Jan-1994',6)\nFROM dual;": "This in not a valid SQL statement.",
+  "You need to display the number of months between today's date and each employee's hiredate. Which function should you use?": "MONTHS_BETWEEN",
+  "Which query would return a whole number if the sysdate is 26-May-2004?": "SELECT TRUNC(MONTHS_BETWEEN(SYSDATE,'19-Mar-1979') /12)\nAS YEARS\nFROM DUAL;",
+  "Which SELECT statement will NOT return a date value?": "SELECT (SYSDATE - hire_date) + 10*8\nFROM employees;",
+  "You need to display each employee's name in all uppercase letters. Which function should you use?": "UPPER",
+  "The STYLES table contains this data:\nSTYLE_ID       STYLE_NAME            CATEGORY    COST\n895840                        SANDAL                     85940              12.00\n968950                        SANDAL                     85909              10.00\n869506                        SANDAL                     89690              15.00\n809090                        LOAFER                      89098              10.00\n890890                        LOAFER                      89789              14.00\n857689                        HEEL                           85940              11.00\n758960                        SANDAL                     86979              12.00\nYou query the database and return the value 79. Which script did you use?": "SELECT SUBSTR(category, -2,2)\nFROM styles\nWHERE style_id = 758960;",
+  "What does the following SQL SELECT statement return?\nSELECT UPPER( SUBSTR('Database Programming', INSTR('Database Programming','P'),20))\nFROM dual;": "PROGRAMMING",
+  "You issue this SQL statement:\nSELECT INSTR ('organizational sales', 'al')\nFROM dual;\n\nWhich value is returned by this command?": "13",
+  "Which of the following are types of SQL functions? (Choose two correct answers.)": "Multi-Row Functions|Single-Row Functions",
+  "The answer to the following script is 456. True or False?\nSELECT TRUNC(ROUND(456.98))\nFROM dual;": "False",
+  "You issue this SQL statement:\nSELECT ROUND (1282.248, -2) FROM dual;\nWhat value does this statement produce?": "1300",
+  "You issue this SQL statement:\nSELECT TRUNC(751.367,-1) FROM dual;\nWhich value does this statement display?": "750",
+  "If hire_date has a value of '03-Jul-2003', then what is the output from this code?\nSELECT ROUND(hire_date, 'Year') FROM employees;": "01-Jan-2004",
+  "Which SELECT statement will return a numeric value?": "SELECT (SYSDATE - hire_date) / 7\nFROM employees;",
+  "You need to subtract three months from the current date. Which function should you use?": "ADD_MONTHS",
+  "What is the result of the following query?\nSELECT ADD_MONTHS ('11-Jan-1994',6)\nFROM dual;": "11-Jul-1994",
+  "The PRICE table contains this data:\nPRODUCT_ID MANUFACTURER_ID\n86950  59604\n\nYou query the database and return the value 95. Which script did you use?": "SELECT SUBSTR(product_id, 3, 2)\nFROM price\nWHERE manufacturer_id = 59604;",
+  "You need to display the number of characters in each customer's last name. Which function should you use?": "LENGTH",
+  "Identify the output from the following SQL statement:\nSELECT RPAD('SQL',6, '*')\nFROM DUAL;": "SQL***",
+  "The EMPLOYEES table contains these columns:\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nHIRE_DATE DATE\nEVAL_MONTHS NUMBER(3)\n\nEvaluate this SELECT statement:\n\nSELECT hire_date + eval_months\nFROM employees;\n\nThe values returned by this SELECT statement will be of which data type?": "DATE",
+  "Which comparison operator retrieves a list of values?": "IN",
+  "Which SQL function is used to return the position where a specific character string begins within a larger character string?": "INSTR",
+  "You query the database with this SQL statement:\nSELECT CONCAT(last_name, (SUBSTR(LOWER(first_name), 4))) \"Default Password\"\nFROM employees;\n\nWhich function will be evaluated first?": "LOWER",
+  "What function would you use to return the highest date in a month?": "LAST_DAY",
+  "Which of the following SQL statements will correctly display the last name and the number of weeks employed for all employees in department 90?": "SELECT last_name, (SYSDATE-hire_date)/7 AS WEEKS\nFROM employees\nWHERE department_id = 90;",
+  "Which SQL function can be used to remove heading or trailing characters (or both) from a character string?": "TRIM",
+  "Evaluate this SELECT statement:\nSELECT SYSDATE + 30\nFROM dual;\n\nWhich value is returned by the query?": "The current date plus 30 days.",
+  "Which query would return a user password combining the ID of an employee and the first 4 digits of the last name?": "SELECT CONCAT (employee_id, SUBSTR(last_name,1,4))\nAS \"User Passwords\"\nFROM employees",
+  "Which function would you use to return the current database server date and time?": "SYSDATE",
+  "Which three statements about functions are true? (Choose three)": "The SYSDATE function returns the Oracle Server date and time.|The ROUND number function rounds a value to a specified decimal place or the nearest whole number.|The SUBSTR character function returns a portion of a string beginning at a defined character position to a specified length.",
+  "You need to return a portion of each employee's last name, beginning with the first character up to the fifth character. Which character function should you use?": "SUBSTR",
+  "Which query selects the first names of the DJ On Demand clients who have a first name beginning with \"A\"?": "SELECT UPPER(first_name)\nFROM d_clients\nWHERE LOWER(first_name) LIKE 'a%'",
+  "You want to create a report that displays all orders and their amounts that were placed during the month of January. You want the orders with the highest amounts to appear first. Which query should you issue?": "SELECT orderid, total\nFROM orders\nWHERE order_date BETWEEN '01-Jan-2002' AND '31-Jan-2002'\nORDER BY total DESC;",
+  "What will the following SQL statemtent display?\nSELECT last_name, LPAD(salary, 15, '$')SALARY\nFROM employees;": "The last name and salary for all employees with the format of the salary 15 characters long, left-padded with the $ and the column labeled SALARY.",
+  "Evaluate this SELECT statement:\nSELECT LENGTH(email)\nFROM employee;\n\nWhat will this SELECT statement display?": "The number of characters for each value in the EMAIL column in the employees table",
+  "Which character manipulation function always returns a numerical value?": "LENGTH",
+  "Character functions accept character arguments and only return character values. True or False?": "False",
+  "Which of the following SQL statements would correctly return a song title identified in the database as \"All These Years\"?": "WHERE title LIKE INITCAP('%all these years');"
 } satisfies OracleQaBank;
+
+
+ 
