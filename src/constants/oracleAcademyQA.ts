@@ -1723,4 +1723,15 @@ export const ORACLE_QA_BANK = {
 		"SELECT companyname, TO_CHAR (sysdate, 'fmDay, dd Month, yyyy'), total\nFROM customers NATURAL JOIN orders\nWHERE total >= 2500;",
 	'The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9)\nLAST_NAME VARCHAR2 (25)\nFIRST_NAME VARCHAR2 (25)\nSALARY NUMBER(6)\nYou need to create a report to display the salaries of all employees. Which SQL Statement should you use to display the salaries in format: "$45,000.00"?':
 		"SELECT TO_CHAR(salary, '$999,999.00')\nFROM employees;",
+
+	// Added DP Section 2 Quiz Questions (2026-05-25)
+	'The BETWEEN operator is inclusive. True or False?': 'True',
+	'When using the LIKE operator, which character represents a single character?': '_',
+	'When using the LIKE operator, which character represents any number of characters (zero, one, or more)?': '%',
+	'Which operator is used to search for values in a specified list?': 'IN',
+	'Which logical operator requires both conditions to be true?': 'AND',
+	'Which logical operator returns true if either condition is true?': 'OR',
+	'Which comparison operator is used to test for NULL values?': 'IS NULL',
+	'Arithmetic operators can be used in the SELECT and WHERE clauses. True or False?': 'True',
+	'Character strings and date values in the WHERE clause must be enclosed in single quotation marks. True or False?': 'True',
 } satisfies OracleQaBank;
