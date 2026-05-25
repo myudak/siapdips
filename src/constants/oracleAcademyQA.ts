@@ -1182,7 +1182,7 @@ export const ORACLE_QA_BANK = {
 	'You need to join the EMPLOYEE_HIST and EMPLOYEES tables. The EMPLOYEE_HIST table will be the first table in the FROM clause. All the matched and unmatched rows in the EMPLOYEES table need to be displayed. Which type of join will you use?':
 		'A right outer join',
 	'EMPLOYEES Table:\nName   Null?    Type\nEMPLOYEE_ID          NOT NULL     NUMBER(6)\nFIRST_NAME             VARCHAR2(20)\nLAST_NAME  NOT NULL     VARCHAR2(25)\nDEPARTMENT_ID                 NUMBER (4)\nDEPARTMENTS Table:\nName   Null?    Type\nDEPARTMENT_ID     NOT NULL     NUMBER 4\nDEPARTMENT_NAME          NOT NULL     VARCHAR2(30)\nMANAGER_ID                       NUMBER (6)\nA query is needed to display each department and its manager name from the above tables. However, not all departments have a manager but we want departments returned in all cases. Which of the following SQL: 1999 syntax scripts will accomplish the task?':
-		'SELECT d.department_id, e.first_name, e.last_name\nFROM employees e\nRIGHT OUTER JOIN departments d\nON (e.employee_id = d.manager_id);',
+		'SELECT d.department_id, e.first_name, e.last_name\nFROM employees e\nRIGHT OUTER JOIN departments d\nON (e.employee_id = d.manager_id);|SELECT departments.department_id, employees.first_name, employees.last_name\nFROM employees\nRIGHT OUTER JOIN departments\nON (employees.employee_id = departments.manager_id);',
 
 	'Which statement about a self join is true?':
 		'Table aliases must be used to qualify table names.',
@@ -1208,7 +1208,7 @@ export const ORACLE_QA_BANK = {
 	'Which query represents the correct syntax for a left outer join?':
 		'SELECT companyname, orderdate, total\nFROM customers c\nLEFT OUTER JOIN orders o\nON c.cust_id = o.cust_id;',
 	'Which query will retrieve all the rows in the EMPLOYEES table, even if there is no match in the DEPARTMENTS table?':
-		'SELECT e.last_name, e.department_id, d.department_name\nFROM employees e\nLEFT OUTER JOIN departments d ON (e.department_id = d.department_id);',
+		'SELECT e.last_name, e.department_id, d.department_name\nFROM employees e\nLEFT OUTER JOIN departments d ON (e.department_id = d.department_id);|SELECT employees.last_name, employees.department_id, departments.department_name\nFROM employees\nLEFT OUTER JOIN departments ON (employees.department_id = departments.department_id);',
 	'Which type of join returns rows from one table that have NO direct match in the other table?':
 		'Outer join',
 	'The primary advantages of using JOIN ON is: (Select two)':
