@@ -30,22 +30,29 @@ let customQa: Record<string, string> = {};
  * Normalize text: trim, collapse spaces, lowercase.
  */
 function normalizeText(txt: string | null | undefined): string {
-  return (
-    (txt || "")
-      // Convert non-breaking spaces to normal spaces
-      .replace(/\u00A0/g, " ")
-      // Normalize dashes/quotes to ASCII
-      .replace(/[\u2013\u2014]/g, "-")
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
-      // Collapse multiple whitespace into a single space
-      .replace(/\s+/g, " ")
-      // Normalize curly quotes to straight quotes (optional but helpful)
-      .replace(/[""]/g, '"')
-      .replace(/[']/g, "'")
-      .trim()
-      .toLowerCase()
-  );
+  if (!txt) return "";
+  
+  return txt
+    // Convert non-breaking spaces to normal spaces
+    .replace(/\u00A0/g, " ")
+    // Normalize dashes/quotes to ASCII
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    // Strip common instruction suffixes to make matching incredibly resilient
+    .replace(/\s*\(\s*choose\s+\w+\s*answers?\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*select\s+\w+\s*answers?\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*choose\s+\w+\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*select\s+\w+\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*choose\s+all\s+correct\s+answers?\.?\s*\)/gi, "")
+    .replace(/\s*mark\s+for\s+review/gi, "")
+    // Collapse multiple whitespace into a single space
+    .replace(/\s+/g, " ")
+    // Normalize curly quotes to straight quotes
+    .replace(/[""]/g, '"')
+    .replace(/[']/g, "'")
+    .trim()
+    .toLowerCase();
 }
 
 function getQuestionElement(): HTMLElement | null {
