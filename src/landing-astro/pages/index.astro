@@ -1,0 +1,52 @@
+---
+import LandingApp from "../../pages/landing/App";
+import "../../pages/landing/index.css";
+
+const title = "Siap Dips - Campus Companion buat Mahasiswa Undip";
+const description =
+  "Siap Dips bantu mahasiswa Undip rapihin SIAP, Kulon, Todoist, jadwal, IPK, form rutin, dan helper kampus lain langsung dari browser.";
+const chromeUrl =
+  "https://chromewebstore.google.com/detail/siap-dips-your-campus-com/inpmbpkngacgeljphlapgdgdjmoffild";
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#ffcf57" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/icons/icon128.png" />
+    <meta property="og:locale" content="id_ID" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/icons/icon128.png" />
+    <link rel="icon" href="/icons/icon48.png" />
+    <link rel="apple-touch-icon" href="/icons/icon128.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Siap Dips",
+      applicationCategory: "BrowserApplication",
+      operatingSystem: "Chrome, Firefox, Microsoft Edge",
+      description,
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "IDR",
+      },
+      url: chromeUrl,
+    })} />
+  </head>
+  <body>
+    <LandingApp />
+  </body>
+</html>

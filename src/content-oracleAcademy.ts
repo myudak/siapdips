@@ -3,10 +3,26 @@ import { ORACLE_QA_BANK } from "@/constants/oracleAcademyQA";
 const HELPER_ID = "oracle-academy-helper";
 const AUTO_HELPER_KEY = "oracleAcademyHelperEnabled";
 const AUTO_NEXT_KEY = "oracleAcademyAutoNextEnabled";
+const AUTO_ANSWER_KEY = "oracleAcademyAutoAnswerEnabled";
+const ANSWER_DELAY_MIN_KEY = "oracleAcademyAnswerDelayMin";
+const ANSWER_DELAY_MAX_KEY = "oracleAcademyAnswerDelayMax";
+const AUTO_NEXT_INTERVAL_KEY = "oracleAcademyAutoNextIntervalMs";
 const CUSTOM_QA_KEY = "oracleAcademyCustomQA";
+const DEFAULT_ANSWER_DELAY_MIN_SEC = 10;
+const DEFAULT_ANSWER_DELAY_MAX_SEC = 15;
+const DEFAULT_AUTO_NEXT_INTERVAL_MS = 1500;
+const MIN_AUTO_NEXT_INTERVAL_MS = 500;
 
 let autoNextTimer: number | null = null;
 let autoNextMissCount = 0;
+let answerSubmitTimer: number | null = null;
+let autoAnswerWatcherTimer: number | null = null;
+let autoAnswerLastQuestionKey = "";
+let answerDelayMinSec = DEFAULT_ANSWER_DELAY_MIN_SEC;
+let answerDelayMaxSec = DEFAULT_ANSWER_DELAY_MAX_SEC;
+let autoNextIntervalMs = DEFAULT_AUTO_NEXT_INTERVAL_MS;
+let autoAnswerEnabled = false;
+let helperStatusEl: HTMLDivElement | null = null;
 let customQa: Record<string, string> = {};
 
 /**
@@ -122,6 +138,57 @@ function showToast(
   }).showToast();
 }
 
+function setHelperStatus(
+  message: string,
+  type: "idle" | "info" | "error" | "success" = "idle"
+): void {
+  if (!helperStatusEl) return;
+
+  helperStatusEl.textContent = message;
+  helperStatusEl.style.color =
+    type === "error"
+      ? "#dc2626"
+      : type === "success"
+      ? "#16a34a"
+      : type === "info"
+      ? "#2563eb"
+      : "#6b7280";
+}
+
+function normalizeAnswerDelayRange(minRaw: unknown, maxRaw: unknown) {
+  let min = Number(minRaw);
+  let max = Number(maxRaw);
+
+  if (!Number.isFinite(min) || min < 0) min = DEFAULT_ANSWER_DELAY_MIN_SEC;
+  if (!Number.isFinite(max) || max < 0) max = DEFAULT_ANSWER_DELAY_MAX_SEC;
+
+  if (min > max) {
+    const temp = min;
+    min = max;
+    max = temp;
+  }
+
+  return { min, max };
+}
+
+function normalizeAutoNextIntervalMs(valueRaw: unknown): number {
+  const value = Number(valueRaw);
+  if (!Number.isFinite(value)) return DEFAULT_AUTO_NEXT_INTERVAL_MS;
+  return Math.max(MIN_AUTO_NEXT_INTERVAL_MS, Math.round(value));
+}
+
+function getRandomAnswerDelayMs(): number {
+  const { min, max } = normalizeAnswerDelayRange(
+    answerDelayMinSec,
+    answerDelayMaxSec
+  );
+  return Math.round((min + Math.random() * (max - min)) * 1000);
+}
+
+function formatSeconds(ms: number): string {
+  return `${(ms / 1000).toFixed(1)}s`;
+}
+
 function getAutoHelperEnabled(): Promise<boolean> {
   return new Promise((resolve) => {
     try {
@@ -173,7 +240,98 @@ function getAutoNextEnabled(): Promise<boolean> {
   });
 }
 
+function getAutoAnswerEnabled(): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      if (!chrome?.storage?.local) {
+        resolve(false);
+        return;
+      }
+      chrome.storage.local.get(AUTO_ANSWER_KEY, (res) => {
+        if (chrome.runtime.lastError) {
+          console.debug(
+            "[Oracle Academy] Failed to read oracleAcademyAutoAnswerEnabled:",
+            chrome.runtime.lastError.message
+          );
+          resolve(false);
+          return;
+        }
+        resolve(res[AUTO_ANSWER_KEY] ?? false);
+      });
+    } catch (err) {
+      console.debug("[Oracle Academy] Storage read error:", err);
+      resolve(false);
+    }
+  });
+}
+
+function loadTimingConfig(): Promise<void> {
+  return new Promise((resolve) => {
+    try {
+      if (!chrome?.storage?.local) {
+        resolve();
+        return;
+      }
+
+      chrome.storage.local.get(
+        [
+          ANSWER_DELAY_MIN_KEY,
+          ANSWER_DELAY_MAX_KEY,
+          AUTO_NEXT_INTERVAL_KEY,
+          AUTO_ANSWER_KEY,
+        ],
+        (res) => {
+          if (chrome.runtime.lastError) {
+            console.debug(
+              "[Oracle Academy] Failed to read timing config:",
+              chrome.runtime.lastError.message
+            );
+            resolve();
+            return;
+          }
+
+          const delay = normalizeAnswerDelayRange(
+            res[ANSWER_DELAY_MIN_KEY] ?? DEFAULT_ANSWER_DELAY_MIN_SEC,
+            res[ANSWER_DELAY_MAX_KEY] ?? DEFAULT_ANSWER_DELAY_MAX_SEC
+          );
+          answerDelayMinSec = delay.min;
+          answerDelayMaxSec = delay.max;
+          autoNextIntervalMs = normalizeAutoNextIntervalMs(
+            res[AUTO_NEXT_INTERVAL_KEY] ?? DEFAULT_AUTO_NEXT_INTERVAL_MS
+          );
+          autoAnswerEnabled = Boolean(res[AUTO_ANSWER_KEY] ?? false);
+          resolve();
+        }
+      );
+    } catch (err) {
+      console.debug("[Oracle Academy] Timing config read error:", err);
+      resolve();
+    }
+  });
+}
+
 function setStoredBoolean(key: string, value: boolean): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!chrome?.storage?.local) {
+        resolve();
+        return;
+      }
+
+      chrome.storage.local.set({ [key]: value }, () => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        resolve();
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+function setStoredNumber(key: string, value: number): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
       if (!chrome?.storage?.local) {
@@ -266,9 +424,12 @@ function clickNextButtonOnce(): boolean {
   return true;
 }
 
-function startAutoNextLoop(intervalMs = 1500) {
+function startAutoNextLoop(intervalMs = autoNextIntervalMs) {
   stopAutoNextLoop();
   autoNextMissCount = 0;
+  const safeIntervalMs = normalizeAutoNextIntervalMs(intervalMs);
+  autoNextIntervalMs = safeIntervalMs;
+  setHelperStatus(`Next every ${safeIntervalMs}ms.`, "info");
   autoNextTimer = window.setInterval(() => {
     const clicked = clickNextButtonOnce();
     if (clicked) return;
@@ -279,7 +440,7 @@ function startAutoNextLoop(intervalMs = 1500) {
       void setStoredBoolean(AUTO_NEXT_KEY, false);
       showToast("Auto Next stopped. Next button not found.", "info");
     }
-  }, intervalMs);
+  }, safeIntervalMs);
   console.log("[Oracle Academy] Auto-next loop started.");
 }
 
@@ -538,6 +699,87 @@ function answerCurrentQuestion(): boolean {
   return true;
 }
 
+function cancelPendingAnswer(statusMessage = "Pending answer cancelled."): void {
+  if (answerSubmitTimer !== null) {
+    clearTimeout(answerSubmitTimer);
+    answerSubmitTimer = null;
+    setHelperStatus(statusMessage, "idle");
+  }
+}
+
+function scheduleAnswerCurrentQuestion(source: "manual" | "auto" = "manual") {
+  const questionRaw = getQuestionText();
+  if (!questionRaw) {
+    showToast("Question element not found.", "error");
+    setHelperStatus("Question element not found.", "error");
+    return false;
+  }
+
+  if (answerSubmitTimer !== null) {
+    setHelperStatus("Answer already scheduled.", "info");
+    showToast("Answer already scheduled.", "info");
+    return true;
+  }
+
+  const delayMs = getRandomAnswerDelayMs();
+  const questionKey = normalizeText(questionRaw);
+  autoAnswerLastQuestionKey = questionKey;
+  setHelperStatus(`Answering in ${formatSeconds(delayMs)}...`, "info");
+
+  answerSubmitTimer = window.setTimeout(() => {
+    answerSubmitTimer = null;
+
+    const currentQuestionKey = normalizeText(getQuestionText());
+    if (currentQuestionKey && currentQuestionKey !== questionKey) {
+      setHelperStatus("Question changed. Skipped old answer.", "idle");
+      if (source === "manual") {
+        showToast("Question changed before answer submit.", "info");
+      }
+      return;
+    }
+
+    const ok = answerCurrentQuestion();
+    setHelperStatus(
+      ok ? "Answer submitted." : "Answer submit failed.",
+      ok ? "success" : "error"
+    );
+  }, delayMs);
+
+  return true;
+}
+
+function checkAutoAnswerQuestion(): void {
+  if (!autoAnswerEnabled || answerSubmitTimer !== null) return;
+
+  const questionRaw = getQuestionText();
+  if (!questionRaw) return;
+
+  const questionKey = normalizeText(questionRaw);
+  if (!questionKey || questionKey === autoAnswerLastQuestionKey) return;
+
+  scheduleAnswerCurrentQuestion("auto");
+}
+
+function startAutoAnswerWatcher(): void {
+  stopAutoAnswerWatcher();
+  autoAnswerEnabled = true;
+  autoAnswerLastQuestionKey = "";
+  setHelperStatus("Auto Answer armed.", "info");
+  checkAutoAnswerQuestion();
+  autoAnswerWatcherTimer = window.setInterval(checkAutoAnswerQuestion, 1000);
+  console.log("[Oracle Academy] Auto-answer watcher started.");
+}
+
+function stopAutoAnswerWatcher(): void {
+  if (autoAnswerWatcherTimer !== null) {
+    clearInterval(autoAnswerWatcherTimer);
+    autoAnswerWatcherTimer = null;
+    console.log("[Oracle Academy] Auto-answer watcher stopped.");
+  }
+  autoAnswerEnabled = false;
+  cancelPendingAnswer("Auto Answer disabled.");
+}
+
 function createHelper(): void {
   if (document.getElementById(HELPER_ID)) return;
 
@@ -603,6 +845,56 @@ function createHelper(): void {
     marginBottom: "8px",
   };
 
+  const createNumberInput = (
+    label: string,
+    value: number,
+    suffix: string,
+    options: { min: string; step: string }
+  ) => {
+    const wrapper = document.createElement("label");
+    Object.assign(wrapper.style, {
+      display: "grid",
+      gridTemplateColumns: "1fr 82px 30px",
+      alignItems: "center",
+      gap: "6px",
+      marginBottom: "8px",
+      fontSize: "12px",
+      color: "#374151",
+      fontWeight: "600",
+    });
+
+    const labelText = document.createElement("span");
+    labelText.textContent = label;
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.value = String(value);
+    input.min = options.min;
+    input.step = options.step;
+    Object.assign(input.style, {
+      width: "100%",
+      padding: "6px 7px",
+      border: "1px solid #d1d5db",
+      borderRadius: "7px",
+      fontSize: "12px",
+      color: "#111827",
+      boxSizing: "border-box",
+    });
+
+    const suffixText = document.createElement("span");
+    suffixText.textContent = suffix;
+    Object.assign(suffixText.style, {
+      color: "#6b7280",
+      fontWeight: "500",
+    });
+
+    wrapper.appendChild(labelText);
+    wrapper.appendChild(input);
+    wrapper.appendChild(suffixText);
+
+    return { wrapper, input };
+  };
+
   const setToggleButtonState = (
     buttonEl: HTMLButtonElement,
     label: string,
@@ -616,6 +908,102 @@ function createHelper(): void {
 
   let helperEnabledState = true;
   let autoNextEnabledState = false;
+  let autoAnswerEnabledState = false;
+
+  const delaySection = document.createElement("div");
+  Object.assign(delaySection.style, {
+    padding: "8px",
+    marginBottom: "8px",
+    border: "1px solid #e5e7eb",
+    borderRadius: "10px",
+    background: "#f9fafb",
+  });
+
+  const answerMinControl = createNumberInput(
+    "Answer min",
+    answerDelayMinSec,
+    "sec",
+    { min: "0", step: "0.5" }
+  );
+  const answerMaxControl = createNumberInput(
+    "Answer max",
+    answerDelayMaxSec,
+    "sec",
+    { min: "0", step: "0.5" }
+  );
+  const nextIntervalControl = createNumberInput(
+    "Next interval",
+    autoNextIntervalMs,
+    "ms",
+    { min: String(MIN_AUTO_NEXT_INTERVAL_MS), step: "100" }
+  );
+
+  delaySection.appendChild(answerMinControl.wrapper);
+  delaySection.appendChild(answerMaxControl.wrapper);
+  delaySection.appendChild(nextIntervalControl.wrapper);
+  panel.appendChild(delaySection);
+
+  helperStatusEl = document.createElement("div");
+  helperStatusEl.textContent = "Ready. Answer delay 10-15s, next 1500ms.";
+  Object.assign(helperStatusEl.style, {
+    margin: "0 0 10px 0",
+    padding: "7px 8px",
+    borderRadius: "8px",
+    background: "#f3f4f6",
+    color: "#6b7280",
+    fontSize: "12px",
+    lineHeight: "1.35",
+  });
+  panel.appendChild(helperStatusEl);
+
+  const saveAnswerDelayFromInputs = async () => {
+    const delay = normalizeAnswerDelayRange(
+      answerMinControl.input.value,
+      answerMaxControl.input.value
+    );
+    answerDelayMinSec = delay.min;
+    answerDelayMaxSec = delay.max;
+    answerMinControl.input.value = String(delay.min);
+    answerMaxControl.input.value = String(delay.max);
+
+    try {
+      await Promise.all([
+        setStoredNumber(ANSWER_DELAY_MIN_KEY, delay.min),
+        setStoredNumber(ANSWER_DELAY_MAX_KEY, delay.max),
+      ]);
+      setHelperStatus(`Answer delay ${delay.min}-${delay.max}s saved.`, "info");
+    } catch (err) {
+      console.debug("[Oracle Academy] Failed to save answer delay:", err);
+      showToast("Failed to save answer delay.", "error");
+    }
+  };
+
+  const saveAutoNextIntervalFromInput = async () => {
+    const nextMs = normalizeAutoNextIntervalMs(nextIntervalControl.input.value);
+    autoNextIntervalMs = nextMs;
+    nextIntervalControl.input.value = String(nextMs);
+
+    try {
+      await setStoredNumber(AUTO_NEXT_INTERVAL_KEY, nextMs);
+      setHelperStatus(`Auto Next interval ${nextMs}ms saved.`, "info");
+      if (autoNextEnabledState) {
+        startAutoNextLoop(nextMs);
+      }
+    } catch (err) {
+      console.debug("[Oracle Academy] Failed to save auto next interval:", err);
+      showToast("Failed to save Auto Next interval.", "error");
+    }
+  };
+
+  answerMinControl.input.addEventListener("change", () => {
+    void saveAnswerDelayFromInputs();
+  });
+  answerMaxControl.input.addEventListener("change", () => {
+    void saveAnswerDelayFromInputs();
+  });
+  nextIntervalControl.input.addEventListener("change", () => {
+    void saveAutoNextIntervalFromInput();
+  });
 
   const autoHelperToggle = document.createElement("button");
   Object.assign(autoHelperToggle.style, toggleButtonBaseStyle);
@@ -650,6 +1038,46 @@ function createHelper(): void {
     }
   });
   panel.appendChild(autoHelperToggle);
+
+  const autoAnswerToggle = document.createElement("button");
+  Object.assign(autoAnswerToggle.style, toggleButtonBaseStyle);
+  setToggleButtonState(autoAnswerToggle, "Auto Answer & Submit", false);
+  autoAnswerToggle.addEventListener("mouseenter", () => {
+    autoAnswerToggle.style.boxShadow = "0 8px 16px rgba(0,0,0,0.08)";
+    autoAnswerToggle.style.transform = "translateY(-1px)";
+  });
+  autoAnswerToggle.addEventListener("mouseleave", () => {
+    autoAnswerToggle.style.boxShadow = "none";
+    autoAnswerToggle.style.transform = "translateY(0)";
+  });
+  autoAnswerToggle.addEventListener("click", async () => {
+    autoAnswerEnabledState = !autoAnswerEnabledState;
+    setToggleButtonState(
+      autoAnswerToggle,
+      "Auto Answer & Submit",
+      autoAnswerEnabledState
+    );
+
+    if (autoAnswerEnabledState) {
+      startAutoAnswerWatcher();
+    } else {
+      stopAutoAnswerWatcher();
+    }
+
+    try {
+      await setStoredBoolean(AUTO_ANSWER_KEY, autoAnswerEnabledState);
+      showToast(
+        autoAnswerEnabledState
+          ? "Auto Answer & Submit enabled."
+          : "Auto Answer & Submit disabled.",
+        "success"
+      );
+    } catch (err) {
+      console.debug("[Oracle Academy] Failed to save auto answer state:", err);
+      showToast("Failed to save auto answer state.", "error");
+    }
+  });
+  panel.appendChild(autoAnswerToggle);
 
   const autoNextToggle = document.createElement("button");
   Object.assign(autoNextToggle.style, toggleButtonBaseStyle);
@@ -850,6 +1278,51 @@ function createHelper(): void {
     if (AUTO_NEXT_KEY in changes) {
       autoNextEnabledState = Boolean(changes[AUTO_NEXT_KEY].newValue);
       setToggleButtonState(autoNextToggle, "Auto Next", autoNextEnabledState);
+      if (autoNextEnabledState && autoNextTimer === null) {
+        startAutoNextLoop(autoNextIntervalMs);
+      } else if (!autoNextEnabledState && autoNextTimer !== null) {
+        stopAutoNextLoop();
+      }
+    }
+
+    if (AUTO_ANSWER_KEY in changes) {
+      const nextEnabled = Boolean(changes[AUTO_ANSWER_KEY].newValue);
+      autoAnswerEnabledState = nextEnabled;
+      setToggleButtonState(
+        autoAnswerToggle,
+        "Auto Answer & Submit",
+        autoAnswerEnabledState
+      );
+      if (nextEnabled && autoAnswerWatcherTimer === null) {
+        startAutoAnswerWatcher();
+      } else if (!nextEnabled && autoAnswerWatcherTimer !== null) {
+        stopAutoAnswerWatcher();
+      }
+    }
+
+    if (ANSWER_DELAY_MIN_KEY in changes || ANSWER_DELAY_MAX_KEY in changes) {
+      const delay = normalizeAnswerDelayRange(
+        ANSWER_DELAY_MIN_KEY in changes
+          ? changes[ANSWER_DELAY_MIN_KEY].newValue
+          : answerDelayMinSec,
+        ANSWER_DELAY_MAX_KEY in changes
+          ? changes[ANSWER_DELAY_MAX_KEY].newValue
+          : answerDelayMaxSec
+      );
+      answerDelayMinSec = delay.min;
+      answerDelayMaxSec = delay.max;
+      answerMinControl.input.value = String(delay.min);
+      answerMaxControl.input.value = String(delay.max);
+    }
+
+    if (AUTO_NEXT_INTERVAL_KEY in changes) {
+      autoNextIntervalMs = normalizeAutoNextIntervalMs(
+        changes[AUTO_NEXT_INTERVAL_KEY].newValue
+      );
+      nextIntervalControl.input.value = String(autoNextIntervalMs);
+      if (autoNextEnabledState) {
+        startAutoNextLoop(autoNextIntervalMs);
+      }
     }
   };
 
@@ -857,22 +1330,50 @@ function createHelper(): void {
     if (chrome?.storage?.onChanged) {
       chrome.storage.onChanged.removeListener(handleStorageChange);
     }
+    cancelPendingAnswer("Helper closed.");
+    stopAutoAnswerWatcher();
     panel.remove();
+    if (helperStatusEl && panel.contains(helperStatusEl)) {
+      helperStatusEl = null;
+    }
   });
   panel.appendChild(close);
 
   document.body.appendChild(panel);
 
-  Promise.all([getAutoHelperEnabled(), getAutoNextEnabled()])
-    .then(([helperEnabled, nextEnabled]) => {
+  Promise.all([
+    getAutoHelperEnabled(),
+    getAutoNextEnabled(),
+    getAutoAnswerEnabled(),
+    loadTimingConfig(),
+  ])
+    .then(([helperEnabled, nextEnabled, answerEnabled]) => {
       helperEnabledState = helperEnabled;
       autoNextEnabledState = nextEnabled;
+      autoAnswerEnabledState = answerEnabled;
       setToggleButtonState(
         autoHelperToggle,
         "Auto helper on page",
         helperEnabledState
       );
       setToggleButtonState(autoNextToggle, "Auto Next", autoNextEnabledState);
+      setToggleButtonState(
+        autoAnswerToggle,
+        "Auto Answer & Submit",
+        autoAnswerEnabledState
+      );
+      answerMinControl.input.value = String(answerDelayMinSec);
+      answerMaxControl.input.value = String(answerDelayMaxSec);
+      nextIntervalControl.input.value = String(autoNextIntervalMs);
+      setHelperStatus(
+        `Ready. Answer delay ${answerDelayMinSec}-${answerDelayMaxSec}s, next ${autoNextIntervalMs}ms.`,
+        "idle"
+      );
+      if (autoAnswerEnabledState && autoAnswerWatcherTimer === null) {
+        startAutoAnswerWatcher();
+      } else if (autoAnswerEnabledState) {
+        setHelperStatus("Auto Answer armed.", "info");
+      }
     })
     .catch((err) => {
       console.debug("[Oracle Academy] Failed to hydrate helper controls:", err);
@@ -982,6 +1483,7 @@ async function initOracleAcademyHelper() {
   }).showToast();
 
   await loadCustomQa();
+  await loadTimingConfig();
 
   const autoHelper = await getAutoHelperEnabled();
   if (autoHelper) {
@@ -995,9 +1497,16 @@ async function initOracleAcademyHelper() {
     startAutoNextLoop();
   }
 
+  const shouldAutoAnswer = await getAutoAnswerEnabled();
+  if (shouldAutoAnswer) {
+    startAutoAnswerWatcher();
+  }
+
   // Expose for manual triggers if needed.
   (window as unknown as Record<string, unknown>).answerOracleAcademyQuiz =
     answerCurrentQuestion;
+  (window as unknown as Record<string, unknown>).scheduleOracleAcademyAnswer =
+    scheduleAnswerCurrentQuestion;
   (window as unknown as Record<string, unknown>).showOracleAcademyHelper =
     createHelper;
   (window as unknown as Record<string, unknown>).clickOracleNext =
