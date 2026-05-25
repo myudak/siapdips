@@ -1756,4 +1756,50 @@ export const ORACLE_QA_BANK = {
 	// Added DP Section 3 Quiz Questions (2026-05-25)
 	'You query the database with this SQL statement:SELECT price FROM products WHERE price IN(1, 25, 50, 250) AND (price BETWEEN 25 AND 40 OR price > 50);Which two values could the statement return? (Choose Two)':
 		'25|250',
+
+	// Section 7 - SQL Joins from DeniAce Blog (2026-05-25)
+	'S7J Q1 Evaluate this SQL statement:\nSELECT e.employee_id, e.last_name, e.first_name, d.department_name\nFROM employees e, departments d\nWHERE e.department_id = d.department_id AND employees.department_id > 5000\nORDER BY 4;\n\nWhich clause contains a syntax error?':
+		'AND employees.department_id > 5000',
+	'S7J Q2 When must column names be prefixed by table names in join syntax?':
+		'When the same column name appears in more than one table of the query',
+	'S7J Q3 If table A has 10 rows and table B has 5 rows, how many rows will be returned if you perform a cartesian join on those two tables?':
+		'50',
+	'S7J Q4 What is produced when a join condition is not specified in a multiple-table query using Oracle proprietary Join syntax?':
+		'A Cartesian product',
+	'S7J Q5 The CUSTOMERS and SALES tables contain these columns:\nCUSTOMERS\nCUST_ID NUMBER(10) PRIMARY KEY\nCOMPANY VARCHAR2(30)\nLOCATION VARCHAR2(20)\n\nSALES\nSALES_ID NUMBER(5) PRIMARY KEY\nCUST_ID NUMBER(10) FOREIGN KEY\nTOTAL_SALES NUMBER(30)\n\nWhich SELECT statement will return the customer ID, the company and the total sales?':
+		'SELECT c.cust_id, c.company, s.total_sales\nFROM customers c, sales s\nWHERE c.cust_id = s.cust_id;',
+	'S7J Q6 You have the following EMPLOYEES table:\nEMPLOYEE_ID NUMBER(5) NOT NULL PRIMARY KEY\nFIRST_NAME VARCHAR2(25)\nLAST_NAME VARCHAR2(25)\nADDRESS VARCHAR2(35)\nCITY VARCHAR2(25)\nSTATE VARCHAR2(2)\nZIP NUMBER(9)\nTELEPHONE NUMBER(10)\nDEPARTMENT_ID NUMBER(5) NOT NULL FOREIGN KEY\n\nThe BONUS table includes the following columns:\nBONUS_ID NUMBER(5) NOT NULL PRIMARY KEY\nANNUAL_SALARY NUMBER(10)\nBONUS_PCT NUMBER(3, 2)\nEMPLOYEE_ID VARCHAR2(5) NOT NULL FOREIGN KEY\n\nYou want to determine the amount of each employee\'s bonus as a calculation of salary times bonus. Which of the following queries should you issue?':
+		'SELECT e.first_name, e.last_name, b.annual_salary * b. bonus_pct\nFROM employees e, bonus b\nWHERE e.employee_id = b.employee_id;',
+	'S7J Q7 The ID column in the CLIENT table that corresponds to the CLIENT_ID column of the ORDER table contains null values for rows that need to be displayed. Which type of join should you use to display the data?':
+		'Outer join',
+	'S7J Q8 Using Oracle Proprietary join syntax, which two operators can be used in an outer join condition using the outer join operator (+)?':
+		'AND and =',
+	'S7J Q9 You need to join the EMPLOYEES table and the SCHEDULES table, but the two tables do not have any corresponding columns. Which type of join will you create?':
+		'A non-equijoin',
+	'S7J Q10 Using Oracle Proprietary join syntax, which operator would you use after one of the column names in the WHERE clause when creating an outer join?':
+		'(+)',
+	'S7J Q11 Which statement about outer joins is true?':
+		'The OR operator cannot be used to link outer join conditions.',
+	'S7J Q12 The following is a valid outer join statement:\nSELECT c.country_name, d.department_name\nFROM countries c, departments d\nWHERE c.country_id (+) = d.country_id (+)\n\nTrue or False?':
+		'False',
+	'S7J Q13 What is the result of a query that selects from two tables but includes no join condition?':
+		'A Cartesian product',
+	'S7J Q14 Which statement about the join syntax of an Oracle Proprietary join syntax SELECT statement is true?':
+		'The WHERE clause represents the join criteria.',
+	'S7J Q15 If table A has 10 rows and table B has 5 rows, how many rows will be returned if you perform an equi-join on those two tables?':
+		'It depends on how many rows have matching data in each of the two tables.',
+	'S7J Q16 The PATIENTS and DOCTORS tables contain these columns:\nPATIENTS\nPATIENT_ID NUMBER(9)\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\n\nDOCTORS\nDOCTOR_ID NUMBER(9)\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\n\nYou issue this statement:\nSELECT patient_id, doctor_id\nFROM patients, doctors;\n\nWhich result will this statement provide?':
+		'A report containing all possible combinations of the PATIENT_ID and DOCTOR_ID values',
+	'S7J Q17 Which statement about joining tables with a non-equijoin is false?':
+		'A WHERE clause must specify a column in one table that is compared to a column in the second table',
+	'S7J Q18 To perform a valid outer join between DEPARTMENTS and EMPLOYEES to list departments without employees, select the correct WHERE clause for the following select statement:\nSELECT d.department_name, e.last_name\nFROM employees e, departments d\nWHERE':
+		'e.department_id(+) = d.department_id',
+	'S7J Q19 The EMPLOYEE_ID column in the EMPLOYEES table corresponds to the EMPLOYEE_ID column of the ORDERS table.\nThe EMPLOYEE_ID column in the ORDERS table contains null values for rows that you need to display.\nWhich type of join should you use to display the data?':
+		'Outer join',
+	'S7J Q20 Oracle proprietary JOINS can use the WHERE clause for conditions other than the join-condition. True or False?':
+		'True',
+	'S7J Q21 What is the minimum number of join conditions required to join 5 tables together?':
+		'4',
+	'S7J Q22 Nonequijoins are normally used with which of the following? (Choose Two)':
+		'Ranges of numbers|Ranges of dates',
 } satisfies OracleQaBank;
