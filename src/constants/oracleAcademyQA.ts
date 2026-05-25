@@ -1734,4 +1734,22 @@ export const ORACLE_QA_BANK = {
 	'Which comparison operator is used to test for NULL values?': 'IS NULL',
 	'Arithmetic operators can be used in the SELECT and WHERE clauses. True or False?': 'True',
 	'Character strings and date values in the WHERE clause must be enclosed in single quotation marks. True or False?': 'True',
+
+	// More DP Section 2 Quiz Questions (2026-05-25)
+	'The structure of the table can be displayed with the _________ command:':
+		'Desc and the Describe',
+	'Which of the following statements will work?':
+		'SELECT first_name ||\' \'||last_name NAME, department_id DEPARTMENT, salary*12 "ANNUAL SALARY"\nFROM employees\nWHERE last_name = \'King\';',
+	'You want to determine the orders that have been placed by customers who reside in the city of Chicago. You write this partial SELECT statement:\nSELECT orderid, orderdate, total\nFROM orders;\nWhat should you include in your SELECT statement to achieve the desired results?':
+		'WHERE city = \'Chicago\';',
+	'What will be the result of the SELECT statement and what will display?\nSELECT last_name, salary, salary + 300\nFROM employees;':
+		'Display the last name, salary, and the results of adding 300 to each salary for all the employees',
+	'Which of the following is NOT BEING DONE in this SQL statement?\nSELECT first_name || \' \' || last_name "Name"\nFROM employees;':
+		'Concatenating first name, middle name and last name',
+	'Which query would give the following result?\nLAST_NAME FIRST_NAME DEPARTMENT_ID\nKing Steven 90':
+		'SELECT last_name, first_name, department_id\nFROM employees\nWHERE last_name = \'King\';',
+	'The following is a valid SQL SELECT statement. True or False?\nSELECT first_name || \' \' || last_name alias AS Employee_Name\nFROM employees;':
+		'False',
+	'Evaluate this SELECT statement:\nSELECT *FROM employeesWHERE department_id IN(10, 20, 30)AND salary > 20000;\nWhich values would cause the logical condition to return TRUE?':
+		'DEPARTMENT_ID = 10 and SALARY = 20001',
 } satisfies OracleQaBank;
