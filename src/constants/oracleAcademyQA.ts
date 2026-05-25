@@ -1104,7 +1104,7 @@ export const ORACLE_QA_BANK = {
 	"What does the following SQL SELECT statement return? SELECT UPPER( SUBSTR('Database Programming', INSTR('Database Programming','P'),20)) FROM dual;":
 		'PROGRAMMING',
 	'Consider the following data in the Employees table: (last_name, commission_pct, manager_id) DATA: King, null, null Kochhar, null, 100 Vargas, null, 124 Zlotkey, .2, 100 What is the result of the following statement: SELECT last_name, COALESCE(commission_pct, manager_id, -1) comm FROM employees ;':
-		'Zlotkey, .2',
+		'King, -1\nKochhar, 100\nVargas, 124\nZlotkey, .2',
 	'Which SELECT statement implements a self join? [duplicate variant 2]':
 		'SELECT e.employee_id, m.manager_id FROM employees e, employees m WHERE m.employee_id = e.manager_id;',
 	'You need to create a report that lists all employees in department 10 (Sales) whose salary is not equal to $25,000 per year. Which query should you issue to accomplish this task?':
