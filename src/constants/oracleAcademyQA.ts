@@ -1752,4 +1752,8 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'Evaluate this SELECT statement:\nSELECT *FROM employeesWHERE department_id IN(10, 20, 30)AND salary > 20000;\nWhich values would cause the logical condition to return TRUE?':
 		'DEPARTMENT_ID = 10 and SALARY = 20001',
+
+	// Added DP Section 3 Quiz Questions (2026-05-25)
+	'You query the database with this SQL statement:SELECT price FROM products WHERE price IN(1, 25, 50, 250) AND (price BETWEEN 25 AND 40 OR price > 50);Which two values could the statement return? (Choose Two)':
+		'25|250',
 } satisfies OracleQaBank;
