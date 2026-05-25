@@ -611,6 +611,34 @@ function answerCurrentQuestion(): boolean {
 
   let clicked = false;
   let matchedCount = 0;
+
+  // Layer 1: Attempt exact match for single-select questions first to avoid substring collisions
+  if (effectiveExpected.length === 0) {
+    const exactBtn = choiceButtons.find((btn) => {
+      const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
+      const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
+      const btnText = (textSpan?.textContent || "").trim();
+      const btnNorm = normalizeText(btnText || ariaLabel);
+      return btnNorm === answerTextNorm;
+    });
+
+    if (exactBtn) {
+      const ariaLabel = (exactBtn.getAttribute("aria-label") || "").trim();
+      const textSpan = exactBtn.querySelector<HTMLSpanElement>(".choice-Text");
+      const btnText = (textSpan?.textContent || "").trim();
+      console.log("[Oracle Academy] Found exact choice match:", btnText || ariaLabel);
+      exactBtn.click();
+      clicked = true;
+
+      const flagInput = exactBtn.querySelector<HTMLInputElement>(
+        'input[name="f01"].qzlab-choice'
+      );
+      if (flagInput) flagInput.value = "Y";
+      return true;
+    }
+  }
+
+  // Layer 2 & 3: Fallback to multi-select or substring matching if exact match wasn't found
   for (const btn of choiceButtons) {
     const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
     const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
@@ -631,7 +659,7 @@ function answerCurrentQuestion(): boolean {
         answerTextNorm.includes(btnNorm));
 
     if (multiMatch || singleMatch) {
-      console.log("[Oracle Academy] Clicking choice:", btnText || ariaLabel);
+      console.log("[Oracle Academy] Clicking choice (fallback):", btnText || ariaLabel);
       btn.click();
       clicked = true;
       matchedCount += 1;
