@@ -1212,7 +1212,7 @@ export const ORACLE_QA_BANK = {
 	'Which type of join returns rows from one table that have NO direct match in the other table?':
 		'Outer join',
 	'The primary advantages of using JOIN ON is: (Select two)':
-		'It permits columns that donﾒt have matching data types to be joined.|It permits columns with different names to be joined.',
+		'It permits columns that don\'t have matching data types to be joined.|It permits columns with different names to be joined.',
 	'The primary advantage of using JOIN ON is:':
 		'It permits columns with different names to be joined.',
 	'Which of the following database design concepts is implemented with a self join?':
