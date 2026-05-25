@@ -16,6 +16,7 @@ const MIN_AUTO_NEXT_INTERVAL_MS = 500;
 let autoNextTimer: number | null = null;
 let autoNextMissCount = 0;
 let answerSubmitTimer: number | null = null;
+let answerCountdownInterval: number | null = null;
 let autoAnswerWatcherTimer: number | null = null;
 let autoAnswerLastQuestionKey = "";
 let answerDelayMinSec = DEFAULT_ANSWER_DELAY_MIN_SEC;
@@ -47,13 +48,8 @@ function normalizeText(txt: string | null | undefined): string {
   );
 }
 
-function getQuestionElement(): HTMLParagraphElement | HTMLElement | null {
-  return (
-    document.querySelector<HTMLParagraphElement>(
-      "#question-Text .t-ContentBlock-body p"
-    ) ||
-    document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body")
-  );
+function getQuestionElement(): HTMLElement | null {
+  return document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body");
 }
 
 function getQuestionText(): string | null {
@@ -703,8 +699,12 @@ function cancelPendingAnswer(statusMessage = "Pending answer cancelled."): void 
   if (answerSubmitTimer !== null) {
     clearTimeout(answerSubmitTimer);
     answerSubmitTimer = null;
-    setHelperStatus(statusMessage, "idle");
   }
+  if (answerCountdownInterval !== null) {
+    clearInterval(answerCountdownInterval);
+    answerCountdownInterval = null;
+  }
+  setHelperStatus(statusMessage, "idle");
 }
 
 function scheduleAnswerCurrentQuestion(source: "manual" | "auto" = "manual") {
@@ -724,10 +724,29 @@ function scheduleAnswerCurrentQuestion(source: "manual" | "auto" = "manual") {
   const delayMs = getRandomAnswerDelayMs();
   const questionKey = normalizeText(questionRaw);
   autoAnswerLastQuestionKey = questionKey;
-  setHelperStatus(`Answering in ${formatSeconds(delayMs)}...`, "info");
+
+  const targetTimestamp = Date.now() + delayMs;
+
+  const updateCountdown = () => {
+    const remainingMs = Math.max(0, targetTimestamp - Date.now());
+    setHelperStatus(`Answering in ${formatSeconds(remainingMs)}...`, "info");
+    if (remainingMs <= 0) {
+      if (answerCountdownInterval !== null) {
+        clearInterval(answerCountdownInterval);
+        answerCountdownInterval = null;
+      }
+    }
+  };
+
+  updateCountdown();
+  answerCountdownInterval = window.setInterval(updateCountdown, 100);
 
   answerSubmitTimer = window.setTimeout(() => {
     answerSubmitTimer = null;
+    if (answerCountdownInterval !== null) {
+      clearInterval(answerCountdownInterval);
+      answerCountdownInterval = null;
+    }
 
     const currentQuestionKey = normalizeText(getQuestionText());
     if (currentQuestionKey && currentQuestionKey !== questionKey) {
