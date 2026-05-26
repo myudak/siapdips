@@ -12,6 +12,7 @@ node_modules
 dist
 dist-landing
 dist-ssr
+release
 *.local
 
 # Editor directories and files
