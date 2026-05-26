@@ -16,6 +16,7 @@ const MIN_AUTO_NEXT_INTERVAL_MS = 500;
 let autoNextTimer: number | null = null;
 let autoNextMissCount = 0;
 let answerSubmitTimer: number | null = null;
+let answerCountdownInterval: number | null = null;
 let autoAnswerWatcherTimer: number | null = null;
 let autoAnswerLastQuestionKey = "";
 let answerDelayMinSec = DEFAULT_ANSWER_DELAY_MIN_SEC;
@@ -29,31 +30,33 @@ let customQa: Record<string, string> = {};
  * Normalize text: trim, collapse spaces, lowercase.
  */
 function normalizeText(txt: string | null | undefined): string {
-  return (
-    (txt || "")
-      // Convert non-breaking spaces to normal spaces
-      .replace(/\u00A0/g, " ")
-      // Normalize dashes/quotes to ASCII
-      .replace(/[\u2013\u2014]/g, "-")
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/[\u201C\u201D]/g, '"')
-      // Collapse multiple whitespace into a single space
-      .replace(/\s+/g, " ")
-      // Normalize curly quotes to straight quotes (optional but helpful)
-      .replace(/[""]/g, '"')
-      .replace(/[']/g, "'")
-      .trim()
-      .toLowerCase()
-  );
+  if (!txt) return "";
+  
+  return txt
+    // Convert non-breaking spaces to normal spaces
+    .replace(/\u00A0/g, " ")
+    // Normalize dashes/quotes to ASCII
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    // Strip common instruction suffixes to make matching incredibly resilient
+    .replace(/\s*\(\s*choose\s+\w+\s*answers?\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*select\s+\w+\s*answers?\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*choose\s+\w+\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*select\s+\w+\.?\s*\)/gi, "")
+    .replace(/\s*\(\s*choose\s+all\s+correct\s+answers?\.?\s*\)/gi, "")
+    .replace(/\s*mark\s+for\s+review/gi, "")
+    // Collapse multiple whitespace into a single space
+    .replace(/\s+/g, " ")
+    // Normalize curly quotes to straight quotes
+    .replace(/[""]/g, '"')
+    .replace(/[']/g, "'")
+    .trim()
+    .toLowerCase();
 }
 
-function getQuestionElement(): HTMLParagraphElement | HTMLElement | null {
-  return (
-    document.querySelector<HTMLParagraphElement>(
-      "#question-Text .t-ContentBlock-body p"
-    ) ||
-    document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body")
-  );
+function getQuestionElement(): HTMLElement | null {
+  return document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body");
 }
 
 function getQuestionText(): string | null {
@@ -615,6 +618,34 @@ function answerCurrentQuestion(): boolean {
 
   let clicked = false;
   let matchedCount = 0;
+
+  // Layer 1: Attempt exact match for single-select questions first to avoid substring collisions
+  if (effectiveExpected.length === 0) {
+    const exactBtn = choiceButtons.find((btn) => {
+      const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
+      const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
+      const btnText = (textSpan?.textContent || "").trim();
+      const btnNorm = normalizeText(btnText || ariaLabel);
+      return btnNorm === answerTextNorm;
+    });
+
+    if (exactBtn) {
+      const ariaLabel = (exactBtn.getAttribute("aria-label") || "").trim();
+      const textSpan = exactBtn.querySelector<HTMLSpanElement>(".choice-Text");
+      const btnText = (textSpan?.textContent || "").trim();
+      console.log("[Oracle Academy] Found exact choice match:", btnText || ariaLabel);
+      exactBtn.click();
+      clicked = true;
+
+      const flagInput = exactBtn.querySelector<HTMLInputElement>(
+        'input[name="f01"].qzlab-choice'
+      );
+      if (flagInput) flagInput.value = "Y";
+      return true;
+    }
+  }
+
+  // Layer 2 & 3: Fallback to multi-select or substring matching if exact match wasn't found
   for (const btn of choiceButtons) {
     const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
     const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
@@ -635,7 +666,7 @@ function answerCurrentQuestion(): boolean {
         answerTextNorm.includes(btnNorm));
 
     if (multiMatch || singleMatch) {
-      console.log("[Oracle Academy] Clicking choice:", btnText || ariaLabel);
+      console.log("[Oracle Academy] Clicking choice (fallback):", btnText || ariaLabel);
       btn.click();
       clicked = true;
       matchedCount += 1;
@@ -703,8 +734,12 @@ function cancelPendingAnswer(statusMessage = "Pending answer cancelled."): void 
   if (answerSubmitTimer !== null) {
     clearTimeout(answerSubmitTimer);
     answerSubmitTimer = null;
-    setHelperStatus(statusMessage, "idle");
   }
+  if (answerCountdownInterval !== null) {
+    clearInterval(answerCountdownInterval);
+    answerCountdownInterval = null;
+  }
+  setHelperStatus(statusMessage, "idle");
 }
 
 function scheduleAnswerCurrentQuestion(source: "manual" | "auto" = "manual") {
@@ -724,10 +759,29 @@ function scheduleAnswerCurrentQuestion(source: "manual" | "auto" = "manual") {
   const delayMs = getRandomAnswerDelayMs();
   const questionKey = normalizeText(questionRaw);
   autoAnswerLastQuestionKey = questionKey;
-  setHelperStatus(`Answering in ${formatSeconds(delayMs)}...`, "info");
+
+  const targetTimestamp = Date.now() + delayMs;
+
+  const updateCountdown = () => {
+    const remainingMs = Math.max(0, targetTimestamp - Date.now());
+    setHelperStatus(`Answering in ${formatSeconds(remainingMs)}...`, "info");
+    if (remainingMs <= 0) {
+      if (answerCountdownInterval !== null) {
+        clearInterval(answerCountdownInterval);
+        answerCountdownInterval = null;
+      }
+    }
+  };
+
+  updateCountdown();
+  answerCountdownInterval = window.setInterval(updateCountdown, 100);
 
   answerSubmitTimer = window.setTimeout(() => {
     answerSubmitTimer = null;
+    if (answerCountdownInterval !== null) {
+      clearInterval(answerCountdownInterval);
+      answerCountdownInterval = null;
+    }
 
     const currentQuestionKey = normalizeText(getQuestionText());
     if (currentQuestionKey && currentQuestionKey !== questionKey) {
