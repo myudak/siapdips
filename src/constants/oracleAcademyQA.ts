@@ -1946,5 +1946,8 @@ export const ORACLE_QA_BANK = {
 	'MINUS will give you rows from the first query that are not present in the second query. (True or False?)':
 		'True',
 
+	'Is the following statement correct?\nSELECT department_id, AVG(salary)\nFROM employees;':
+		'No, because a GROUP BY department_id clause is needed',
+
 } satisfies OracleQaBank;
 
