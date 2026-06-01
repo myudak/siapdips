@@ -1166,9 +1166,6 @@ export const ORACLE_QA_BANK = {
 	'Evaluate this SELECT statement: SELECT last_name, first_name, department_id, manager_id FROM employees; You need to sort data by manager id values and then alphabetically by employee last name and first name values. Which ORDER BY clause could you use?':
 		'ORDER BY manager_id, last_name, first_name',
 
-	'The EMPLOYEES table contains these columns:':
-		"SELECT TO_CHAR(hire_date, 'Month DD, YYYY') FROM employees;",
-
 	'You query the database with this SQL statement:\nSELECT *\nFROM transaction\nWHERE product_id = 4569;\n\nWhich SQL SELECT statement capabilities are achieved when this statement is executed?':
 		'Selection and projection only',
 
@@ -1815,7 +1812,7 @@ export const ORACLE_QA_BANK = {
 	'The TRUCKS table contains these columns:\nTRUCKS:\nTYPE VARCHAR2(30)\nYEAR DATE\nMODEL VARCHAR2(20)\nPRICE NUMBER(10)\n\nWhich SELECT statement will return the average price for the 4x4 model?':
 		"SELECT AVG(price) FROM trucks WHERE model = '4x4';",
 
-	'The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9)\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nSALARY NUMBER(7,2)\nDEPARTMENT_ID NUMBER(9)\n\nYou need to display the number of employees whose salary is greater than $50,000? Which SELECT would you use?':
+	'The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9)\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nSALARY NUMBER(7,2)\nDEPARTMENT_ID NUMBER(9)\n\nYou need to display the number of employees whose salary is greater than $50,000. Which SELECT would you use?':
 		'SELECT COUNT(*) FROM employees WHERE salary > 50000;',
 
 	'Evaluate this SQL statement:\nSELECT COUNT (amount)\nFROM inventory;\n\nWhat will occur when the statement is issued?':
