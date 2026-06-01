@@ -1092,7 +1092,6 @@ export const ORACLE_QA_BANK = {
 		'No rows would be returned by the outer query.',
 	'Which comparison operator can only be used with a single-row subquery?':
 		'<>',
-	'Which operator can be used with a multiple-row subquery?': 'IN',
 	'Table aliases must be used when you are writing correlated subqueries. (True or false?)':
 		'False',
 	"You want to create a list of all albums that have been produced by the company. The list should include the title of the album, the artist's name, and the date the album was released. The ALBUMS table includes the following columns: ALB_TITLE VARCHAR2(150) NOT NULL ALB_ARTIST VARCHAR2(150) NOT NULL ALB_DATE DATE NOT NULL Which statement can you use to retrieve the necessary information?":
@@ -1948,6 +1947,218 @@ export const ORACLE_QA_BANK = {
 
 	'Is the following statement correct?\nSELECT department_id, AVG(salary)\nFROM employees;':
 		'No, because a GROUP BY department_id clause is needed',
+
+
+	// Section 10 Quiz Questions Added Automatically
+	'A multiple-row operator expects how many values?':
+		'One or more',
+
+	'The salary column of the f_staffs table contains the following values: 4000 5050 6000 11000 23000 Which of the following statements will return the last_name and first_name of those employees who earn more than 5000?':
+		'SELECT last_name, first_name FROM f_staffs WHERE salary IN (SELECT salary FROM f_staffs WHERE salary > 5000);',
+
+	'Examine the data in the PAYMENT table: PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT customer_id, payment_type FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_amount = 596.00 OR payment_date = \'20-Mar-2003\'); Which change could correct the problem?':
+		'Change the outer query WHERE clause to \'WHERE payment_id IN\'.',
+
+	'Which of the following statements contains a comparison operator that is used to restrict rows based on a list of values returned from an inner query? SELECT description FROM d_types WHERE code IN (SELECT type_code FROM d_songs); SELECT description FROM d_types WHERE code = ANY (SELECT type_code FROM d_songs); SELECT description FROM d_types WHERE code <> ALL (SELECT type_code FROM d_songs);':
+		'All of the above.',
+
+	'Group functions can be used in multiple-row subqueries in the HAVING and GROUP BY clauses. True or False?':
+		'True',
+
+	'The SQL multiple-row subquery extends the capability of the single-row syntax through the use of which three comparison operators? IN, ANY, and EVERY IN, ALL, and EVERY IN, ANY, and EQUAL':
+		'IN, ANY, and ALL',
+
+	'Which statement about the <> operator is true? The <> operator can be used':
+		'The <> operator can be used when a single-row subquery returns only one row.',
+
+	'Single row subqueries may not include this operator: > <>':
+		'ALL',
+
+	'Examine the structure of the EMPLOYEE, DEPARTMENT, and ORDERS tables. EMPLOYEE: EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) DEPARTMENT: DEPARTMENT_ID NUMBER(9) DEPARTMENT_NAME VARCHAR2(25) CREATION_DATE DATE ORDERS: ORDER_ID NUMBER(9) EMPLOYEE_ID NUMBER(9) DATE DATE CUSTOMER_ID NUMBER(9) You want to display all employees who had an order after the Sales department was established. Which of the following constructs would you use?':
+		'A single-row subquery',
+
+	'If you use the equality operator (=) with a subquery, how many values can the subquery return?':
+		'Only 1',
+
+	'The TEACHERS and CLASS_ASSIGNMENTS tables contain these columns: TEACHERS TEACHER_ID NUMBER(5) Primary Key NAME VARCHAR2 (25) SUBJECT_ID NUMBER(5) CLASS_ID NUMBER(5) CLASS_ASSIGNMENTS CLASS_ID NUMBER (5) Primary Key TEACHER_ID NUMBER (5) DATE MAX_CAPACITY NUMBER (3) All MAX_CAPACITY values are greater than 10. Which two SQL statements correctly use subqueries? (Choose two.)':
+		'SELECT * FROM teachers WHERE teacher_id = (SELECT teacher_id FROM class_assignments WHERE class_id = 45963);|SELECT * FROM class_assignments WHERE max_capacity = (SELECT AVG(max_capacity) FROM class_assignments);',
+
+	'Which operator can be used with a multiple-row subquery? LIKE':
+		'IN',
+
+	'Which answer is INCORRECT? The parent statement of a correlated subquery can be: A SELECT statement A DELETE statement An UPDATE statement':
+		'An INSERT statement',
+
+	'The Oracle server performs a correlated subquery when the subquery references a column from a table referred to in the parent. True or False?':
+		'True',
+
+	'In a non-correlated subquery, the outer query always executes prior to the inner query\'s execution. True or False? True':
+		'False',
+
+	'Subqueries are limited to four per SQL transaction. True or False? True':
+		'False',
+
+	'Which statement about subqueries is true? Subqueries should be enclosed in double quotation marks. Subqueries generally execute last, after the main or outer query executes. Subqueries cannot contain group functions. Subqueries are often used in a WHERE':
+		'clause to return values for an unknown conditional value.',
+
+	'When creating a report of all employees earning more than the average salary for their department, a __________ ____________ can be used to first calculate the average salary of each department, and then compare the salary for each employee to the average salary of that employeeﾒs department. WITH CLAUSE GROUP BY':
+		'CORRELATED SUBQUERY',
+
+	'Which statement is false? The WITH clause retrieves the results of one or more query blocks. The WITH clause stores the results for the user who runs the query. The WITH clause decreases':
+		'The WITH clause decreases performance.',
+
+	'Correlated Subqueries must reference the same tables in both the inner and outer queries. (True or False?) True':
+		'False',
+
+	'When a multiple-row subquery uses the NOT IN operator (equivalent to <>ALL), if one of the values returned by the inner query is a null value, the entire query returns: All rows that were selected by the inner query including the null values':
+		'No rows returned',
+
+	'You need to create a SELECT statement that contains a multiple-row subquery. Which comparison operator(s) can you use?':
+		'IN, ANY, and ALL',
+
+	'You are looking for Executive information using a subquery. What will the following SQL statement display? SELECT department_id, last_name, job_id FROM employees WHERE department_id IN (SELECT department_id FROM departments WHERE department_name = \'Executive\');':
+		'job ID for every employee in the Executive department',
+
+	'Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use?':
+		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);',
+
+	'Which of the following best describes the meaning of the ANY operator? Equal to any member in the list Equal to each value in the list Compare value to the first value returned by the subquery Compare value to each value returned':
+		'Compare value to each value returned by the subquery',
+
+	'Oracle allows you to write named subqueries in one single statement, as long as you start your statement with the keyword WITH. True or False?':
+		'True',
+
+	'Which statement is false? The WITH clause decreases':
+		'The WITH clause decreases performance.',
+
+	'Subqueries can only be placed in the WHERE clause. True or False? True':
+		'False',
+
+	'Which operator can be used with a multiple-row subquery?':
+		'IN',
+
+	'Using a subquery in which clause will return a syntax error? WHERE FROM HAVING You can use subqueries in all of the':
+		'above clauses.',
+
+	'Which comparison operator can only be used with a single-row subquery? IN':
+		'<>',
+
+	'You need to produce a report that contains all employee-related information for those employees who have Brad Carter as a supervisor. However, you are not sure which supervisor ID belongs to Brad Carter. Which query should you issue to accomplish this task?':
+		'SELECT * FROM employees WHERE supervisor_id = (SELECT employee_id FROM employees WHERE last_name = \'Carter\');',
+
+	'Which operator or keyword cannot be used with a multiple-row subquery? >':
+		'=',
+
+	'When a multiple-row subquery uses the NOT IN operator (equivalent to <>ALL), if one of the values returned by the inner query is a null value, the entire query returns: A list of Nulls':
+		'No rows returned',
+
+	'Evaluate this SQL statement: SELECT employee_id, last_name, salary FROM employees WHERE department_id IN (SELECT department_id FROM employees WHERE salary > 30000 AND salary < 50000); Which values will be displayed?':
+		'All employees who work in a department with employees who earn more than $30,000, but less than $50,000.',
+
+	'The SQL multiple-row subquery extends the capability of the single-row syntax through the use of which three comparison operators?':
+		'IN, ANY, and ALL',
+
+	'The WITH clause is a way of creating extra tables in the database. (True or False?)':
+		'False',
+
+	'In a correlated subquery, the outer and inner queries are joined on one or more columns. (True or False?)':
+		'True',
+
+	'If a single-row subquery returns a null value and uses the equality comparison operator, what will the outer query return? All the rows in the table':
+		'No rows',
+
+	'The SQL multiple-row subquery extends the capability of the single-row syntax through the use of which three comparison operators? IN, ANY, and EQUAL':
+		'IN, ANY, and ALL',
+
+	'Which comparison operator would you use to compare a value to every value returned by a subquery? IN ANY SOME':
+		'ALL',
+
+	'You need to display all the players whose salaries are greater than or equal to John Brown\'s salary. Which comparison operator should you use? = <=':
+		'>=',
+
+	'What will the following statement return: SELECT last_name, salary FROM employees WHERE salary < (SELECT salary FROM employees WHERE employee_id = 103);':
+		'employees who make less than employee 103',
+
+	'Which of the following is TRUE regarding the order of subquery execution? The subquery executes once after the main query. The result of the main query is used with the subquery. The subquery executes once before':
+		'the main query.',
+
+	'If a single-row subquery returns a null value and uses the equality comparison operator, what will the outer query return?':
+		'No rows',
+
+	'The result of this statement will be: SELECT last_name, job_id, salary, department_id FROM employees WHERE job_id = (SELECT job_id FROM employees WHERE employee_id = 141) AND department_id = (SELECT department_id FROM departments WHERE location_id =1500);':
+		'matches employee 141 and who work in location 1500',
+
+	'Which answer is INCORRECT? The parent statement of a correlated subquery can be:':
+		'An INSERT statement',
+
+	'The WITH clause enables a SELECT statement to define the subquery block at the start of the query, process the block just once, label the results, and then refer to the results multiple times. True or False?':
+		'True',
+
+	'Which of the following statements is a true guideline for using subqueries?':
+		'The outer and inner queries can reference more than one table. They can get data from different tables.',
+
+	'Evaluate this SELECT statement: SELECT customer_id, name FROM customer WHERE customer_id IN (SELECT customer_id FROM customer WHERE state_id = \'GA\' AND credit_limit > 500.00); What would happen if the inner query returned null?':
+		'No rows would be returned by the outer query.',
+
+	'Which statement about the ANY operator, when used with a multiple-row subquery, is true? The ANY operator is a synonym for the ALL operator. The ANY operator can be used with the LIKE and IN operators. The ANY operator compares every':
+		'The ANY operator compares a value to each value returned by the subquery.',
+
+	'Multiple-row subqueries must have NOT, IN, or ANY in the WHERE clause of the inner query. True or False? True':
+		'False',
+
+	'null, null, {}); Unknown30 Desember 2017 pukul 01.25 A correlated subquery is evaluated _____ for each row processed by the parent statement.':
+		'ONCE',
+
+	'Balasan Balas Gananjay Thanekar5 Agustus 2020 pukul 23.33 1- A correlated subquery will _______ a candidate row from an outer query, _______ the inner query using candidate row value, and _______ values from the inner query to qualify or disqualify the candidate row. ROLLUP; GRANT; DROP DELETE; UPDATE; INSERT':
+		'GET; EXECUTE; USE',
+
+	'Balasan Balas announ18 Agustus 2021 pukul 13.05 What is wrong with the following query? SELECT employee_id, last_name FROM employees WHERE salary = (SELECT MIN(salary) FROM employees GROUP BY department_id);':
+		'Subquery returns more than one row and single row comparison operator is used.|The results of the inner query are returned to the outer query.|You need to display all the orders that were placed on the same day as order number 25950.',
+
+	'Balasan Balas Unknown3 April 2022 pukul 18.05 Which best describes a multiple-row subquery?':
+		'A query that returns one or more rows from the inner SELECT statement',
+
+	'Balasan Balas Unknown8 April 2022 pukul 01.34 14. The EMPLOYEES and ORDERS tables contain these columns: EMPLOYEES EMPLOYEE_ID NUMBER(10) NOT NULL PRIMARY KEY FIRST_NAME VARCHAR2(30) LAST_NAME VARCHAR2(30) ADDRESS VARCHAR2(25) CITY VARCHAR2(20) STATE VARCHAR2(2) ZIP NUMBER(9) TELEPHONE NUMBER(10) ORDERS ORDER_ID NUMBER(10) NOT NULL PRIMARY KEY EMPLOYEE_ID NUMBER(10) NOT NULL FOREIGN KEY ORDER_DATE DATE TOTAL NUMBER(10) Which SELECT statement will return all orders generated by a sales representative named Franklin during the year 2001? SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = \'Franklin\')':
+		'SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = \'Franklin\') AND order_date BETWEEN \'01-Jan-2001\' AND \'31-Dec-2001\';',
+
+	'Balasan Balas Unknown1 Mei 2024 pukul 23.54 Which best describes a single-row subquery? A query that returns one or more rows from the inner SELECT statement':
+		'A query that returns only one row from the inner SELECT statement',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.05 Examine the data in the PAYMENT table: > > > > PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT payment_date, customer_id, payment_amount FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_date >= \'05-Jan-2002\' OR payment_amount > 500.00); Which change could correct the problem? Remove the subquery WHERE clause. Remove the single quotes around the date value in the inner query WHERE clause. Include the PAYMENT_ID column in the select list of the outer query.':
+		'Change the outer query WHERE clause to \'WHERE payment_id IN\'.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.05 There can be more than one subquery returning information to the outer query. True or False?':
+		'True',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.06 What will the following statement return: SELECT last_name, salary FROM employees WHERE (department_id, job_id) = (SELECT department_id, job_id FROM employees WHERE employee_id = 103)':
+		'A list of last_names and salaries of employees that works in the same department and has the same job_id as that of employee 103.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.13 Evaluate this SELECT statement: SELECT student_id, last_name, first_name FROM student WHERE major_id NOT IN (SELECT major_id FROM majors WHERE department_head_id = 30 AND title = \'ADJUNCT\'); What would happen if the inner query returned a NULL value row? All the rows in the STUDENT table would be displayed.':
+		'No rows would be returned from the STUDENT table.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.18 In a subquery, the ALL operator compares a value to every value returned by the inner query. True or False?':
+		'True',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.19 If the subquery returns no rows, will the outer query return any values? Yes, Oracle will find the nearest value and rewrite your statement implicitly when you run it.':
+		'No, because the subquery will be treated like a null value.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.13 Which of the following is a valid reason why the query below will not execute successfully? SELECT employee_id, last_name, salary FROM employees WHERE department_id = (SELECT department_id FROM employees WHERE last_name like \'%u%\');':
+		'A single, rather than a multiple value operator was used.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.13 What would happen if you attempted to use a single-row operator with a multiple-row subquery? No rows will be selected. The data returned may or may not be correct.':
+		'An error would be returned.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.17 Group functions can be used in subqueries even though they may return many rows. True or False?':
+		'True',
+
+	'Balasan Balas galih6 Juli 2024 pukul 03.21 What will the following statement return: SELECT last_name, salary FROM employees WHERE salary < (SELECT salary FROM employees WHERE employee_id = 103);':
+		'A list of last_names and salaries of employees who make less than employee 103',
+
+	'Balasan Balas galih6 Juli 2024 pukul 03.29 10. Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use? SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist':
+		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);',
+
+	'Balasan Balas GenEtika30 Oktober 2024 pukul 00.36 Which statement about single-row and multiple-row subqueries is true? Multiple-row subqueries can be used with both single-row and multiple-row operators. Multiple-row subqueries can only be used in SELECT statements. Single-row operators can be used with both single-row and multiple-row subqueries.':
+		'Multiple-row subqueries cannot be used with the LIKE operator.',
 
 } satisfies OracleQaBank;
 
