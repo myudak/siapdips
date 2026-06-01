@@ -1844,5 +1844,14 @@ export const ORACLE_QA_BANK = {
 
 	'Which group function would you use to display the total of all salary values in the EMPLOYEES table?':
 		'SUM',
+
+	'Which group function would you use to display the lowest value in the SALES_AMOUNT column?':
+		'MIN',
+
+	'You need to compute the total salary amount for all employees in department 10. Which group function will you use?':
+		'SUM',
+
+	'Using your existing knowledge of the employees table, would the following two statements produce the same result?\nSELECT COUNT(*)\nFROM employees;\n\nSELECT COUNT(commission_pct)\nFROM employees;':
+		'No',
 } satisfies OracleQaBank;
 
