@@ -1937,7 +1937,7 @@ export const ORACLE_QA_BANK = {
 	'Given the following data in the employees table (employee_id, salary, commission_pct)\nDATA:\n(143, 2600, null\n144, 2500, null\n149, 10500, .2\n174, 11000, .3\n176, 8600, .2\n178, 7000, .15)\n\nWhat is the result of the following statement:\n\nSELECT AVG(commission_pct)\nFROM employees\nWHERE employee_id IN( 143,144,149,174,176,178);':
 		'0.2125',
 
-	'The PLAYERS and TEAMS tables contain these columns:\nPLAYERS\nPLAYER_ID NUMBER NOT NULL, PRIMARY KEY\nLAST_NAME VARCHAR2(30) NOT NULL\nFIRST_NAME VARCHAR2(25) NOT NULL\nTEAM_ID NUMBER\nPOSITION VARCHAR2(25)\n\nTEAMS\nTEAM_ID NUMBER NOT NULL, PRIMARY KEY\nTEAM_NAME VARCHAR2(25)\n\nYou need to create a report that lists the names of each team with more than three goal keepers.\nWhich SELECT statement will produce the desired result?':
+	'The PLAYERS and TEAMS tables contain these columns:\nPLAYERS\nPLAYER_ID NUMBER NOT NULL, PRIMARY KEY\nLAST_NAME VARCHAR2 (30) NOT NULL\nFIRST_NAME VARCHAR2 (25) NOT NULL\nTEAM_ID NUMBER\nPOSITION VARCHAR2 (25)\n\nTEAMS\nTEAM_ID NUMBER NOT NULL, PRIMARY KEY\nTEAM_NAME VARCHAR2 (25)\n\nYou need to create a report that lists the names of each team with more than three goal keepers.\nWhich SELECT statement will produce the desired result?':
 		'SELECT t.team_name, COUNT(p.player_id)\nFROM players p\nJOIN teams t ON (p.team_id = t.team_id)\nWHERE UPPER(p.position) = \'GOAL KEEPER\'\nGROUP BY t.team_name\nHAVING COUNT(p.player_id) > 3;',
 
 	'GROUPING SETS is another extension to the GROUP BY clause and is used to specify multiple groupings of data but provide a single result set. True or False?':
