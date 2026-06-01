@@ -1512,8 +1512,6 @@ export const ORACLE_QA_BANK = {
 	'Which symbol in the WHERE clause means "Not Equal To"? (Choose Two)':
 		'<>|NOT IN (..)',
 	'Which comparison condition means "Less Than or Equal To"?': '"<="',
-	'You attempt to query the database with this SQL statement:\nSELECT product_id "Product Number", category_id "Category", price "Price"\nFROM products\nWHERE "Category" = 5570\nORDER BY "Product Number";\n\nThis statement fails when executed. Which clause contains a syntax error?':
-		'WHERE "Category" = 5570',
 	'Which of the following is true of the ORDER BY clause:? (Choose Two)':
 		'Must be the last clause of the SQL statement|Defaults to an ascending order (ASC)',
 	'Evaluate this SELECT statement:\nSELECT first_name, last_name, email\nFROM employees\nORDER BY last_name;\n\nWhich statement is true?':
@@ -1546,8 +1544,6 @@ export const ORACLE_QA_BANK = {
 		'True',
 	"Which of the following would be returned by this SQL statement:\nSELECT First_name, last_name, department_id\nFROM employees\nWHERE department_id IN(50,80)\nAND first_name LIKE ' C% '\nOR last_name LIKE ' %s% '":
 		'All of the above',
-	'You query the database with this SQL statement:\nSELECT price\nFROM products\nWHERE price IN(1, 25, 50, 250)\nAND (price BETWEEN 25 AND 40 OR price > 50);\n\nWhich two values could the statement return? (Choose two.)':
-		'25|250',
 	'Which logical operator returns TRUE if either condition is true?': 'OR',
 	'Which statement about the logical operators is true?':
 		'The order of operator precedence is NOT, AND, and OR.',
@@ -1833,9 +1829,6 @@ export const ORACLE_QA_BANK = {
 	'Group functions can avoid computations involving duplicate values by including which keyword?':
 		'DISTINCT',
 
-	'The STYLES table contains this data:\nSTYLE_ID STYLE_NAME CATEGORY COST\n895840 SANDAL 85940 12.00\n968950 SANDAL 85909 10.00\n869506 SANDAL 89690 15.00\n809090 LOAFER 89098 10.00\n890890 LOAFER 89789 14.00\n857689 HEEL 85940 11.00\n758960 SANDAL 86979\n\nYou issue this SELECT statement:\nSELECT COUNT(category)\nFROM styles;\n\nWhich value is displayed?':
-		'7',
-
 	'You need to calculate the average salary of employees in each department. Which group function will you use?':
 		'AVG',
 
@@ -1848,13 +1841,101 @@ export const ORACLE_QA_BANK = {
 	'You need to compute the total salary amount for all employees in department 10. Which group function will you use?':
 		'SUM',
 
+	'The PRODUCTS table contains these columns:\n\nPROD_ID NUMBER(4)\nPROD_NAME VARCHAR2(30)\nPROD_CAT VARCHAR2(30)\nPROD_PRICE NUMBER(3)\nPROD_QTY NUMBER(4)\n\nThe following statement is issued:\n\nSELECT AVG(prod_price, prod_qty)\nFROM products;\n\nWhat happens when this statement is issued?':
+		'An error occurs.',
+
+	'Examine the following statement:\nSELECT department_id, manager_id, job_id, SUM(salary)\nFROM employees\nGROUP BY GROUPING SETS((department_id, manager_id), (department_id, job_id))\n\nWhat data will this query generate?':
+		'Sum of salaries for (department_id, job_id) and (department_id, manager_id)',
+
+	'Examine the following statement:\nSELECT department_id, manager_id, job_id, SUM(salary)\nFROM employees\nGROUP BY ROLLUP(department_id, manager_id)\n\nWhat extra data will this query generate?':
+		'The statement will fail.',
+
+	'You use ROLLUP to:':
+		'produce subtotal values',
+
+	'CUBE will cross-reference the columns listed in the ______ clause to create a superset of groups.':
+		'GROUP BY',
+
+	'Which of the following are correct SET operators? (choose two)':
+		'UNION, MINUS|UNION ALL, INTERSECT',
+
+	'The ___________ operator returns all rows from both tables, after eliminating duplicates.':
+		'UNION',
+
+	'To control the order of rows returned using SET operators, the ORDER BY clause is used ______ and is placed in the _____ SELECT statement of the query.':
+		'ONCE; LAST',
+
+	'Is the following statement correct?\nSELECT first_name, last_name, salary, department_id, COUNT(employee_id)\nFROM employees\nWHERE department_id = 50\nGROUP BY last_name, first_name, department_id;':
+		'No, because the statement is missing salary in the GROUP BY clause',
+
+	'What will the following SQL Statement do?\nSELECT job_id, COUNT(*)\nFROM employees\nGROUP BY job_id;':
+		'Displays each job id and the number of people assigned to that job id',
+
+	'The PLAYERS table contains these columns:\nPLAYER_ID NUMBER PK\nPLAYER_NAME VARCHAR2(30)\nTEAM_ID NUMBER\nHIRE_DATE DATE\nSALARY NUMBER(8,2)\n\nWhich clauses represent valid uses of aggregate functions? (Choose three.)':
+		'SELECT AVG(NVL(salary, 0))|ORDER BY AVG(salary)|HAVING MAX(salary) > 10000',
+
+	'The EMPLOYEES table contains these columns:\nID_NUMBER NUMBER Primary Key\nNAME VARCHAR2 (30)\nDEPARTMENT_ID NUMBER\nSALARY NUMBER (7,2)\nHIRE_DATE DATE\n\nEvaluate this SQL statement:\nSELECT id_number, name, department_id, SUM(salary)\nFROM employees\nWHERE salary > 25000\nGROUP BY department_id, id_number, name\nORDER BY hire_date;\n\nWhy will this statement cause an error?':
+		'The HIRE_DATE column is NOT included in the GROUP BY clause.',
+
+	'What is the best explanation as to why this SQL statement will NOT execute?\nSELECT department_id "Department", AVG (salary)"Average"\nFROM employees\nGROUP BY Department;':
+		'You cannot use a column alias in the GROUP BY clause.',
+
+	'The PRODUCTS table contains these columns:\nPROD_ID NUMBER(4)\nPROD_NAME VARCHAR(20)\nPROD_CAT VARCHAR2(15)\nPROD_PRICE NUMBER(5)\nPROD_QTY NUMBER(4)\n\nYou need to identify the minimum product price in each product category.\nWhich statement could you use to accomplish this task?':
+		'SELECT prod_cat, MIN (prod_price) FROM products GROUP BY prod_cat;',
+
+	'Evaluate this statement:\nSELECT department_id, AVG(salary)\nFROM employees\nWHERE job_id <> 69879\nGROUP BY job_id, department_id\nHAVING AVG(salary) > 35000\nORDER BY department_id;\n\nWhich clauses restricts the result? Choose two.':
+		'WHERE job_id <> 69879|HAVING AVG(salary) > 35000',
+
+	'Evaluate this SELECT statement:\nSELECT COUNT(employee_id), department_id\nFROM employees\nGROUP BY department_id;\n\nYou only want to include employees who earn more than 15000.\nWhich clause should you include in the SELECT statement?':
+		'WHERE salary > 15000',
+
+	'You use GROUPING functions to:':
+		'Identify the extra row values created by either a ROLLUP or CUBE operation',
+
+	'You use GROUPING functions to ______ database rows from tabulated rows.':
+		'DISTINGUISH',
+
+	'When using SET operators, the names of the matching columns must be identical in all of the SELECT statements used in the query. True or False?':
+		'False',
+
+	'Which of the following SQL statements could display the number of people with the same last name:\nSELECT last_name, COUNT(last_name)\nFROM EMPLOYEES\nGROUP BY last_name;':
+		'SELECT last_name, COUNT(last_name) FROM EMPLOYEES GROUP BY last_name;',
+
+	'How would you alter the following query to list only employees where two or more employees have the same last name?\nSELECT last_name, COUNT(employee_id)\nFROM EMPLOYEES\nGROUP BY last_name;':
+		'SELECT last_name, COUNT(last_name) FROM EMPLOYEES GROUP BY last_name HAVING COUNT(last_name) > 1;',
+
+	'You need to display the number of unique types of manufacturers at each location. Which SELECT statement should you use?\nSELECT location_id, COUNT(DISTINCT type)\nFROM manufacturer;':
+		'SELECT location_id, COUNT(DISTINCT type) FROM manufacturer GROUP BY location_id;',
+
+	'Which SELECT statement could you use to display the number of times each customer payment was made between January 1, 2003 and June 30, 2003 ?\nSELECT customer_id, COUNT(payment_id)\nFROM payment\nWHERE payment_date BETWEEN \'01-Jan-2003\' AND \'30-Jun-2003\';':
+		'SELECT customer_id, COUNT(payment_id) FROM payment WHERE payment_date BETWEEN \'01-Jan-2003\' AND \'30-Jun-2003\' GROUP BY customer_id;',
+
+	'Can group functions be nested at a depth of?':
+		'Two',
+
+	'Which group function would you use to display the average price of all products in the PRODUCTS table?':
+		'AVG',
+
+	'What two group functions can be used with any datatype?':
+		'MIN, MAX',
+
+	'You need to calculate the standard deviation for the cost of products produced in the Birmingham facility. Which group function will you use?':
+		'STDDEV',
+
+	'You attempt to query the database with this SQL statement:\nSELECT product_id "Product Number", category_id "Category", price "Price"\nFROM products\nWHERE "Category" = 5570\nORDER BY "Product Number";\n\nThis statement fails when executed. Which clause contains a syntax error?':
+		'WHERE',
+
+	'You query the database with this SQL statement:\nSELECT price\nFROM products\nWHERE price IN(1, 25, 50, 250)\nAND (price BETWEEN 25 AND 40 OR price > 50);\n\nWhich two values could the statement return? (Choose two.)':
+		'25|250',
+
+	'The STYLES table contains this data:\nSTYLE_ID STYLE_NAME CATEGORY COST\n895840 SANDAL 85940 12.00\n968950 SANDAL 85909 10.00\n869506 SANDAL 89690 15.00\n809090 LOAFER 89098 10.00\n890890 LOAFER 89789 14.00\n857689 HEEL 85940 11.00\n758960 SANDAL 86979\n\nYou issue this SELECT statement:\nSELECT COUNT(category)\nFROM styles;\n\nWhich value is displayed?':
+		'7',
+
 	'Using your existing knowledge of the employees table, would the following two statements produce the same result?\nSELECT COUNT(*)\nFROM employees;\n\nSELECT COUNT(commission_pct)\nFROM employees;':
 		'No',
 
 	'Given the following data in the employees table (employee_id, salary, commission_pct)\nDATA:\n(143, 2600, null\n144, 2500, null\n149, 10500, .2\n174, 11000, .3\n176, 8600, .2\n178, 7000, .15)\n\nWhat is the result of the following statement:\n\nSELECT AVG(commission_pct)\nFROM employees\nWHERE employee_id IN( 143,144,149,174,176,178);':
 		'0.2125',
 
-	'The PRODUCTS table contains these columns:\n\nPROD_ID NUMBER(4)\nPROD_NAME VARCHAR2(30)\nPROD_CAT VARCHAR2(30)\nPROD_PRICE NUMBER(3)\nPROD_QTY NUMBER(4)\n\nThe following statement is issued:\n\nSELECT AVG(prod_price, prod_qty)\nFROM products;\n\nWhat happens when this statement is issued?':
-		'An error occurs.',
 } satisfies OracleQaBank;
 
