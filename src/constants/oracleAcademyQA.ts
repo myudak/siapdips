@@ -2160,5 +2160,9 @@ export const ORACLE_QA_BANK = {
 	'Balasan Balas GenEtika30 Oktober 2024 pukul 00.36 Which statement about single-row and multiple-row subqueries is true? Multiple-row subqueries can be used with both single-row and multiple-row operators. Multiple-row subqueries can only be used in SELECT statements. Single-row operators can be used with both single-row and multiple-row subqueries.':
 		'Multiple-row subqueries cannot be used with the LIKE operator.',
 
+
+	'Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nThis statement fails when executed:\nSELECT payment_date, customer_id, payment_amount\nFROM payment\nWHERE payment_id =\n (SELECT payment_id\n FROM payment\n WHERE payment_date >= \'05-JAN-2002\' OR payment_amount > 500.00);\n\nWhich change could correct the problem?':
+		"Change the outer query WHERE clause to 'WHERE payment_id IN'.",
+
 } satisfies OracleQaBank;
 
