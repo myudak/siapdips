@@ -1802,4 +1802,47 @@ export const ORACLE_QA_BANK = {
 		'4',
 	'S7J Q22 Nonequijoins are normally used with which of the following? (Choose Two)':
 		'Ranges of numbers|Ranges of dates',
+
+	'The AVG, SUM, VARIANCE, and STDDEV functions can be used with which of the following?':
+		'Only numeric data types',
+
+	'Which aggregate function can be used on a column of the DATE data type?':
+		'MAX',
+
+	'Group functions return a value for ________________ and ________________ null values in their computations.':
+		'a row set, ignore',
+
+	'The TRUCKS table contains these columns:\nTRUCKS:\nTYPE VARCHAR2(30)\nYEAR DATE\nMODEL VARCHAR2(20)\nPRICE NUMBER(10)\n\nWhich SELECT statement will return the average price for the 4x4 model?':
+		"SELECT AVG(price) FROM trucks WHERE model = '4x4';",
+
+	'The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9)\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nSALARY NUMBER(7,2)\nDEPARTMENT_ID NUMBER(9)\n\nYou need to display the number of employees whose salary is greater than $50,000? Which SELECT would you use?':
+		'SELECT COUNT(*) FROM employees WHERE salary > 50000;',
+
+	'Evaluate this SQL statement:\nSELECT COUNT (amount)\nFROM inventory;\n\nWhat will occur when the statement is issued?':
+		'The statement will count the number of rows in the INVENTORY table where the AMOUNT column is not null.',
+
+	'To include null values in the calculations of a group function, you must:':
+		'Convert the null to a value using the NVL( ) function',
+
+	'Which statement about the COUNT function is true?':
+		'The COUNT function always ignores null values by default.',
+
+	'Which SELECT statement will calculate the number of rows in the PRODUCTS table?':
+		'SELECT COUNT (*) FROM products;',
+
+	'Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nYou need to determine the average payment amount made by each customer in January, February, and March of 2003.\nWhich SELECT statement should you use?':
+		"SELECT AVG(payment_amount) FROM payment WHERE payment_date BETWEEN '01-Jan-2003' AND '31-Mar-2003';",
+
+	'Group functions can avoid computations involving duplicate values by including which keyword?':
+		'DISTINCT',
+
+	'The STYLES table contains this data:\nSTYLE_ID STYLE_NAME CATEGORY COST\n895840 SANDAL 85940 12.00\n968950 SANDAL 85909 10.00\n869506 SANDAL 89690 15.00\n809090 LOAFER 89098 10.00\n890890 LOAFER 89789 14.00\n857689 HEEL 85940 11.00\n758960 SANDAL 86979\n\nYou issue this SELECT statement:\nSELECT COUNT(category)\nFROM styles;\n\nWhich value is displayed?':
+		'7',
+
+	'You need to calculate the average salary of employees in each department. Which group function will you use?':
+		'AVG',
+
+	'Which group function would you use to display the total of all salary values in the EMPLOYEES table?':
+		'SUM',
 } satisfies OracleQaBank;
+
