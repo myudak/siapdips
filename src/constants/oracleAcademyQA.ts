@@ -1850,5 +1850,8 @@ export const ORACLE_QA_BANK = {
 
 	'Using your existing knowledge of the employees table, would the following two statements produce the same result?\nSELECT COUNT(*)\nFROM employees;\n\nSELECT COUNT(commission_pct)\nFROM employees;':
 		'No',
+
+	'Given the following data in the employees table (employee_id, salary, commission_pct)\nDATA:\n(143, 2600, null\n144, 2500, null\n149, 10500, .2\n174, 11000, .3\n176, 8600, .2\n178, 7000, .15)\n\nWhat is the result of the following statement:\n\nSELECT AVG(commission_pct)\nFROM employees\nWHERE employee_id IN( 143,144,149,174,176,178);':
+		'0.2125',
 } satisfies OracleQaBank;
 
