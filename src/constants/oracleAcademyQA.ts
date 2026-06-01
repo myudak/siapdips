@@ -2164,5 +2164,13 @@ export const ORACLE_QA_BANK = {
 	'Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nThis statement fails when executed:\nSELECT payment_date, customer_id, payment_amount\nFROM payment\nWHERE payment_id =\n (SELECT payment_id\n FROM payment\n WHERE payment_date >= \'05-JAN-2002\' OR payment_amount > 500.00);\n\nWhich change could correct the problem?':
 		"Change the outer query WHERE clause to 'WHERE payment_id IN'.",
 
+
+	// Subqueries Comment Quiz Fixes
+	'Which operator can be used with subqueries that return only one row?':
+		'LIKE',
+
+	'Subqueries can only be placed in the WHERE clause. True or False?':
+		'False',
+
 } satisfies OracleQaBank;
 
