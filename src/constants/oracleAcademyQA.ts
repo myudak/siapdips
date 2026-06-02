@@ -2012,7 +2012,7 @@ export const ORACLE_QA_BANK = {
 		'job ID for every employee in the Executive department',
 
 	'Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use?':
-		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);',
+		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);|FROM depart_hist WHERE old_dept_id = 15',
 
 	'Which of the following best describes the meaning of the ANY operator? Equal to any member in the list Equal to each value in the list Compare value to the first value returned by the subquery Compare value to each value returned':
 		'Compare value to each value returned by the subquery',
@@ -2147,7 +2147,7 @@ export const ORACLE_QA_BANK = {
 		'A list of last_names and salaries of employees who make less than employee 103',
 
 	'Balasan Balas galih6 Juli 2024 pukul 03.29 10. Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use? SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist':
-		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);',
+		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);|FROM depart_hist WHERE old_dept_id = 15',
 
 	'Balasan Balas GenEtika30 Oktober 2024 pukul 00.36 Which statement about single-row and multiple-row subqueries is true? Multiple-row subqueries can be used with both single-row and multiple-row operators. Multiple-row subqueries can only be used in SELECT statements. Single-row operators can be used with both single-row and multiple-row subqueries.':
 		'Multiple-row subqueries cannot be used with the LIKE operator.',
