@@ -2180,5 +2180,8 @@ export const ORACLE_QA_BANK = {
 	'In a correlated subquery, the outer and inner queries are joined on one or more columns. True or False?':
 		'True',
 
+	'Evaluate this SELECT statement that includes a subquery:\nSELECT last_name, first_name\nFROM customer\nWHERE area_code IN\n  (SELECT area_code\n   FROM sales\n   WHERE salesperson_id = 20);\n\nWhich statement is true about the given subquery?':
+		'The results of the inner query are returned to the outer query.',
+
 } satisfies OracleQaBank;
 
