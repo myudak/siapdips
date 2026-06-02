@@ -2172,5 +2172,9 @@ export const ORACLE_QA_BANK = {
 	'Subqueries can only be placed in the WHERE clause. True or False?':
 		'False',
 
+
+	'What will be the result of this statement?\n\nSELECT last_name, job_id, salary, department_id\nFROM employees\nWHERE job_id =\n  (SELECT job_id\n   FROM employees\n   WHERE employee_id = 141) AND\ndepartment_id =\n  (SELECT department_id\n   FROM departments\n   WHERE location_id =1500);':
+		'Only the employees whose job id matches employee 141 and who work in location 1500',
+
 } satisfies OracleQaBank;
 
