@@ -1188,7 +1188,7 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'A join between tables where the result set includes matching values from both tables but does NOT return any unmatched rows could be called which of the following? (Choose three)':
 		'Equijoin|Simple join|Self join',
-	'A NATURAL JOIN is based on:': 'Columns with the same name and datatype',
+	'A NATURAL JOIN is based on:': 'Columns with the same name and datatype|same name and datatype|datatype',
 	'You need to join two tables that have two columns with the same name, datatype, and precision. Which type of join would you create to join the tables on both of the columns?':
 		'Natural join',
 	'For which condition would you use an equijoin query with the USING keyword?':
