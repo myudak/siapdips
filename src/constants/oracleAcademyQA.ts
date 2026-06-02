@@ -1104,8 +1104,6 @@ export const ORACLE_QA_BANK = {
 		'PROGRAMMING',
 	'Consider the following data in the Employees table: (last_name, commission_pct, manager_id) DATA: King, null, null Kochhar, null, 100 Vargas, null, 124 Zlotkey, .2, 100 What is the result of the following statement: SELECT last_name, COALESCE(commission_pct, manager_id, -1) comm FROM employees ;':
 		'King, -1\nKochhar, 100\nVargas, 124\nZlotkey, .2',
-	'Which SELECT statement implements a self join? [duplicate variant 2]':
-		'SELECT e.employee_id, m.manager_id FROM employees e, employees m WHERE m.employee_id = e.manager_id;',
 	'You need to create a report that lists all employees in department 10 (Sales) whose salary is not equal to $25,000 per year. Which query should you issue to accomplish this task?':
 		'SELECT last_name, first_name, salary FROM employees WHERE salary != 25000 AND dept_id = 10;',
 	'You have two tables named EMPLOYEES and SALES. You want to identify the sales representatives who have generated at least $100,000 in revenue. Which query should you issue?':
@@ -1235,7 +1233,7 @@ export const ORACLE_QA_BANK = {
 	'If you select rows from two tables (employees and departments) using the outer join specified in the example, what will you get?\nSELECT employees.last_name, employees.department_id, departments.department_name\nFROM employees\nLEFT OUTER JOIN departments\nON (employees.department_id = departments.department_id);':
 		'All employees including those that do not have a departement_id assigned to them',
 	'Which SELECT statement implements a self join?':
-		'SELECT item.part_id, type.product_id\nFROM part item JOIN part type\nON item.part_id = type.product_id;',
+		'SELECT item.part_id, type.product_id\nFROM part item JOIN part type\nON item.part_id = type.product_id;|SELECT worker.employee_id, manager.manager_id\nFROM employees worker JOIN employees manager\nON manager.employee_id = worker.manager_id;|SELECT e.employee_id, m.manager_id FROM employees e, employees m WHERE m.employee_id = e.manager_id;',
 	'The join column must be included in the select statement when you use the NATURAL JOIN clause. True or False?':
 		'False',
 	'Which two sets of join keywords create a join that will include unmatched rows from the first table specified in the SELECT statement?':
@@ -1244,8 +1242,6 @@ export const ORACLE_QA_BANK = {
 		'Columns with the same names must have the same datatype.',
 	'Evaluate this SELECT statement:\nSELECT *\nFROM employee worker JOIN employee manager\nON worker.mgr_id = manager.emp_id;\nWhich type of join is created by this SELECT statement?':
 		'a self join',
-	'Which SELECT statement implements a self join? [employees worker manager]':
-		'SELECT worker.employee_id, manager.manager_id\nFROM employees worker JOIN employees manager\nON manager.employee_id = worker.manager_id;',
 	'The following statement is an example of what kind of join?\nSELECT car.vehicle_id, driver.name\nFROM car\nLEFT OUTER JOIN driver USING(driver_id) ;':
 		'Outer Join',
 	'Which of the following statements is the simplest description of a nonequijoin?':
