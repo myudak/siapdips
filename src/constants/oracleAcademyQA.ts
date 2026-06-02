@@ -1011,8 +1011,8 @@ export const ORACLE_QA_BANK = {
 		'SELECT last_name, first_name, team_id, salary FROM players WHERE salary BETWEEN 25000 AND 100000 AND team_id BETWEEN 1200 AND 1500 ORDER BY team_id, salary DESC;',
 	'The following statement represents a multi-row function. True or False? SELECT MAX(salary) FROM employees':
 		'True',
-	"The PLAYERS table contains these columns: PLAYERS TABLE: LAST_NAME VARCHAR2 (20) FIRST_NAME VARCHAR2 (20) SALARY NUMBER(8,2) TEAM_ID NUMBER(4) MANAGER_ID NUMBER(9) POSITION_ID NUMBER(4) You want to display all players' names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which statement should you use to achieve the required results?":
-		'SELECT last_name, first_name FROM players WHERE position_id >= 6900 ORDER BY last_name, first_name;',
+	"You want to display all players' names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which statement should you use to achieve the required results?":
+		'SELECT last_name, first_name FROM players WHERE position_id >= 6900 ORDER BY last_name, first_name;|position_id >= 6900',
 	'Evaluate this SQL statement: SELECT e.employee_id, e.last_name, e.first_name, m.manager_id FROM employees e, employees m ORDER BY e.last_name, e.first_name WHERE e.employee_id = m.manager_id; This statement fails when executed. Which change will correct the problem?':
 		'Reorder the clauses in the query.',
 	'Which columns can be added to the ORDER BY clause in the following SELECT statement? (Choose Three) SELECT first_name, last_name, salary, hire_date FROM employees WHERE department_id = 50 ORDER BY ?????;':
@@ -1321,8 +1321,7 @@ export const ORACLE_QA_BANK = {
 	'The EMPLOYEES table includes these columns:\nEMPLOYEE_ID NUMBER(4) NOT NULL\nLAST_NAME VARCHAR2(15) NOT NULL\nFIRST_NAME VARCHAR2(10) NOT NULL\nHIRE_DATE DATE NOT NULL\n\nYou want to produce a report that provides the first names, last names and hire dates of those employees who were hired between March 1, 2000, and August 30, 2000. Which statements can you issue to accomplish this task?':
 		'SELECT last_name, first_name, hire_date\nFROM employees\nWHERE hire_date BETWEEN ’01-MAR-00′ AND ’30-AUG-00′;',
 
-	'The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\nYou want to display all players’ names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which In the real world, databases used by businesses generally have a single table. True or False?statement should you use to achieve the required results?':
-		'SELECT last_name, first_name\nFROM players\nWHERE position_id >= 6900\nORDER BY last_name, first_name;',
+	// duplicate players 6900 key removed
 
 	'Evaluate this SELECT statement:\nSELECT *\nFROM employees\nWHERE salary > 30000\nAND department_id = 10\nOR email IS NOT NULL;\nWhich statement is true?':
 		'The AND condition will be evaluated before the OR condition.',
@@ -1523,8 +1522,7 @@ export const ORACLE_QA_BANK = {
 		'You can use a column alias in the ORDER BY clause.',
 	'Find the clause that will give the same results as:\nSELECT *\nFROM d_cds\nWHERE cd_id NOT IN(90, 91, 92);':
 		'WHERE cd_id != 90 and cd_id != 91 and cd_id != 92;',
-	"The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\n\nYou want to display all players' names with position 6900 or greater.\nYou want the players names to be displayed alphabetically by last name and then by first name.\nWhich statement should you use to achieve the required results?":
-		'SELECT last_name, first_name\nFROM players\nWHERE position_id >= 6900\nORDER BY last_name, first_name;',
+	// duplicate players 6900 key removed
 	'Which of the following are TRUE regarding the logical AND operator?':
 		'TRUE AND FALSE return FALSE',
 	'Which statement about the default sort order is true?':
