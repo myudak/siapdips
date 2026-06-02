@@ -2175,5 +2175,8 @@ export const ORACLE_QA_BANK = {
 	'Evaluate this SELECT statement that includes a subquery:\nSELECT last_name, first_name\nFROM customer\nWHERE area_code IN\n  (SELECT area_code\n   FROM sales\n   WHERE salesperson_id = 20);\n\nWhich statement is true about the given subquery?':
 		'The results of the inner query are returned to the outer query.',
 
+	'What would the following SQL statement return?\nSELECT COUNT(DISTINCT salary)\nFROM employees;':
+		'The number of unique salaries in the employees table',
+
 } satisfies OracleQaBank;
 
