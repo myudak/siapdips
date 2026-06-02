@@ -1059,7 +1059,7 @@ export const ORACLE_QA_BANK = {
 		"SELECT TO_CHAR(salary, '$999,999.00') FROM employees;",
 	'Below find the structures of the PRODUCTS and VENDORS tables: PRODUCTS PRODUCT_ID NUMBER PRODUCT_NAME VARCHAR2 (25) VENDOR_ID NUMBER CATEGORY_ID NUMBER VENDORS VENDOR_ID NUMBER VENDOR_NAME VARCHAR2 (25) ADDRESS VARCHAR2 (30) CITY VARCHAR2 (25) REGION VARCHAR2 (10) POSTAL_CODE VARCHAR2 (11) You want to create a query that will return an alphabetical list of products, including the product name and associated vendor name, for all products that have a vendor assigned. Which two queries could you use?':
 		'SELECT p.product_name, v.vendor_name FROM products p JOIN vendors v USING (vendor_id) ORDER BY p.product_name;|SELECT p.product_name, v.vendor_name FROM products p NATURAL JOIN vendors v ORDER BY p.product_name;',
-	'The following statement is an example of what kind of join? SELECT car.vehicle_id, driver.name FROM car LEFT OUTER JOIN driver ON (driver_id) ;':
+	'The following statement is an example of what kind of join?':
 		'Outer Join',
 	'Will the following statement work? SELECT department_name, last_name FROM employees, departments WHERE department_id = department_id;':
 		'No, Oracle will return a Column Ambiguously Defined error.',
@@ -1213,8 +1213,6 @@ export const ORACLE_QA_BANK = {
 		'Recursive Relationship',
 	'Hierarchical queries can walk both Top-Down and Bottom-Up. True or False?':
 		'True',
-	'The following statement is an example of what kind of join?\nSELECT car.vehicle_id, driver.name\nFROM car\nLEFT OUTER JOIN driver ON (driver_id) ;':
-		'Outer Join',
 	'The following is a valid SQL statement.\nSELECT e.employee_id, e.last_name,     d.location_id, department_id\nFROM employees e JOIN departments d\nUSING (department_id) ;\n\nTrue or False?':
 		'True',
 	'Which keyword in a SELECT statement creates an equijoin by specifying a column name common to both tables?':
@@ -1242,8 +1240,6 @@ export const ORACLE_QA_BANK = {
 		'Columns with the same names must have the same datatype.',
 	'Evaluate this SELECT statement:\nSELECT *\nFROM employee worker JOIN employee manager\nON worker.mgr_id = manager.emp_id;\nWhich type of join is created by this SELECT statement?':
 		'a self join',
-	'The following statement is an example of what kind of join?\nSELECT car.vehicle_id, driver.name\nFROM car\nLEFT OUTER JOIN driver USING(driver_id) ;':
-		'Outer Join',
 	'Which of the following statements is the simplest description of a nonequijoin?':
 		'A join condition containing something other than an equality operator',
 	'Which syntax would be used to retrieve all rows in both the EMPLOYEES and DEPARTMENTS tables, even when there is no match?':
