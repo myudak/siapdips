@@ -1667,7 +1667,7 @@ export const ORACLE_QA_BANK = {
 	'When executed, which statement displays a zero if the TUITION_BALANCE value is zero and the HOUSING_BALANCE value is null?':
 		'SELECT NVL (tuition_balance + housing_balance, 0) "Balance Due"\nFROM student_accounts;',
 	'Which statement about group functions is true?':
-		'NVL, NVL2, and COALESCE can be used with group functions to replace null values.',
+		'Group functions ignore null values.|NVL, NVL2, and COALESCE can be used with group functions to replace null values.',
 	'Consider the following data in the Employees table: (last_name, commission_pct, manager_id)\nDATA:\nKing, null, null\nKochhar, null, 100\nVargas, null, 124\nZlotkey, .2, 100\nWhat is the result of the following statement:\nSELECT last_name, COALESCE(commission_pct, manager_id, -1) comm\nFROM employees ;':
 		'King, -1\nKochhar, 100\nVargas, 124\nZlotkey, .2',
 	'You need to replace null values in the DEPT_ID column with the text N/A. Which functions should you use?':
