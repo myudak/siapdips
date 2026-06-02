@@ -2176,5 +2176,111 @@ export const ORACLE_QA_BANK = {
 	'What would the following SQL statement return?\nSELECT COUNT(DISTINCT salary)\nFROM employees;':
 		'The number of unique salaries in the employees table',
 
+	// Section 12 Quiz (Oracle Database Programming with SQL)
+	'A column in a table can be given a default value. This option prevents NULL values from automatically being assigned to the column if a row is inserted without a specified value for the column. True or False ?':
+		'True',
+
+	'In developing the Employees table, you create a column called hire_date. You assign the hire_date column a DATE datatype with a DEFAULT value of 0 (zero). A user can come back later and enter the correct hire_date. This is __________.':
+		'A bad idea. The default value must match the DATE datatype of the column.',
+
+	'Aliases can be used with MERGE statements. True or False?':
+		'True',
+
+	'Multi-table inserts can be conditional or unconditional. True or False?':
+		'True',
+
+	'A multi-table insert statement can insert into more than one table. (True or False?)':
+		'True',
+
+	'Which of the following represents the correct syntax for an INSERT statement?':
+		"INSERT INTO customers VALUES ('3178', 'J.', 'Smith', '123 Main Street', 'Nashville', 'TN', '37777');",
+
+	'You need to delete a record in the EMPLOYEES table for Tim Jones, whose unique employee identification number is 348. The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(5) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nADDRESS VARCHAR2(30)\nPHONE NUMBER(10)\n\nWhich DELETE statement will delete the appropriate record without deleting any additional records?':
+		'DELETE FROM employees WHERE employee_id = 348;',
+
+	'The EMPLOYEES table contains the following columns:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFAST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2(20)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\nBONUS NUMBER(9,2)\n\nYou want to execute one DML statement to change the salary of all employees in department 10 to equal the new salary of employee number 89898. Currently, all employees in department 10 have the same salary value. Which statement should you execute?':
+		'UPDATE employees SET salary = (SELECT salary FROM employees WHERE employee_id = 89898) WHERE department_id = 10;',
+
+	'If the subquery returns one row, how many rows will be deleted from the employees table?\nDELETE FROM employees\nWHERE department_id =\n (SELECT department_id\n FROM departments\n WHERE department_name LIKE \'%Public%\');':
+		'All rows in the employees table of employees who work in the given department will be deleted.',
+
+	'What keyword in an UPDATE statement speficies the column that you want to change?':
+		'SET',
+
+	'To return a table summary on the customers table, which of the following is correct?':
+		'DESCRIBE customers, or DESC customers',
+
+	'The PRODUCTS table contains these columns:\nPRODUCT_ID NUMBER NOT NULL\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER NOT NULL\nLIST_PRICE NUMBER (7,2)\nCOST NUMBER (5,2)\nQTY_IN_STOCK NUMBER(4)\nLAST_ORDER_DT DATE DEFAULT SYSDATE NOT NUL\n\nWhich INSERT statement will execute successfully?':
+		"INSERT INTO products (product_id, product_name, supplier_id, list_price, cost, qty_in_stock) VALUES(2958, 'Cable', 8690, 7.09, 4.04, 700)",
+
+	'Assume all the column names are correct. The following SQL statement will execute which of the following?\nINSERT INTO departments\n(department_id, department_name, manager_id, location_id)\nVALUES\n(70, \'Public Relations\', 100, 1700);':
+		'70 will be inserted into the department_id column.',
+
+	'You need to copy rows from the EMPLOYEE table to the EMPLOYEE_HIST table. What could you use in the INSERT statement to accomplish this task?':
+		'A subquery',
+
+	'The STUDENTS table contains these columns:\nSTU_ID NUMBER(9) NOT NULL\nLAST_NAME VARCHAR2 (30) NOT NULL\nFIRST_NAME VARCHAR2 (25) NOT NULL\nDOB DATE\nSTU_TYPE_ID VARCHAR2(1) NOT NULL\nENROLL_DATE DATE\n\nYou create another table, named FT_STUDENTS, with an identical structure.You want to insert all full-time students who have a STU_TYPE_ID value of "F" into the new table. You execute this INSERT statement:\n\nINSERT INTO ft_students\n (SELECT stu_id, last_name, first_name, dob, stu_type_id, enroll_date\n FROM students\n WHERE UPPER(stu_type_id) = \'F\');\n\nWhat is the result of executing this INSERT statement?':
+		'All full-time students are inserted into the FT_STUDENTS table.',
+
+	'Which of the following statements will add a new customer to the customers table in the Global Fast Foods database?':
+		"INSERT INTO customers (id, first_name, last_name, address, city, state, zip, phone_number) VALUES (145, 'Katie', 'Hernandez', '92 Chico Way', 'Los Angeles', 'CA', 98008, 8586667641);",
+
+	'Which statement about the VALUES clause of an INSERT statement is true?':
+		'If no column list is specified, the values must be listed in the same order that the columns are listed in the table.',
+
+	'If the employees table has 7 rows, how many rows are inserted into the copy_emps table with the following statement:\nINSERT INTO copy_emps (employee_id, first_name, last_name, salary, department_id)\nSELECT employee_id, first_name, last_name, salary, department_id\nFROM employees':
+		'7 rows, as no WHERE-clause restricts the rows returned on the subquery.',
+
+	'Using the INSERT statement and assuming that a column can accept null values, how can you implicitly insert a null value in a column?':
+		'Omit the column in the column list.',
+
+	'Insert statements can be combined with subqueries to create more than one row per statement. True or False?':
+		'True',
+
+	'Which statement below will not insert a row of data into a table?':
+		"INSERT INTO (id, lname, fname, lunch_num) VALUES (143354, 'Roberts', 'Cameron', 6543);",
+
+	'Multi-table inserts are used when the same source data should be inserted into _____________ target table.':
+		'More than one',
+
+	'The DEFAULT keyword can be used in the following statements:':
+		'INSERT and UPDATE',
+
+	'The default value must match the __________ of the column.':
+		'Datatype',
+
+	'One of the sales representatives, Janet Roper, has informed you that she was recently married, and she has requested that you update her name in the employee database. Her new last name is Cooper. Janet is the only person with the last name of Roper that is employed by the company. The EMPLOYEES table contains these columns and all data is stored in lowercase:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2 (20)\nHIRE_DATE DATE\nSALARY NUMBER(10)\n\nWhich UPDATE statement will accomplish your objective?':
+		"UPDATE employees SET last_name = 'cooper' WHERE last_name = 'roper';",
+
+	'To change an existing row in a table, you can use the UPDATE or INSERT statements. True or False?':
+		'False',
+
+	'One of your employees was recently married. Her employee ID is still 189, however, her last name is now Rockefeller. Which SQL statement will allow you to reflect this change?':
+		"UPDATE my_employees SET last_name = 'Rockefeller' WHERE employee_ID = 189;",
+
+	'The TEACHERS and CLASS_ASSIGNMENTS tables contain these columns:\nTEACHERS:\nTEACHER_ID NUMBER(5)\nNAME VARCHAR2(25)\nSUBJECT_ID NUMBER(5)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\n\nCLASS_ASSIGNMENTS:\nCLASS_ID NUMBER(5)\nTEACHER_ID NUMBER(5)\nSTART_DATE DATE\nMAX_CAPACITY NUMBER(3)\n\nWhich scenario would require a subquery to return the desired results?':
+		'You need to create a report to display the teachers who teach more classes than the average number of classes taught by each teacher.',
+
+	'You need to remove a row from the EMPLOYEES table. Which statement would you use?':
+		'DELETE with a WHERE clause',
+
+	'The MERGE statement first tries to update one or more rows in a table that match the criteria; if no row matches the criteria for the update, a new row will automatically be inserted instead. True or False?':
+		'True',
+
+	'What would happen if you issued a DELETE statement without a WHERE clause?':
+		'All the rows in the table would be deleted.',
+
+	'DML is an acronym that stands for:':
+		'Data Manipulation Language',
+
+	'Using your knowledge of the employees table, what would be the result of the following statement:\nDELETE FROM employees;':
+		'All rows in the employees table will be deleted if there are no constraints on the table.',
+
+	'Examine the structures of the PLAYERS, MANAGERS, and TEAMS tables:\nPLAYERS:\nPLAYER_ID NUMBER Primary Key\nLAST_NAME VARCHAR2 (30)\nFIRST_NAME VARCHAR2 (25)\nTEAM_ID NUMBER\nMGR_ID NUMBER\nSIGNING_BONUS NUMBER(9,2)\nSALARY NUMBER(9,2)\n\nMANAGERS:\nMANAGER_ID NUMBER Primary Key\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nTEAM_ID NUMBER\n\nTEAMS:\nTEAM_ID NUMBER Primary Key\nTEAM_NAME VARCHAR2 (20)\nOWNER_LAST_NAME VARCHAR2 (20)\nOWNER_FIRST_NAME VARCHAR2 (20)\n\nWhich situation would require a subquery to return the desired result?':
+		'To display the names of the managers for all the teams owned by a given owner',
+
+	'You need to update the area code of employees that live in Atlanta. Evaluate this partial UPDATE statement:\nUPDATE employee\nSET area_code = 770\n\nWhich of the following should you include in your UPDATE statement to achieve the desired results?':
+		"WHERE city = 'Atlanta';",
+
 } satisfies OracleQaBank;
 
