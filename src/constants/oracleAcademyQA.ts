@@ -2334,5 +2334,8 @@ export const ORACLE_QA_BANK = {
 	'If you are performing an UPDATE statement with a subquery, it MUST be a correlated subquery. True or False?':
 		'False',
 
+	'You want to enter a new record into the CUSTOMERS table. Which two commands can be used to create new rows?':
+		'INSERT, MERGE',
+
 } satisfies OracleQaBank;
 
