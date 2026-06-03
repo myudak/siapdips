@@ -2282,5 +2282,54 @@ export const ORACLE_QA_BANK = {
 	'You need to update the area code of employees that live in Atlanta. Evaluate this partial UPDATE statement:\nUPDATE employee\nSET area_code = 770\n\nWhich of the following should you include in your UPDATE statement to achieve the desired results?':
 		"WHERE city = 'Atlanta';",
 
+	// Section 12 Quiz (Oracle Database Programming with SQL) - Comments & Extras
+	'When inserting rows into a table, all columns must be given values. True or False?':
+		'False',
+
+	'What is the quickest way to use today\'s date when you are creating a new row?':
+		'Use the SYSDATE function.',
+
+	'Examine the structures of the PRODUCTS and SUPPLIERS tables:\nSUPPLIERS:\nSUPPLIER_ID NUMBER NOT NULL, Primary Key\nSUPPLIER_NAME VARCHAR2 (25)\nADDRESS VARCHAR2 (30)\nCITY VARCHAR2 (25)\nREGION VARCHAR2 (10)\nPOSTAL_CODE VARCHAR2 (11)\n\nPRODUCTS:\nPRODUCT_ID NUMBER NOT NULL, Primary Key\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER Foreign key to SUPPLIER_ID of the SUPPLIERS table\nCATEGORY_ID NUMBER\nQTY_PER_UNIT NUMBER\nUNIT_PRICE NUMBER (7,2)\nQTY_IN_STOCK NUMBER\nQTY_ON_ORDER NUMBER\nREORDER_LEVEL NUMBER\n\nYou want to delete any products supplied by the five suppliers located in Atlanta. Which script should you use?':
+		"DELETE FROM products WHERE supplier_id IN (SELECT supplier_id FROM suppliers WHERE UPPER(city) = 'ATLANTA');",
+
+	'Is the following statement valid, i.e. is it allowed to update rows in one table, based on a subquery from another table?\nUPDATE copy_emp\nSET department_id = (SELECT department_id\n FROM employees\n WHERE employee_id = 100)\nWHERE job_id = (SELECT job_id\n FROM employees\n WHERE employee_id = 200);':
+		'Yes, this is a perfectly valid statement.',
+
+	'The PLAYERS table contains these columns:\nPLAYER_ID NUMBER NOT NULL\nPLAYER_LNAME VARCHAR2(20) NOT NULL\nPLAYER_FNAME VARCHAR2(10) NOT NULL\nTEAM_ID NUMBER\nSALARY NUMBER(9,2)\n\nYou need to increase the salary of each player for all players on the Tiger team by 12.5 percent. The TEAM_ID value for the Tiger team is 5960. Which statement should you use?':
+		'UPDATE players SET salary = salary * 1.125 WHERE team_id = 5960;',
+
+	'In a conditional multi-table insert, you can specify either __________ or __________.':
+		'ALL; FIRST',
+
+	'The EMPLOYEES table contains the following columns:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nDEPTARTMENT_ID VARCHAR2(20)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\nBONUS NUMBER(9,2)\n\nYou need to increase the salary for all employees in department 10 by 10 percent. You also need to increase the bonus for all employees in department 10 by 15 percent. Which statement should you use?':
+		'UPDATE employees SET salary = salary * 1.10, bonus = bonus * 1.15 WHERE department_id = 10;',
+
+	'You need to add a row to an existing table. Which DML statement should you use?':
+		'INSERT',
+
+	'You have been instructed to add a new customer to the CUSTOMERS table. Because the new customer has not had a credit check, you should not add an amount to the CREDIT column.\nThe CUSTOMERS table contains these columns:\nCUST_ID NUMBER(10)\nCOMPANY VARCHAR2(30)\nCREDIT NUMBER(10)\nPOC VARCHAR2(30)\nLOCATION VARCHAR2(30)\n\nWhich two INSERT statements will accomplish your objective?':
+		"INSERT INTO customers (cust_id, company, poc, location) VALUES (200, 'InterCargo', 'tflanders', 'samerica');|INSERT INTO customers VALUES (200, 'InterCargo', null, 'tflanders', 'samerica');",
+
+	'Which two commands can be used to modify existing data in a database row?':
+		'UPDATE|MERGE',
+
+	'Which of the following statements best describes what will happen to the student table in this SQL statement?\nUPDATE students\nSET lunch_number =\n    (SELECT lunch_number\n     FROM student\n     WHERE student_id = 17)\nWHERE student_id = 19;':
+		"The statement updates the student_table by replacing student id 19's lunch number with student id 17's lunch number.",
+
+	'If a default value was set for a null column, Oracle sets the column to the default value. However, if no default value was set when the column was created, Oracle inserts a space. True or False?':
+		'False',
+
+	'Using MERGE accomplishes an __________ and __________ simultaneously.':
+		'INSERT; UPDATE',
+
+	'Is it possible to insert more than one row at a time using an INSERT statement with a VALUES clause?':
+		'No, you can only create one row at a time when using the VALUES clause.',
+
+	'One employee has the last name of \'King\' in the employees table. How many rows will be deleted from the employees table with the following statement?\nDELETE FROM employees\nWHERE last_name = \'king\';':
+		'No rows will be deleted, as no employees match the WHERE-clause.',
+
+	'When inserting a new row, the null keyword can be included in the values list for any column that allows nulls. True or False?':
+		'True',
+
 } satisfies OracleQaBank;
 
