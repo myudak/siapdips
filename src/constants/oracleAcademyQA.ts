@@ -2331,5 +2331,8 @@ export const ORACLE_QA_BANK = {
 	'When inserting a new row, the null keyword can be included in the values list for any column that allows nulls. True or False?':
 		'True',
 
+	'If you are performing an UPDATE statement with a subquery, it MUST be a correlated subquery. True or False?':
+		'False',
+
 } satisfies OracleQaBank;
 
