@@ -1059,7 +1059,8 @@ export const ORACLE_QA_BANK = {
 		"SELECT TO_CHAR(salary, '$999,999.00') FROM employees;",
 	'Below find the structures of the PRODUCTS and VENDORS tables: PRODUCTS PRODUCT_ID NUMBER PRODUCT_NAME VARCHAR2 (25) VENDOR_ID NUMBER CATEGORY_ID NUMBER VENDORS VENDOR_ID NUMBER VENDOR_NAME VARCHAR2 (25) ADDRESS VARCHAR2 (30) CITY VARCHAR2 (25) REGION VARCHAR2 (10) POSTAL_CODE VARCHAR2 (11) You want to create a query that will return an alphabetical list of products, including the product name and associated vendor name, for all products that have a vendor assigned. Which two queries could you use?':
 		'SELECT p.product_name, v.vendor_name FROM products p JOIN vendors v USING (vendor_id) ORDER BY p.product_name;|SELECT p.product_name, v.vendor_name FROM products p NATURAL JOIN vendors v ORDER BY p.product_name;',
-	'The following statement is an example of what kind of join?': 'Outer Join',
+	'The following statement is an example of what kind of join?':
+		'Outer Join',
 	'Will the following statement work? SELECT department_name, last_name FROM employees, departments WHERE department_id = department_id;':
 		'No, Oracle will return a Column Ambiguously Defined error.',
 	'When joining 3 tables in a SELECT statement, how many join conditions are needed in the WHERE clause?':
@@ -1187,8 +1188,7 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'A join between tables where the result set includes matching values from both tables but does NOT return any unmatched rows could be called which of the following? (Choose three)':
 		'Equijoin|Simple join|Self join',
-	'A NATURAL JOIN is based on:':
-		'Columns with the same name and datatype|same name and datatype|datatype',
+	'A NATURAL JOIN is based on:': 'Columns with the same name and datatype|same name and datatype|datatype',
 	'You need to join two tables that have two columns with the same name, datatype, and precision. Which type of join would you create to join the tables on both of the columns?':
 		'Natural join',
 	'For which condition would you use an equijoin query with the USING keyword?':
@@ -1206,7 +1206,7 @@ export const ORACLE_QA_BANK = {
 	'Which type of join returns rows from one table that have NO direct match in the other table?':
 		'Outer join',
 	'The primary advantages of using JOIN ON is: (Select two)':
-		"It permits columns that don't have matching data types to be joined.|It permits columns with different names to be joined.",
+		'It permits columns that don\'t have matching data types to be joined.|It permits columns with different names to be joined.',
 	'The primary advantage of using JOIN ON is:':
 		'It permits columns with different names to be joined.',
 	'Which of the following database design concepts is implemented with a self join?':
@@ -1708,33 +1708,29 @@ export const ORACLE_QA_BANK = {
 
 	// Added DP Section 2 Quiz Questions (2026-05-25)
 	'The BETWEEN operator is inclusive. True or False?': 'True',
-	'When using the LIKE operator, which character represents a single character?':
-		'_',
-	'When using the LIKE operator, which character represents any number of characters (zero, one, or more)?':
-		'%',
+	'When using the LIKE operator, which character represents a single character?': '_',
+	'When using the LIKE operator, which character represents any number of characters (zero, one, or more)?': '%',
 	'Which operator is used to search for values in a specified list?': 'IN',
 	'Which logical operator requires both conditions to be true?': 'AND',
 	'Which logical operator returns true if either condition is true?': 'OR',
 	'Which comparison operator is used to test for NULL values?': 'IS NULL',
-	'Arithmetic operators can be used in the SELECT and WHERE clauses. True or False?':
-		'True',
-	'Character strings and date values in the WHERE clause must be enclosed in single quotation marks. True or False?':
-		'True',
+	'Arithmetic operators can be used in the SELECT and WHERE clauses. True or False?': 'True',
+	'Character strings and date values in the WHERE clause must be enclosed in single quotation marks. True or False?': 'True',
 
 	// More DP Section 2 Quiz Questions (2026-05-25)
 	'The structure of the table can be displayed with the _________ command:':
 		'Desc and the Describe',
 	'Which of the following statements will work?':
-		"SELECT first_name ||' '||last_name NAME, department_id DEPARTMENT, salary*12 \"ANNUAL SALARY\"\nFROM employees\nWHERE last_name = 'King';",
+		'SELECT first_name ||\' \'||last_name NAME, department_id DEPARTMENT, salary*12 "ANNUAL SALARY"\nFROM employees\nWHERE last_name = \'King\';',
 	'You want to determine the orders that have been placed by customers who reside in the city of Chicago. You write this partial SELECT statement:\nSELECT orderid, orderdate, total\nFROM orders;\nWhat should you include in your SELECT statement to achieve the desired results?':
-		"WHERE city = 'Chicago';",
+		'WHERE city = \'Chicago\';',
 	'What will be the result of the SELECT statement and what will display?\nSELECT last_name, salary, salary + 300\nFROM employees;':
 		'Display the last name, salary, and the results of adding 300 to each salary for all the employees',
 	'Which of the following is NOT BEING DONE in this SQL statement?\nSELECT first_name || \' \' || last_name "Name"\nFROM employees;':
 		'Concatenating first name, middle name and last name',
 	'Which query would give the following result?\nLAST_NAME FIRST_NAME DEPARTMENT_ID\nKing Steven 90':
-		"SELECT last_name, first_name, department_id\nFROM employees\nWHERE last_name = 'King';",
-	"The following is a valid SQL SELECT statement. True or False?\nSELECT first_name || ' ' || last_name alias AS Employee_Name\nFROM employees;":
+		'SELECT last_name, first_name, department_id\nFROM employees\nWHERE last_name = \'King\';',
+	'The following is a valid SQL SELECT statement. True or False?\nSELECT first_name || \' \' || last_name alias AS Employee_Name\nFROM employees;':
 		'False',
 	'Evaluate this SELECT statement:\nSELECT *FROM employeesWHERE department_id IN(10, 20, 30)AND salary > 20000;\nWhich values would cause the logical condition to return TRUE?':
 		'DEPARTMENT_ID = 10 and SALARY = 20001',
@@ -1754,7 +1750,7 @@ export const ORACLE_QA_BANK = {
 		'A Cartesian product',
 	'S7J Q5 The CUSTOMERS and SALES tables contain these columns:\nCUSTOMERS\nCUST_ID NUMBER(10) PRIMARY KEY\nCOMPANY VARCHAR2(30)\nLOCATION VARCHAR2(20)\n\nSALES\nSALES_ID NUMBER(5) PRIMARY KEY\nCUST_ID NUMBER(10) FOREIGN KEY\nTOTAL_SALES NUMBER(30)\n\nWhich SELECT statement will return the customer ID, the company and the total sales?':
 		'SELECT c.cust_id, c.company, s.total_sales\nFROM customers c, sales s\nWHERE c.cust_id = s.cust_id;',
-	"S7J Q6 You have the following EMPLOYEES table:\nEMPLOYEE_ID NUMBER(5) NOT NULL PRIMARY KEY\nFIRST_NAME VARCHAR2(25)\nLAST_NAME VARCHAR2(25)\nADDRESS VARCHAR2(35)\nCITY VARCHAR2(25)\nSTATE VARCHAR2(2)\nZIP NUMBER(9)\nTELEPHONE NUMBER(10)\nDEPARTMENT_ID NUMBER(5) NOT NULL FOREIGN KEY\n\nThe BONUS table includes the following columns:\nBONUS_ID NUMBER(5) NOT NULL PRIMARY KEY\nANNUAL_SALARY NUMBER(10)\nBONUS_PCT NUMBER(3, 2)\nEMPLOYEE_ID VARCHAR2(5) NOT NULL FOREIGN KEY\n\nYou want to determine the amount of each employee's bonus as a calculation of salary times bonus. Which of the following queries should you issue?":
+	'S7J Q6 You have the following EMPLOYEES table:\nEMPLOYEE_ID NUMBER(5) NOT NULL PRIMARY KEY\nFIRST_NAME VARCHAR2(25)\nLAST_NAME VARCHAR2(25)\nADDRESS VARCHAR2(35)\nCITY VARCHAR2(25)\nSTATE VARCHAR2(2)\nZIP NUMBER(9)\nTELEPHONE NUMBER(10)\nDEPARTMENT_ID NUMBER(5) NOT NULL FOREIGN KEY\n\nThe BONUS table includes the following columns:\nBONUS_ID NUMBER(5) NOT NULL PRIMARY KEY\nANNUAL_SALARY NUMBER(10)\nBONUS_PCT NUMBER(3, 2)\nEMPLOYEE_ID VARCHAR2(5) NOT NULL FOREIGN KEY\n\nYou want to determine the amount of each employee\'s bonus as a calculation of salary times bonus. Which of the following queries should you issue?':
 		'SELECT e.first_name, e.last_name, b.annual_salary * b. bonus_pct\nFROM employees e, bonus b\nWHERE e.employee_id = b.employee_id;',
 	'S7J Q7 The ID column in the CLIENT table that corresponds to the CLIENT_ID column of the ORDER table contains null values for rows that need to be displayed. Which type of join should you use to display the data?':
 		'Outer join',
@@ -1843,7 +1839,8 @@ export const ORACLE_QA_BANK = {
 	'Examine the following statement:\nSELECT department_id, manager_id, job_id, SUM(salary)\nFROM employees\nGROUP BY ROLLUP(department_id, manager_id)\n\nWhat extra data will this query generate?':
 		'The statement will fail.',
 
-	'You use ROLLUP to:': 'produce subtotal values',
+	'You use ROLLUP to:':
+		'produce subtotal values',
 
 	'CUBE will cross-reference the columns listed in the ______ clause to create a superset of groups.':
 		'GROUP BY',
@@ -1899,15 +1896,17 @@ export const ORACLE_QA_BANK = {
 	'You need to display the number of unique types of manufacturers at each location. Which SELECT statement should you use?\nSELECT location_id, COUNT(DISTINCT type)\nFROM manufacturer;':
 		'SELECT location_id, COUNT(DISTINCT type) FROM manufacturer GROUP BY location_id;',
 
-	"Which SELECT statement could you use to display the number of times each customer payment was made between January 1, 2003 and June 30, 2003 ?\nSELECT customer_id, COUNT(payment_id)\nFROM payment\nWHERE payment_date BETWEEN '01-Jan-2003' AND '30-Jun-2003';":
-		"SELECT customer_id, COUNT(payment_id) FROM payment WHERE payment_date BETWEEN '01-Jan-2003' AND '30-Jun-2003' GROUP BY customer_id;",
+	'Which SELECT statement could you use to display the number of times each customer payment was made between January 1, 2003 and June 30, 2003 ?\nSELECT customer_id, COUNT(payment_id)\nFROM payment\nWHERE payment_date BETWEEN \'01-Jan-2003\' AND \'30-Jun-2003\';':
+		'SELECT customer_id, COUNT(payment_id) FROM payment WHERE payment_date BETWEEN \'01-Jan-2003\' AND \'30-Jun-2003\' GROUP BY customer_id;',
 
-	'Can group functions be nested at a depth of?': 'Two',
+	'Can group functions be nested at a depth of?':
+		'Two',
 
 	'Which group function would you use to display the average price of all products in the PRODUCTS table?':
 		'AVG',
 
-	'What two group functions can be used with any datatype?': 'MIN, MAX',
+	'What two group functions can be used with any datatype?':
+		'MIN, MAX',
 
 	'You need to calculate the standard deviation for the cost of products produced in the Birmingham facility. Which group function will you use?':
 		'STDDEV',
@@ -1928,7 +1927,7 @@ export const ORACLE_QA_BANK = {
 		'0.2125',
 
 	'The PLAYERS and TEAMS tables contain these columns:\nPLAYERS\nPLAYER_ID NUMBER NOT NULL, PRIMARY KEY\nLAST_NAME VARCHAR2 (30) NOT NULL\nFIRST_NAME VARCHAR2 (25) NOT NULL\nTEAM_ID NUMBER\nPOSITION VARCHAR2 (25)\n\nTEAMS\nTEAM_ID NUMBER NOT NULL, PRIMARY KEY\nTEAM_NAME VARCHAR2 (25)\n\nYou need to create a report that lists the names of each team with more than three goal keepers.\nWhich SELECT statement will produce the desired result?':
-		"SELECT t.team_name, COUNT(p.player_id)\nFROM players p\nJOIN teams t ON (p.team_id = t.team_id)\nWHERE UPPER(p.position) = 'GOAL KEEPER'\nGROUP BY t.team_name\nHAVING COUNT(p.player_id) > 3;",
+		'SELECT t.team_name, COUNT(p.player_id)\nFROM players p\nJOIN teams t ON (p.team_id = t.team_id)\nWHERE UPPER(p.position) = \'GOAL KEEPER\'\nGROUP BY t.team_name\nHAVING COUNT(p.player_id) > 3;',
 
 	'GROUPING SETS is another extension to the GROUP BY clause and is used to specify multiple groupings of data but provide a single result set. True or False?':
 		'True',
@@ -1939,14 +1938,16 @@ export const ORACLE_QA_BANK = {
 	'Is the following statement correct?\nSELECT department_id, AVG(salary)\nFROM employees;':
 		'No, because a GROUP BY department_id clause is needed',
 
+
 	// Section 10 Quiz Questions Added Automatically
-	'A multiple-row operator expects how many values?': 'One or more',
+	'A multiple-row operator expects how many values?':
+		'One or more',
 
 	'The salary column of the f_staffs table contains the following values: 4000 5050 6000 11000 23000 Which of the following statements will return the last_name and first_name of those employees who earn more than 5000?':
 		'SELECT last_name, first_name FROM f_staffs WHERE salary IN (SELECT salary FROM f_staffs WHERE salary > 5000);',
 
-	"Examine the data in the PAYMENT table: PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT customer_id, payment_type FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_amount = 596.00 OR payment_date = '20-Mar-2003'); Which change could correct the problem?":
-		"Change the outer query WHERE clause to 'WHERE payment_id IN'.",
+	'Examine the data in the PAYMENT table: PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT customer_id, payment_type FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_amount = 596.00 OR payment_date = \'20-Mar-2003\'); Which change could correct the problem?':
+		'Change the outer query WHERE clause to \'WHERE payment_id IN\'.',
 
 	'Which of the following statements contains a comparison operator that is used to restrict rows based on a list of values returned from an inner query? SELECT description FROM d_types WHERE code IN (SELECT type_code FROM d_songs); SELECT description FROM d_types WHERE code = ANY (SELECT type_code FROM d_songs); SELECT description FROM d_types WHERE code <> ALL (SELECT type_code FROM d_songs);':
 		'All of the above.',
@@ -1960,7 +1961,8 @@ export const ORACLE_QA_BANK = {
 	'Which statement about the <> operator is true? The <> operator can be used':
 		'The <> operator can be used when a single-row subquery returns only one row.',
 
-	'Single row subqueries may not include this operator: > <>': 'ALL',
+	'Single row subqueries may not include this operator: > <>':
+		'ALL',
 
 	'Examine the structure of the EMPLOYEE, DEPARTMENT, and ORDERS tables. EMPLOYEE: EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) DEPARTMENT: DEPARTMENT_ID NUMBER(9) DEPARTMENT_NAME VARCHAR2(25) CREATION_DATE DATE ORDERS: ORDER_ID NUMBER(9) EMPLOYEE_ID NUMBER(9) DATE DATE CUSTOMER_ID NUMBER(9) You want to display all employees who had an order after the Sales department was established. Which of the following constructs would you use?':
 		'A single-row subquery',
@@ -1971,7 +1973,8 @@ export const ORACLE_QA_BANK = {
 	'The TEACHERS and CLASS_ASSIGNMENTS tables contain these columns: TEACHERS TEACHER_ID NUMBER(5) Primary Key NAME VARCHAR2 (25) SUBJECT_ID NUMBER(5) CLASS_ID NUMBER(5) CLASS_ASSIGNMENTS CLASS_ID NUMBER (5) Primary Key TEACHER_ID NUMBER (5) DATE MAX_CAPACITY NUMBER (3) All MAX_CAPACITY values are greater than 10. Which two SQL statements correctly use subqueries? (Choose two.)':
 		'SELECT * FROM teachers WHERE teacher_id = (SELECT teacher_id FROM class_assignments WHERE class_id = 45963);|SELECT * FROM class_assignments WHERE max_capacity = (SELECT AVG(max_capacity) FROM class_assignments);',
 
-	'Which operator can be used with a multiple-row subquery? LIKE': 'IN',
+	'Which operator can be used with a multiple-row subquery? LIKE':
+		'IN',
 
 	'Which answer is INCORRECT? The parent statement of a correlated subquery can be: A SELECT statement A DELETE statement An UPDATE statement':
 		'An INSERT statement',
@@ -1979,7 +1982,7 @@ export const ORACLE_QA_BANK = {
 	'The Oracle server performs a correlated subquery when the subquery references a column from a table referred to in the parent. True or False?':
 		'True',
 
-	"In a non-correlated subquery, the outer query always executes prior to the inner query's execution. True or False? True":
+	'In a non-correlated subquery, the outer query always executes prior to the inner query\'s execution. True or False? True':
 		'False',
 
 	'Subqueries are limited to four per SQL transaction. True or False? True':
@@ -2003,7 +2006,7 @@ export const ORACLE_QA_BANK = {
 	'You need to create a SELECT statement that contains a multiple-row subquery. Which comparison operator(s) can you use?':
 		'IN, ANY, and ALL',
 
-	"You are looking for Executive information using a subquery. What will the following SQL statement display? SELECT department_id, last_name, job_id FROM employees WHERE department_id IN (SELECT department_id FROM departments WHERE department_name = 'Executive');":
+	'You are looking for Executive information using a subquery. What will the following SQL statement display? SELECT department_id, last_name, job_id FROM employees WHERE department_id IN (SELECT department_id FROM departments WHERE department_name = \'Executive\');':
 		'job ID for every employee in the Executive department',
 
 	'Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use?':
@@ -2021,7 +2024,8 @@ export const ORACLE_QA_BANK = {
 	'Subqueries can only be placed in the WHERE clause. True or False? True':
 		'False',
 
-	'Which operator can be used with a multiple-row subquery?': 'IN',
+	'Which operator can be used with a multiple-row subquery?':
+		'IN',
 
 	'Using a subquery in which clause will return a syntax error? WHERE FROM HAVING You can use subqueries in all of the':
 		'above clauses.',
@@ -2030,7 +2034,7 @@ export const ORACLE_QA_BANK = {
 		'<>',
 
 	'You need to produce a report that contains all employee-related information for those employees who have Brad Carter as a supervisor. However, you are not sure which supervisor ID belongs to Brad Carter. Which query should you issue to accomplish this task?':
-		"SELECT * FROM employees WHERE supervisor_id = (SELECT employee_id FROM employees WHERE last_name = 'Carter');",
+		'SELECT * FROM employees WHERE supervisor_id = (SELECT employee_id FROM employees WHERE last_name = \'Carter\');',
 
 	'Which operator or keyword cannot be used with a multiple-row subquery? >':
 		'=',
@@ -2059,7 +2063,7 @@ export const ORACLE_QA_BANK = {
 	'Which comparison operator would you use to compare a value to every value returned by a subquery? IN ANY SOME':
 		'ALL',
 
-	"You need to display all the players whose salaries are greater than or equal to John Brown's salary. Which comparison operator should you use? = <=":
+	'You need to display all the players whose salaries are greater than or equal to John Brown\'s salary. Which comparison operator should you use? = <=':
 		'>=',
 
 	'What will the following statement return: SELECT last_name, salary FROM employees WHERE salary < (SELECT salary FROM employees WHERE employee_id = 103);':
@@ -2083,7 +2087,7 @@ export const ORACLE_QA_BANK = {
 	'Which of the following statements is a true guideline for using subqueries?':
 		'The outer and inner queries can reference more than one table. They can get data from different tables.',
 
-	"Evaluate this SELECT statement: SELECT customer_id, name FROM customer WHERE customer_id IN (SELECT customer_id FROM customer WHERE state_id = 'GA' AND credit_limit > 500.00); What would happen if the inner query returned null?":
+	'Evaluate this SELECT statement: SELECT customer_id, name FROM customer WHERE customer_id IN (SELECT customer_id FROM customer WHERE state_id = \'GA\' AND credit_limit > 500.00); What would happen if the inner query returned null?':
 		'No rows would be returned by the outer query.',
 
 	'Which statement about the ANY operator, when used with a multiple-row subquery, is true? The ANY operator is a synonym for the ALL operator. The ANY operator can be used with the LIKE and IN operators. The ANY operator compares every':
@@ -2104,14 +2108,14 @@ export const ORACLE_QA_BANK = {
 	'Balasan Balas Unknown3 April 2022 pukul 18.05 Which best describes a multiple-row subquery?':
 		'A query that returns one or more rows from the inner SELECT statement',
 
-	"Balasan Balas Unknown8 April 2022 pukul 01.34 14. The EMPLOYEES and ORDERS tables contain these columns: EMPLOYEES EMPLOYEE_ID NUMBER(10) NOT NULL PRIMARY KEY FIRST_NAME VARCHAR2(30) LAST_NAME VARCHAR2(30) ADDRESS VARCHAR2(25) CITY VARCHAR2(20) STATE VARCHAR2(2) ZIP NUMBER(9) TELEPHONE NUMBER(10) ORDERS ORDER_ID NUMBER(10) NOT NULL PRIMARY KEY EMPLOYEE_ID NUMBER(10) NOT NULL FOREIGN KEY ORDER_DATE DATE TOTAL NUMBER(10) Which SELECT statement will return all orders generated by a sales representative named Franklin during the year 2001? SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = 'Franklin')":
-		"SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = 'Franklin') AND order_date BETWEEN '01-Jan-2001' AND '31-Dec-2001';",
+	'Balasan Balas Unknown8 April 2022 pukul 01.34 14. The EMPLOYEES and ORDERS tables contain these columns: EMPLOYEES EMPLOYEE_ID NUMBER(10) NOT NULL PRIMARY KEY FIRST_NAME VARCHAR2(30) LAST_NAME VARCHAR2(30) ADDRESS VARCHAR2(25) CITY VARCHAR2(20) STATE VARCHAR2(2) ZIP NUMBER(9) TELEPHONE NUMBER(10) ORDERS ORDER_ID NUMBER(10) NOT NULL PRIMARY KEY EMPLOYEE_ID NUMBER(10) NOT NULL FOREIGN KEY ORDER_DATE DATE TOTAL NUMBER(10) Which SELECT statement will return all orders generated by a sales representative named Franklin during the year 2001? SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = \'Franklin\')':
+		'SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = \'Franklin\') AND order_date BETWEEN \'01-Jan-2001\' AND \'31-Dec-2001\';',
 
 	'Balasan Balas Unknown1 Mei 2024 pukul 23.54 Which best describes a single-row subquery? A query that returns one or more rows from the inner SELECT statement':
 		'A query that returns only one row from the inner SELECT statement',
 
-	"Balasan Balas Unknown2 Mei 2024 pukul 00.05 Examine the data in the PAYMENT table: > > > > PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT payment_date, customer_id, payment_amount FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_date >= '05-Jan-2002' OR payment_amount > 500.00); Which change could correct the problem? Remove the subquery WHERE clause. Remove the single quotes around the date value in the inner query WHERE clause. Include the PAYMENT_ID column in the select list of the outer query.":
-		"Change the outer query WHERE clause to 'WHERE payment_id IN'.",
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.05 Examine the data in the PAYMENT table: > > > > PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT payment_date, customer_id, payment_amount FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_date >= \'05-Jan-2002\' OR payment_amount > 500.00); Which change could correct the problem? Remove the subquery WHERE clause. Remove the single quotes around the date value in the inner query WHERE clause. Include the PAYMENT_ID column in the select list of the outer query.':
+		'Change the outer query WHERE clause to \'WHERE payment_id IN\'.',
 
 	'Balasan Balas Unknown2 Mei 2024 pukul 00.05 There can be more than one subquery returning information to the outer query. True or False?':
 		'True',
@@ -2119,7 +2123,7 @@ export const ORACLE_QA_BANK = {
 	'Balasan Balas Unknown2 Mei 2024 pukul 00.06 What will the following statement return: SELECT last_name, salary FROM employees WHERE (department_id, job_id) = (SELECT department_id, job_id FROM employees WHERE employee_id = 103)':
 		'A list of last_names and salaries of employees that works in the same department and has the same job_id as that of employee 103.',
 
-	"Balasan Balas Unknown2 Mei 2024 pukul 00.13 Evaluate this SELECT statement: SELECT student_id, last_name, first_name FROM student WHERE major_id NOT IN (SELECT major_id FROM majors WHERE department_head_id = 30 AND title = 'ADJUNCT'); What would happen if the inner query returned a NULL value row? All the rows in the STUDENT table would be displayed.":
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.13 Evaluate this SELECT statement: SELECT student_id, last_name, first_name FROM student WHERE major_id NOT IN (SELECT major_id FROM majors WHERE department_head_id = 30 AND title = \'ADJUNCT\'); What would happen if the inner query returned a NULL value row? All the rows in the STUDENT table would be displayed.':
 		'No rows would be returned from the STUDENT table.',
 
 	'Balasan Balas Unknown2 Mei 2024 pukul 00.18 In a subquery, the ALL operator compares a value to every value returned by the inner query. True or False?':
@@ -2128,7 +2132,7 @@ export const ORACLE_QA_BANK = {
 	'Balasan Balas Unknown2 Mei 2024 pukul 00.19 If the subquery returns no rows, will the outer query return any values? Yes, Oracle will find the nearest value and rewrite your statement implicitly when you run it.':
 		'No, because the subquery will be treated like a null value.',
 
-	"Balasan Balas Unknown2 Mei 2024 pukul 01.13 Which of the following is a valid reason why the query below will not execute successfully? SELECT employee_id, last_name, salary FROM employees WHERE department_id = (SELECT department_id FROM employees WHERE last_name like '%u%');":
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.13 Which of the following is a valid reason why the query below will not execute successfully? SELECT employee_id, last_name, salary FROM employees WHERE department_id = (SELECT department_id FROM employees WHERE last_name like \'%u%\');':
 		'A single, rather than a multiple value operator was used.',
 
 	'Balasan Balas Unknown2 Mei 2024 pukul 01.13 What would happen if you attempted to use a single-row operator with a multiple-row subquery? No rows will be selected. The data returned may or may not be correct.':
@@ -2146,8 +2150,10 @@ export const ORACLE_QA_BANK = {
 	'Balasan Balas GenEtika30 Oktober 2024 pukul 00.36 Which statement about single-row and multiple-row subqueries is true? Multiple-row subqueries can be used with both single-row and multiple-row operators. Multiple-row subqueries can only be used in SELECT statements. Single-row operators can be used with both single-row and multiple-row subqueries.':
 		'Multiple-row subqueries cannot be used with the LIKE operator.',
 
-	"Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nThis statement fails when executed:\nSELECT payment_date, customer_id, payment_amount\nFROM payment\nWHERE payment_id =\n (SELECT payment_id\n FROM payment\n WHERE payment_date >= '05-JAN-2002' OR payment_amount > 500.00);\n\nWhich change could correct the problem?":
+
+	'Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nThis statement fails when executed:\nSELECT payment_date, customer_id, payment_amount\nFROM payment\nWHERE payment_id =\n (SELECT payment_id\n FROM payment\n WHERE payment_date >= \'05-JAN-2002\' OR payment_amount > 500.00);\n\nWhich change could correct the problem?':
 		"Change the outer query WHERE clause to 'WHERE payment_id IN'.",
+
 
 	// Subqueries Comment Quiz Fixes
 	'Which operator can be used with subqueries that return only one row?':
@@ -2156,8 +2162,10 @@ export const ORACLE_QA_BANK = {
 	'Subqueries can only be placed in the WHERE clause. True or False?':
 		'False',
 
+
 	'What will be the result of this statement?\n\nSELECT last_name, job_id, salary, department_id\nFROM employees\nWHERE job_id =\n  (SELECT job_id\n   FROM employees\n   WHERE employee_id = 141) AND\ndepartment_id =\n  (SELECT department_id\n   FROM departments\n   WHERE location_id =1500);':
 		'Only the employees whose job id matches employee 141 and who work in location 1500',
+
 
 	'In a correlated subquery, the outer and inner queries are joined on one or more columns. True or False?':
 		'True',
@@ -2175,7 +2183,8 @@ export const ORACLE_QA_BANK = {
 	'In developing the Employees table, you create a column called hire_date. You assign the hire_date column a DATE datatype with a DEFAULT value of 0 (zero). A user can come back later and enter the correct hire_date. This is __________.':
 		'A bad idea. The default value must match the DATE datatype of the column.',
 
-	'Aliases can be used with MERGE statements. True or False?': 'True',
+	'Aliases can be used with MERGE statements. True or False?':
+		'True',
 
 	'Multi-table inserts can be conditional or unconditional. True or False?':
 		'True',
@@ -2192,7 +2201,7 @@ export const ORACLE_QA_BANK = {
 	'The EMPLOYEES table contains the following columns:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFAST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2(20)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\nBONUS NUMBER(9,2)\n\nYou want to execute one DML statement to change the salary of all employees in department 10 to equal the new salary of employee number 89898. Currently, all employees in department 10 have the same salary value. Which statement should you execute?':
 		'UPDATE employees SET salary = (SELECT salary FROM employees WHERE employee_id = 89898) WHERE department_id = 10;',
 
-	"If the subquery returns one row, how many rows will be deleted from the employees table?\nDELETE FROM employees\nWHERE department_id =\n (SELECT department_id\n FROM departments\n WHERE department_name LIKE '%Public%');":
+	'If the subquery returns one row, how many rows will be deleted from the employees table?\nDELETE FROM employees\nWHERE department_id =\n (SELECT department_id\n FROM departments\n WHERE department_name LIKE \'%Public%\');':
 		'All rows in the employees table of employees who work in the given department will be deleted.',
 
 	'What keyword in an UPDATE statement speficies the column that you want to change?':
@@ -2204,7 +2213,7 @@ export const ORACLE_QA_BANK = {
 	'The PRODUCTS table contains these columns:\nPRODUCT_ID NUMBER NOT NULL\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER NOT NULL\nLIST_PRICE NUMBER (7,2)\nCOST NUMBER (5,2)\nQTY_IN_STOCK NUMBER(4)\nLAST_ORDER_DT DATE DEFAULT SYSDATE NOT NUL\n\nWhich INSERT statement will execute successfully?':
 		"INSERT INTO products (product_id, product_name, supplier_id, list_price, cost, qty_in_stock) VALUES(2958, 'Cable', 8690, 7.09, 4.04, 700)",
 
-	"Assume all the column names are correct. The following SQL statement will execute which of the following?\nINSERT INTO departments\n(department_id, department_name, manager_id, location_id)\nVALUES\n(70, 'Public Relations', 100, 1700);":
+	'Assume all the column names are correct. The following SQL statement will execute which of the following?\nINSERT INTO departments\n(department_id, department_name, manager_id, location_id)\nVALUES\n(70, \'Public Relations\', 100, 1700);':
 		'70 will be inserted into the department_id column.',
 
 	'You need to copy rows from the EMPLOYEE table to the EMPLOYEE_HIST table. What could you use in the INSERT statement to accomplish this task?':
@@ -2237,7 +2246,8 @@ export const ORACLE_QA_BANK = {
 	'The DEFAULT keyword can be used in the following statements:':
 		'INSERT and UPDATE',
 
-	'The default value must match the __________ of the column.': 'Datatype',
+	'The default value must match the __________ of the column.':
+		'Datatype',
 
 	'One of the sales representatives, Janet Roper, has informed you that she was recently married, and she has requested that you update her name in the employee database. Her new last name is Cooper. Janet is the only person with the last name of Roper that is employed by the company. The EMPLOYEES table contains these columns and all data is stored in lowercase:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2 (20)\nHIRE_DATE DATE\nSALARY NUMBER(10)\n\nWhich UPDATE statement will accomplish your objective?':
 		"UPDATE employees SET last_name = 'cooper' WHERE last_name = 'roper';",
@@ -2260,7 +2270,8 @@ export const ORACLE_QA_BANK = {
 	'What would happen if you issued a DELETE statement without a WHERE clause?':
 		'All the rows in the table would be deleted.',
 
-	'DML is an acronym that stands for:': 'Data Manipulation Language',
+	'DML is an acronym that stands for:':
+		'Data Manipulation Language',
 
 	'Using your knowledge of the employees table, what would be the result of the following statement:\nDELETE FROM employees;':
 		'All rows in the employees table will be deleted if there are no constraints on the table.',
@@ -2275,7 +2286,7 @@ export const ORACLE_QA_BANK = {
 	'When inserting rows into a table, all columns must be given values. True or False?':
 		'False',
 
-	"What is the quickest way to use today's date when you are creating a new row?":
+	'What is the quickest way to use today\'s date when you are creating a new row?':
 		'Use the SYSDATE function.',
 
 	'Examine the structures of the PRODUCTS and SUPPLIERS tables:\nSUPPLIERS:\nSUPPLIER_ID NUMBER NOT NULL, Primary Key\nSUPPLIER_NAME VARCHAR2 (25)\nADDRESS VARCHAR2 (30)\nCITY VARCHAR2 (25)\nREGION VARCHAR2 (10)\nPOSTAL_CODE VARCHAR2 (11)\n\nPRODUCTS:\nPRODUCT_ID NUMBER NOT NULL, Primary Key\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER Foreign key to SUPPLIER_ID of the SUPPLIERS table\nCATEGORY_ID NUMBER\nQTY_PER_UNIT NUMBER\nUNIT_PRICE NUMBER (7,2)\nQTY_IN_STOCK NUMBER\nQTY_ON_ORDER NUMBER\nREORDER_LEVEL NUMBER\n\nYou want to delete any products supplied by the five suppliers located in Atlanta. Which script should you use?':
@@ -2314,7 +2325,7 @@ export const ORACLE_QA_BANK = {
 	'Is it possible to insert more than one row at a time using an INSERT statement with a VALUES clause?':
 		'No, you can only create one row at a time when using the VALUES clause.',
 
-	"One employee has the last name of 'King' in the employees table. How many rows will be deleted from the employees table with the following statement?\nDELETE FROM employees\nWHERE last_name = 'king';":
+	'One employee has the last name of \'King\' in the employees table. How many rows will be deleted from the employees table with the following statement?\nDELETE FROM employees\nWHERE last_name = \'king\';':
 		'No rows will be deleted, as no employees match the WHERE-clause.',
 
 	'When inserting a new row, the null keyword can be included in the values list for any column that allows nulls. True or False?':
@@ -2325,4 +2336,339 @@ export const ORACLE_QA_BANK = {
 
 	'You want to enter a new record into the CUSTOMERS table. Which two commands can be used to create new rows?':
 		'INSERT, MERGE',
+
+	'To store time with fractions of seconds, which datatype should be used for a table column?':
+		'TIMESTAMP',
+
+	'The ELEMENTS column is defined as:\nNUMBER(6,4)\nHow many digits to the right of the decimal point are allowed for the ELEMENTS column?':
+		'Four',
+
+	'The TIMESTAMP data type allows what?':
+		'Time to be stored as a date with fractional seconds.',
+
+	'Which data types stores variable-length character data? Select two.':
+		'CLOB|VARCHAR2',
+
+	'INTERVAL DAY TO SECOND stores a period of time in terms of days, hours, minutes, and seconds. True or False?':
+		'True',
+
+	"A column's data type can always be changed from NUMBER to VARCHAR2 but not from VARCHAR2 to NUMBER, provided the table is empty. True or False?":
+		'False',
+
+	'You can use the ALTER TABLE statement to:':
+		'All of the above',
+
+	'Evaluate this statement:\nALTER TABLE inventory \nMODIFY backorder_amount NUMBER(8,2);\n\nWhich task will this statement accomplish?':
+		'Changes the definition of the BACKORDER_AMOUNT column to NUMBER(8,2)',
+
+	'You need to remove all the data in the SCHEDULE table, the structure of the table, and the indexes associated with the table. Which statement should you use?':
+		'DROP TABLE',
+
+	'When you use ALTER TABLE to add a column, the new column:':
+		'Becomes the last column in the table',
+
+	'It is possible to create a table by using the CREATE TABLE command in conjunction with a subquery. True or False?':
+		'True',
+
+	'I have a table named School_Friends in my schema. You want to build a table in your schema named School_Friends. This is ______________, because ____________________________________.':
+		'possible; my schema is separate from yours, and it is okay for us to have like-named tables in our separate schemas.',
+
+	'Which statement about table and column names is true?':
+		'Table and column names must begin with a letter.',
+
+	'You are creating the EMPLOYEES table. This table should contain the COMMISSION_PCT column and use a value of 10 percent if no commission value is provided when a record is inserted. Which line should you include in the CREATE TABLE statement to accomplish this task?':
+		'commission_pct NUMBER(4,2) DEFAULT 0.10',
+
+	'Evaluate this CREATE TABLE statement:\n1. CREATE TABLE customer#1 ( \n2. cust_1 NUMBER(9), \n3. sales$ NUMBER(9), \n4. 2date DATE DEFAULT SYSDATE);\n\nWhich line of this statement will cause an error?':
+		'4',
+
+	'Which statement about data types is true?':
+		'The CHAR data type should be defined with a size that is not too large for the data it contains (or could contain) to save space in the database.',
+
+	"You are designing a table for the Human Resources department. This table must include a column that contains each employee's hire date. Which data type should you specify for this column?":
+		'DATE',
+
+	'To store large amounts of text you should simply create a series of VARCHAR2 columns in a table. True or False?':
+		'False',
+
+	'Which SQL statement below will correctly create the EMP table based on the structure of the EMPLOYEES table? Include only the EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, and DEPARTMENT_ID columns.':
+		'CREATE TABLE emp\nAS\nSELECT employee_id, first_name, last_name, salary, department_id\nFROM employees;',
+
+	'Which CREATE TABLE statement will fail?':
+		'CREATE TABLE date (date_id NUMBER(9));',
+
+	'CREATE TABLE student_table \n    (id NUMBER(6), \n     lname VARCHAR(20), \n     fname VARCHAR(20), \n     lunch_num NUMBER(4));\nWhich of the following statements best describes the above SQL statement:':
+		'Creates a table named student_table with four columns: id, lname, fname, lunch_num',
+
+	"You want to issue the following command on a database that includes your company's inventory information: \nALTER TABLE products SET UNUSED COLUMN color;\nWhat will be the result of issuing this command?":
+		'The column named COLOR in the table named PRODUCTS will not be returned in subsequent reads of the table by Oracle, as it has been deleted logically.',
+
+	'The previous administrator created a table named CONTACTS, which contains outdated data. You want to remove the table and its data from the database. Which statement should you issue?':
+		'DROP TABLE',
+
+	'The FLASHBACK QUERY statement can restore data back to a point in time before the last COMMIT. True or False?':
+		'False',
+
+	'The FLASHBACK TABLE to BEFORE DROP can restore only the table structure, but not its data back to before the table was dropped. True or False?':
+		'False',
+
+	"You need to store the HIRE_DATE value with a time zone displacement value and allow data to be returned in the user's local session time zone. Which data type should you use?":
+		'TIMESTAMP WITH LOCAL TIME ZONE',
+
+	"Evaluate this statement: \nWhich statement about this TRUNCATE TABLE statement is true?":
+		'You can issue this statement to retain the structure of the employees table.',
+
+	'You need to change the name of the EMPLOYEES table to the EMP table. Which statement should you use?':
+		'RENAME employees TO emp;',
+
+	'The TEAMS table contains these columns:\nTEAM_ID NUMBER(4) Primary Key\nTEAM_NAME VARCHAR2(20)\nMGR_ID NUMBER(9)\n\nThe TEAMS table is currently empty. You need to allow users to include text characters in the manager identification values. Which statement should you use to implement this?':
+		'ALTER TABLE teams\nMODIFY (mgr_id VARCHAR2(15));',
+
+	'Evaluate the structure of the EMPLOYEE table:\nEMPLOYEE_ID NUMBER(9) \nLAST_NAME VARCHAR2(25) \nFIRST_NAME VARCHAR2(25) \nDEPARTMENT_ID NUMBER(9) \nMANAGER_ID NUMBER(9) \nSALARY NUMBER(7,2)\n\nWhich statement should you use to increase the LAST_NAME column length to 35 if the column currently contains 200 records?':
+		'ALTER TABLE employee \nMODIFY (last_name VARCHAR2(35));',
+
+	'Which statement about a column is NOT true?':
+		'You can modify the data type of a column if the column contains non-null data.',
+
+	'Once they are created, external tables are accessed with normal SQL statements. (True or False?)':
+		'True',
+
+	'Which column name is valid?':
+		'NUMBER_1$',
+
+	'DCL, which is the acronym for Data Control Language, allows:':
+		'A Database Administrator the ability to grant privileges to users.',
+
+	'A column that will be used to store binary data up to 4 Gigabytes in size should be defined as which datatype?':
+		'BLOB',
+
+	'Which of the following are valid Oracle datatypes?':
+		'DATE, TIMESTAMP WITH LOCAL TIME ZONE, BLOB',
+
+	'Evaluate this CREATE TABLE statement:\nCREATE TABLE sales \n( \n sales_id NUMBER(9), \n customer_id NUMBER(9), \n employee_id NUMBER(9), \n description VARCHAR2(30), \n sale_date TIMESTAMP WITH LOCAL TIME ZONE DEFAULT SYSDATE, \n sale_amount NUMBER(7,2));\n\nWhich business requirement will this statement accomplish?':
+		"Today's date should be used if no value is provided for the sale date.",
+
+	'Examine the structure of the DONATIONS table.\nDONATIONS: \nPLEDGE_ID NUMBER \nDONOR_ID NUMBER \nPLEDGE_DT DATE \nAMOUNT_PLEDGED NUMBER (7,2) \nAMOUNT_PAID NUMBER (7,2) \nPAYMENT_DT DATE\n\nYou need to reduce the precision of the AMOUNT_PLEDGED column to 5 with a scale of 2 and ensure that when inserting a row into the DONATIONS table without a value for the AMOUNT_PLEDGED column, a price of $10.00 will automatically be inserted. The DONATIONS table currently contains NO records. Which statement is true?':
+		'Both changes can be accomplished with one ALTER TABLE statement.',
+
+	'Which command could you use to quickly remove all data from the rows in a table without deleting the table itself?':
+		'TRUNCATE TABLE',
+
+	'You need to remove all the rows from the SALES_HIST table. You want to release the storage space, but do not want to remove the table structure. Which statement should you use?':
+		'The TRUNCATE TABLE statement',
+
+	'What will be the result in the hire_date column following this insert statement:\n\nINSERT INTO employees VALUES (10, \'Natacha\', \'Hansen\', DEFAULT);':
+		'Statement will work and the hire_date column will have the value of the date when the statement was run.',
+
+	'You want to create a database table that will contain information regarding products that your company released during 2001. Which name can you assign to the table that you create?':
+		'PRODUCTS_2001',
+
+	'You want to create a table named TRAVEL that is a child of the EMPLOYEES table. Which of the following statements should you issue?':
+		'CREATE TABLE travel \n(destination_id number primary key, departure_date date, return_date date, emp_id number(10) REFERENCES employees (emp_id));',
+
+	'Evaluate this CREATE TABLE statement:\nCREATE TABLE sales \n(sales_id NUMBER, \ncustomer_id NUMBER, \nemployee_id NUMBER, \nsale_date TIMESTAMP WITH TIME ZONE, \nsale_amount NUMBER(7,2));\n\nWhich statement about the SALE_DATE column is true?':
+		"Data stored in the column will be returned in the database's local time zone.",
+
+	'Which statement about decreasing the width of a column is true?':
+		'When a character column contains data, you can decrease the width of the column if the existing data does not violate the new size.',
+
+	'Which statement about creating a table is true?':
+		"If no schema is explicitly included in a CREATE TABLE statement, the table is created in the current user's schema.",
+
+	'When creating a new table, which of the following naming rules apply. (Choose three)':
+		'Must begin with a letter|Must contain ONLY A - Z, a - z, 0 - 9, _ (underscore), $, and #|Must be between 1 to 30 characters long',
+
+	'You need to store the SEASONAL data in months and years. Which data type should you use?':
+		'INTERVAL YEAR TO MONTH',
+
+	'Comments can be added to a table by using the COMMENT ON TABLE statement. The comments being added are enclosed in:':
+		"Single quotes ' '",
+
+	'Which of the following will correctly change the name of the LOCATIONS table to NEW_LOCATIONS?':
+		'RENAME LOCATIONS TO NEW_LOCATIONS',
+
+	'The BLOB datatype can max hold 128 Terabytes of data. True or False?':
+		'True',
+
+	'Which statement should you use to decrease the width of the FIRST_NAME column to 10 if the column currently contains 1500 records, but none are longer than 10 bytes or characters?':
+		'ALTER TABLE players\nMODIFY (first_name VARCHAR2(10));',
+
+	'Your supervisor has asked you to modify the AMOUNT column in the ORDERS table. He wants the column to be configured to accept a default value of 250. The table contains data that you need to keep. Which statement should you issue to accomplish this task?':
+		'ALTER TABLE orders\nMODIFY (amount DEFAULT 250);',
+
+	"The EMPLOYEE_ID column currently contains 500 employee identification numbers. Business requirements have changed and you need to allow users to include text characters in the identification values. Which statement should you use to change this column's data type?":
+		'You CANNOT modify the data type of the EMPLOYEE_ID column, as the table is not empty.',
+
+	'Examine the structures of the PRODUCTS and SUPPLIERS tables. PRODUCTS: PRODUCT_ID NUMBER NOT NULL, PRIMARY KEY PRODUCT_NAME VARCHAR2 (25) SUPPLIER_ID NUMBER FOREIGN KEY to SUPPLIER_ID of the SUPPLIER table LIST_PRICE NUMBER (7,2) COST NUMBER (7,2) QTY_IN_STOCK NUMBER QTY_ON_ORDER NUMBER REORDER_LEVEL NUMBER REORDER_QTY NUMBER SUPPLIERS: SUPPLIER_ID NUMBER NOT NULL, PRIMARY KEY SUPPLIER_NAME VARCHAR2 (25) ADDRESS VARCHAR2 (30) CITY VARCHAR2 (25) REGION VARCHAR2 (10) POSTAL_CODE VARCHAR2 (11) Evaluate this statement: ALTER TABLE suppliers DISABLE CONSTRAINT supplier_id_pk CASCADE; For which task would you issue this statement?':
+		'To disable any dependent integrity constraints on the SUPPLIER_ID column in the PRODUCTS table',
+
+	'The PO_DETAILS table contains these columns: PO_NUM NUMBER NOT NULL, Primary Key PO_LINE_ID NUMBER NOT NULL, Primary Key PRODUCT_ID NUMBER Foreign Key to PRODUCT_ID column of the PRODUCTS table QUANTITY NUMBER UNIT_PRICE NUMBER(5,2) Evaluate this statement: ALTER TABLE po_details DISABLE CONSTRAINT product_id_pk CASCADE; For which task would you issue this statement?':
+		'To disable the composite PRIMARY KEY of the po_details table and any dependent FOREIGN KEY constraints',
+
+	'Which of the following would definitely cause an integrity constraint error?':
+		'Using the DELETE command on a row that contains a primary key with a dependent foreign key declared without either an ON DELETE CASCADE or ON DELETE SET NULL.',
+
+	'When dropping a constraint, which keyword(s) specifies that all the referential integrity constraints that refer to the primary and unique keys defined on the dropped columns are dropped as well?':
+		'CASCADE',
+
+	'All of a user\'s constraints can be viewed in the Oracle Data Dictionary view called:':
+		'USER_CONSTRAINTS',
+
+	'Evaluate the structure of the DONATIONS table. DONATIONS: PLEDGE_ID NUMBER NOT NULL, Primary Key DONOR_ID NUMBER Foreign key to DONOR_ID column of DONORS table PLEDGE_DT DATE AMOUNT_PLEDGED NUMBER (7,2) AMOUNT_PAID NUMBER (7,2) PAYMENT_DT DATE Which CREATE TABLE statement should you use to create the DONATIONS table?':
+		'CREATE TABLE donations (pledge_id NUMBER PRIMARY KEY, donor_id NUMBER CONSTRAINT donor_id_fk REFERENCES donors(donor_id), pledge_date DATE, amount_pledged NUMBER(7,2), amount_paid NUMBER(7,2), payment_dt DATE);',
+
+	'Which clause could you use to ensure that cost values are greater than 1.00?':
+		'CONSTRAINT part_cost_ck CHECK (cost > 1.00)',
+
+	'What must exist on the Parent table before Oracle will allow you to create a FOREIGN KEY constraint from a Child table?':
+		'A PRIMARY or UNIQUE KEY constraint must exist on the Parent table.',
+
+	'Evaluate this CREATE TABLE statement: CREATE TABLE part( part_id NUMBER, part_name VARCHAR2(25), manufacturer_id NUMBER(9), retail_price NUMBER(7,2) NOT NULL, CONSTRAINT part_id_pk PRIMARY KEY(part_id), CONSTRAINT cost_nn NOT NULL(cost), CONSTRAINT FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(id)); Which line will cause an error?':
+		'Line 7 (and Line 8)',
+
+	'Which type of constraint by default requires that a column be both unique and not null?':
+		'PRIMARY KEY',
+
+	'You need to ensure that the LAST_NAME column only contains certain character values. No numbers or special characters are allowed. Which type of constraint should you define on the LAST_NAME column?':
+		'CHECK',
+
+	'Which constraint can only be created at the column level?':
+		'NOT NULL',
+
+	'Evaluate this CREATE TABLE statement: CREATE TABLE customers (customer_id NUMBER, customer_name VARCHAR2(25), address VARCHAR2(25), city VARCHAR2(25), region VARCHAR2(25), postal_code VARCHAR2(11), CONSTRAINT customer_id_un UNIQUE(customer_id), CONSTRAINT customer_name_nn NOT NULL(customer_name)); Why does this statement fail when executed?':
+		'NOT NULL constraints CANNOT be defined at the table level.',
+
+	'You need to ensure that the LAST_NAME column does not contain null values. Which type of constraint should you define on the LAST_NAME column?':
+		'NOT NULL',
+
+	'A table must have at least one not null constraint and one unique constraint. True or False?':
+		'False',
+
+	'You need to remove the EMP_FK_DEPT constraint from the EMPLOYEE table in your schema. Which statement should you use?':
+		'ALTER TABLE employees DROP CONSTRAINT EMP_FK_DEPT;',
+
+	'What mechamisn does Oracle use in the background to enforce uniqueness in Primary and Unique key constraints?':
+		'Unique key indexes are created in the background by Oracle when Primary key and Unique key constraints are created or enabled',
+
+	'What is the syntax for removing a PRIMARY KEY constraint and all its dependent constraints?':
+		'ALTER TABLE table_name DROP CONSTRAINT constraint_name CASCADE;',
+
+	'You need to add a NOT NULL constraint to the COST column in the PART table. Which statement should you use to complete this task?':
+		'ALTER TABLE part MODIFY (cost CONSTRAINT part_cost_nn NOT NULL);',
+
+	'You need to ensure that each value in the SEAT_ID column is unique or null. Which constraint should you define on the SEAT_ID column?':
+		'UNIQUE',
+
+	'Which statement about the NOT NULL constraint is true?':
+		'The NOT NULL constraint must be defined at the column level.',
+
+	'Which two statements about NOT NULL constraints are true? (Choose two)':
+		'The Oracle Server creates a name for an unnamed NOT NULL constraint.|You CANNOT add a NOT NULL constraint to an existing column using the ALTER TABLE ADD CONSTRAINT statement.',
+
+	'What is the highest number of NOT NULL constraints you can have on a table?':
+		'You can have as many NOT NULL constraints as you have columns in your table.',
+
+	'Which line of the following code will cause an error: CREATE TABLE clients (client_number NUMBER(4) CONSTRAINT client_client_num_pk PRIMARY KEY client_number, first_name VARCHAR2(14), last_name VARCHAR2(13), hire_date DATE CONSTRAINT emp_min_hire_date CHECK (hire_date < SYSDATE), department_id VARCHAR(3), CONSTRAINT clients_dept_id_fk FOREIGN KEY(department_id) REFERENCES departments(department_id));':
+		'Line 5 (and Line 2)',
+
+	'A Primary Key that is made up of more than one column is called a:':
+		'Composite Primary Key',
+
+	'Which of the following FOREIGN KEY Constraint keywords identifies the table and column in the parent table?':
+		'REFERENCES',
+
+	'A composite primary key may only be defined at the table level. True or False?':
+		'True',
+
+	'You need to enforce a relationship between the LOC_ID column in the FACILITY table and the same column in the MANUFACTURER table. Which type of constraint should you define on the LOC_ID column?':
+		'FOREIGN KEY',
+
+	'Which constraint type enforces uniqueness?':
+		'PRIMARY KEY',
+
+	'If the employees table has a UNIQUE constraint on the DEPARTMENT_ID column, we can only have one employee per department. True or False?':
+		'True',
+
+	'You need to add a NOT NULL constraint to the EMAIL column in the EMPLOYEES table. Which clause should you use?':
+		'MODIFY',
+
+	'You want to disable the FOREIGN KEY constraint that is defined in the EMPLOYEES table on the DEPARTMENT_ID column. The constraint is referenced by the name FK_DEPT_ID_01. Which statement should you issue?':
+		'ALTER TABLE employees DISABLE CONSTRAINT fk_dept_id_01;',
+
+	'You need to add a PRIMARY KEY constraint on the EMP_ID column of the EMPLOYEES table. Which ALTER TABLE statement should you use?':
+		'ALTER TABLE employees ADD CONSTRAINT emp_emp_id_pk PRIMARY KEY(emp_id);',
+
+	'To automatically delete rows in a child table when a parent record is deleted use:':
+		'ON DELETE CASCADE',
+
+	'The employees table contains a foreign key column department_id that references the id column in the departments table. Which of the following constraint modifiers will NOT allow the deletion of id values in the department table?':
+		'Neither A nor B',
+
+	'The LINE_ITEM table contains these columns: LINE_ITEM_ID NUMBER PRIMARY KEY PRODUCT_ID NUMBER(9) FOREIGN KEY references the ID column of the PRODUCT table QUANTITY NUMBER(9) UNIT_PRICE NUMBER(5,2) You need to disable the FOREIGN KEY constraint. Which statement should you use?':
+		'ALTER TABLE line_item DISABLE CONSTRAINT product_id_fk;',
+
+	'This SQL command will do what? ALTER TABLE employees ADD CONSTRAINT emp_manager_fk FOREIGN KEY(manager_id) REFERENCES employees(employee_id);':
+		'Add a FOREIGN KEY constraint to the EMPLOYEES table indicating that a manager must already be an employee.',
+
+	'A table can only have one unique key constraint defined. True or False?':
+		'False',
+
+	'Primary Key, Foreign Key, Unique Key, and Check Constraints can be added at which two levels? (Choose two)':
+		'Column|Table',
+
+
+	'What actions can be performed on or with Constraints?':
+		'Add, Drop, Enable, Disable, Cascade',
+
+	'The command to \'switch off\' a constraint is:':
+		'ALTER TABLE DISABLE CONSTRAINT',
+
+	'A column defined as NOT NULL can have a DEFAULT value of NULL. True or False?':
+		'False',
+
+	'You disabled the EMPLOYEE_ID_PK PRIMARY KEY constraint on the ID column in the EMPLOYEES table and imported 100 records. You need to enable the constraint and verify that the new and existing ID column values do not violate the PRIMARY KEY constraint. Evaluate this statement: ALTER TABLE employees ENABLE employee_id_pk; Which statement is true?':
+		'The statement will NOT execute because it contains a syntax error.',
+
+	'You need to create a composite primary key constraint on the EMPLOYEES table. Which statement is true?':
+		'The PRIMARY KEY constraint must be defined at the table level.',
+
+	'You need to create the PROJECT_HIST table. The table must meet these requirements:\n\n1. The table must contain the EMPLOYEE_ID and TASKED_HOURS columns for numeric data.\n2. The table must contain the START_DATE and END_DATE column for date values.\n3. The table must contain the HOURLY_RATE and PROJECT_COST columns for numeric data with precision and scale of 5,2 and 10,2 respectively.\n4. The table must have a composite primary key on the EMPLOYEE_ID and START_DATE columns.\n\nEvaluate this CREATE TABLE statement:\n\nCREATE TABLE project_hist\n( employee_id NUMBER,\nstart_date DATE,\nend_date DATE,\ntasked_hours NUMBER,\nhourly_rate NUMBER(5,2),\nproject_cost NUMBER(10,2),\nCONSTRAINT project_hist_pk PRIMARY KEY(employee_id, start_date));\n\nHow many of the requirements does the CREATE TABLE statement satisfy?':
+		'All four of the requirements',
+
+
+	'Once constraints have been created on a table, you will have to live with them as they are unless you drop and re-create the table. True or False?':
+		'False',
+
+	'The table that contains the Primary Key in a Foreign Key Constraint is known as:':
+		'Parent Table',
+
+	'Which statement about a non-mandatory foreign key constraint is true?':
+		'A foreign key value must either be null or match an existing value in the parent table.',
+
+	'If a Primary Key is made up of more than one column, one of the columns can be null. True or False?':
+		'False',
+
+	'When creating a referential constraint, which keyword(s) identifies the table and column in the parent table?':
+		'REFERENCES',
+
+	'Un ejemplo de la adición de una restricción de control para limitar el salario que un empleado dapat ganar es:':
+		'ALTER TABLE employees ADD CONSTRAINT emp_salary_ck CHECK (salary < 100000)',
+
+	'You can view the columns used in a constraint defined for a specific table by looking at which data dictionary table?':
+		'USER_CONS_COLUMNS',
+
+	'Which of the following pieces of code will successfully create a foreign key in the CDS table that references the SONGS table?':
+		'All of the above',
+
+	'A unique key constraint can only be defined on a not null column. True or False?':
+		'False',
+
+	'You need to display the names and definitions of constraints only in your schema. Which data dictionary view should you query?':
+		'USER_CONSTRAINTS',
+
+	'You can drop a column in a table with a simple ALTER TABLE DROP COLUMN statement, even if the column is referenced in a constraint. True or False?':
+		'False',
+
 } satisfies OracleQaBank;
+
+
