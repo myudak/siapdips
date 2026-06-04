@@ -3030,6 +3030,8 @@ export const ORACLE_QA_BANK = {
 	'All tables must have indexes on them':
 		'False',
 
+	'Which one of the following statements about indexes is true?':
+		'An index is created automatically when a PRIMARY KEY constraint is created.',
 } satisfies OracleQaBank;
 
 
