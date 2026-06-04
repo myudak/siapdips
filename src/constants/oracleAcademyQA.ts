@@ -2745,7 +2745,7 @@ export const ORACLE_QA_BANK = {
 		'You can use the FORCE option to create the view before the SALES table has been created.',
 
 	'Which of the following keywords cannot be used when creating a view?':
-		'They are all valid keywords when creating views.',
+		'ORDER BY',
 
 	'A view can contain a select statement with a subquery. True or False?':
 		'True',
