@@ -2807,6 +2807,8 @@ export const ORACLE_QA_BANK = {
 	'Given the following CREATE VIEW statement, what data will be returned? CREATE OR REPLACE VIEW emp_dept AS SELECT SUBSTR(e.first_name,1,1) ||\' \'||e.last_name emp_name, e.salary, e.hire_date, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id AND d.department_id >=50;':
 		'First character from employee first_name concatenated to the last_name, the salary, the hire_date, and the department_name of all employees working in department number 50 or higher.',
 
+	'You administer an Oracle database which contains a table named EMPLOYEES. Luke, a database user, must create a report that includes the names and addresses of all employees. You do not want to grant Luke access to the EMPLOYEES table because it contains sensitive data. Which of the following actions should you perform first?':
+		'Create a view.',
 } satisfies OracleQaBank;
 
 
