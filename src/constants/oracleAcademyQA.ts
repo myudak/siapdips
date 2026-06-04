@@ -2409,6 +2409,10 @@ export const ORACLE_QA_BANK = {
 	'The FLASHBACK QUERY statement can restore data back to a point in time before the last COMMIT. True or False?':
 		'False',
 
+	'The FLASHBACK TABLE to BEFORE DROP can restore only the table structure, but not its data back to before the table was dropped. True or False?':
+		'False',
+
+
 	"Evaluate this statement: \nWhich statement about this TRUNCATE TABLE statement is true?":
 		'You can issue this statement to retain the structure of the employees table.',
 
