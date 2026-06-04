@@ -1,4 +1,4 @@
-# Firefox Extension Build Instructions
+# Firefox Extension Build Instructions push
 
 This document provides step-by-step instructions to build the source code for this Firefox extension.
 
