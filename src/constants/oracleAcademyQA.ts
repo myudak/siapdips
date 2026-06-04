@@ -3002,6 +3002,34 @@ export const ORACLE_QA_BANK = {
 	'The EMPLOYEES table contains these columns: EMP_ID NOT NULL, Primary Key SSNUM NOT NULL, Unique LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPT_ID NUMBER Foreign Key to DEPT_ID column of the DEPARTMENTS table SALARY NUMBER(8,2) You execute this statement: CREATE INDEX emp_name_idx ON employees(last_name, first_name); Which statement is true?':
 		'The statement creates a composite non-unique index.',
 
+
+	'You created the LOCATION_ID_SEQ sequence':
+		'The sequence is unchanged.',
+
+	'What kind of INDEX is created by Oracle':
+		'UNIQUE INDEX',
+
+	'Indexes can be used to speed up queries.':
+		'True',
+
+	'When creating an index on one or more':
+		'more columns are frequently used together in a join condition.',
+
+	'The ALTER SEQUENCE statement can be used':
+		'increments each time a number is generated',
+
+	'Creating a sequence with NOCACHE ensures':
+		'False',
+
+	'When used in a CREATE SEQUENCE':
+		'CACHE',
+
+	'When creating a sequence, which keyword':
+		'MINVALUE',
+
+	'All tables must have indexes on them':
+		'False',
+
 } satisfies OracleQaBank;
 
 
