@@ -2875,6 +2875,9 @@ export const ORACLE_QA_BANK = {
 
 	'Evaluate this statement: CREATE INDEX sales_idx ON oe.sales (status); Which statement is true?':
 		'The CREATE INDEX statement creates a nonunique index.',
+
+	'Nextval and Currval are known as column aliases. True or False?':
+		'False',
 } satisfies OracleQaBank;
 
 
