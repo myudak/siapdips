@@ -2499,5 +2499,168 @@ export const ORACLE_QA_BANK = {
 	"The EMPLOYEE_ID column currently contains 500 employee identification numbers. Business requirements have changed and you need to allow users to include text characters in the identification values. Which statement should you use to change this column's data type?":
 		'You CANNOT modify the data type of the EMPLOYEE_ID column, as the table is not empty.',
 
+	'Examine the structures of the PRODUCTS and SUPPLIERS tables. PRODUCTS: PRODUCT_ID NUMBER NOT NULL, PRIMARY KEY PRODUCT_NAME VARCHAR2 (25) SUPPLIER_ID NUMBER FOREIGN KEY to SUPPLIER_ID of the SUPPLIER table LIST_PRICE NUMBER (7,2) COST NUMBER (7,2) QTY_IN_STOCK NUMBER QTY_ON_ORDER NUMBER REORDER_LEVEL NUMBER REORDER_QTY NUMBER SUPPLIERS: SUPPLIER_ID NUMBER NOT NULL, PRIMARY KEY SUPPLIER_NAME VARCHAR2 (25) ADDRESS VARCHAR2 (30) CITY VARCHAR2 (25) REGION VARCHAR2 (10) POSTAL_CODE VARCHAR2 (11) Evaluate this statement: ALTER TABLE suppliers DISABLE CONSTRAINT supplier_id_pk CASCADE; For which task would you issue this statement?':
+		'To disable any dependent integrity constraints on the SUPPLIER_ID column in the PRODUCTS table',
+
+	'The PO_DETAILS table contains these columns: PO_NUM NUMBER NOT NULL, Primary Key PO_LINE_ID NUMBER NOT NULL, Primary Key PRODUCT_ID NUMBER Foreign Key to PRODUCT_ID column of the PRODUCTS table QUANTITY NUMBER UNIT_PRICE NUMBER(5,2) Evaluate this statement: ALTER TABLE po_details DISABLE CONSTRAINT product_id_pk CASCADE; For which task would you issue this statement?':
+		'To disable the composite PRIMARY KEY of the po_details table and any dependent FOREIGN KEY constraints',
+
+	'Which of the following would definitely cause an integrity constraint error?':
+		'Using the DELETE command on a row that contains a primary key with a dependent foreign key declared without either an ON DELETE CASCADE or ON DELETE SET NULL.',
+
+	'When dropping a constraint, which keyword(s) specifies that all the referential integrity constraints that refer to the primary and unique keys defined on the dropped columns are dropped as well?':
+		'CASCADE',
+
+	'All of a user\'s constraints can be viewed in the Oracle Data Dictionary view called:':
+		'USER_CONSTRAINTS',
+
+	'Evaluate the structure of the DONATIONS table. DONATIONS: PLEDGE_ID NUMBER NOT NULL, Primary Key DONOR_ID NUMBER Foreign key to DONOR_ID column of DONORS table PLEDGE_DT DATE AMOUNT_PLEDGED NUMBER (7,2) AMOUNT_PAID NUMBER (7,2) PAYMENT_DT DATE Which CREATE TABLE statement should you use to create the DONATIONS table?':
+		'CREATE TABLE donations (pledge_id NUMBER PRIMARY KEY, donor_id NUMBER CONSTRAINT donor_id_fk REFERENCES donors(donor_id), pledge_date DATE, amount_pledged NUMBER(7,2), amount_paid NUMBER(7,2), payment_dt DATE);',
+
+	'Which clause could you use to ensure that cost values are greater than 1.00?':
+		'CONSTRAINT part_cost_ck CHECK (cost > 1.00)',
+
+	'What must exist on the Parent table before Oracle will allow you to create a FOREIGN KEY constraint from a Child table?':
+		'A PRIMARY or UNIQUE KEY constraint must exist on the Parent table.',
+
+	'Evaluate this CREATE TABLE statement: CREATE TABLE part( part_id NUMBER, part_name VARCHAR2(25), manufacturer_id NUMBER(9), retail_price NUMBER(7,2) NOT NULL, CONSTRAINT part_id_pk PRIMARY KEY(part_id), CONSTRAINT cost_nn NOT NULL(cost), CONSTRAINT FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(id)); Which line will cause an error?':
+		'Line 7 (and Line 8)',
+
+	'Which type of constraint by default requires that a column be both unique and not null?':
+		'PRIMARY KEY',
+
+	'You need to ensure that the LAST_NAME column only contains certain character values. No numbers or special characters are allowed. Which type of constraint should you define on the LAST_NAME column?':
+		'CHECK',
+
+	'Which constraint can only be created at the column level?':
+		'NOT NULL',
+
+	'Evaluate this CREATE TABLE statement: CREATE TABLE customers (customer_id NUMBER, customer_name VARCHAR2(25), address VARCHAR2(25), city VARCHAR2(25), region VARCHAR2(25), postal_code VARCHAR2(11), CONSTRAINT customer_id_un UNIQUE(customer_id), CONSTRAINT customer_name_nn NOT NULL(customer_name)); Why does this statement fail when executed?':
+		'NOT NULL constraints CANNOT be defined at the table level.',
+
+	'You need to ensure that the LAST_NAME column does not contain null values. Which type of constraint should you define on the LAST_NAME column?':
+		'NOT NULL',
+
+	'A table must have at least one not null constraint and one unique constraint. True or False?':
+		'False',
+
+	'You need to remove the EMP_FK_DEPT constraint from the EMPLOYEE table in your schema. Which statement should you use?':
+		'ALTER TABLE employees DROP CONSTRAINT EMP_FK_DEPT;',
+
+	'What mechamisn does Oracle use in the background to enforce uniqueness in Primary and Unique key constraints?':
+		'Unique key indexes are created in the background by Oracle when Primary key and Unique key constraints are created or enabled',
+
+	'What is the syntax for removing a PRIMARY KEY constraint and all its dependent constraints?':
+		'ALTER TABLE table_name DROP CONSTRAINT constraint_name CASCADE;',
+
+	'You need to add a NOT NULL constraint to the COST column in the PART table. Which statement should you use to complete this task?':
+		'ALTER TABLE part MODIFY (cost CONSTRAINT part_cost_nn NOT NULL);',
+
+	'You need to ensure that each value in the SEAT_ID column is unique or null. Which constraint should you define on the SEAT_ID column?':
+		'UNIQUE',
+
+	'Which statement about the NOT NULL constraint is true?':
+		'The NOT NULL constraint must be defined at the column level.',
+
+	'Which two statements about NOT NULL constraints are true? (Choose two)':
+		'The Oracle Server creates a name for an unnamed NOT NULL constraint.|You CANNOT add a NOT NULL constraint to an existing column using the ALTER TABLE ADD CONSTRAINT statement.',
+
+	'What is the highest number of NOT NULL constraints you can have on a table?':
+		'You can have as many NOT NULL constraints as you have columns in your table.',
+
+	'Which line of the following code will cause an error: CREATE TABLE clients (client_number NUMBER(4) CONSTRAINT client_client_num_pk PRIMARY KEY client_number, first_name VARCHAR2(14), last_name VARCHAR2(13), hire_date DATE CONSTRAINT emp_min_hire_date CHECK (hire_date < SYSDATE), department_id VARCHAR(3), CONSTRAINT clients_dept_id_fk FOREIGN KEY(department_id) REFERENCES departments(department_id));':
+		'Line 5 (and Line 2)',
+
+	'A Primary Key that is made up of more than one column is called a:':
+		'Composite Primary Key',
+
+	'Which of the following FOREIGN KEY Constraint keywords identifies the table and column in the parent table?':
+		'REFERENCES',
+
+	'A composite primary key may only be defined at the table level. True or False?':
+		'True',
+
+	'You need to enforce a relationship between the LOC_ID column in the FACILITY table and the same column in the MANUFACTURER table. Which type of constraint should you define on the LOC_ID column?':
+		'FOREIGN KEY',
+
+	'Which constraint type enforces uniqueness?':
+		'PRIMARY KEY',
+
+	'If the employees table has a UNIQUE constraint on the DEPARTMENT_ID column, we can only have one employee per department. True or False?':
+		'True',
+
+	'You need to add a NOT NULL constraint to the EMAIL column in the EMPLOYEES table. Which clause should you use?':
+		'MODIFY',
+
+	'You want to disable the FOREIGN KEY constraint that is defined in the EMPLOYEES table on the DEPARTMENT_ID column. The constraint is referenced by the name FK_DEPT_ID_01. Which statement should you issue?':
+		'ALTER TABLE employees DISABLE CONSTRAINT fk_dept_id_01;',
+
+	'You need to add a PRIMARY KEY constraint on the EMP_ID column of the EMPLOYEES table. Which ALTER TABLE statement should you use?':
+		'ALTER TABLE employees ADD CONSTRAINT emp_emp_id_pk PRIMARY KEY(emp_id);',
+
+	'To automatically delete rows in a child table when a parent record is deleted use:':
+		'ON DELETE CASCADE',
+
+	'The employees table contains a foreign key column department_id that references the id column in the departments table. Which of the following constraint modifiers will NOT allow the deletion of id values in the department table?':
+		'Neither A nor B',
+
+	'The LINE_ITEM table contains these columns: LINE_ITEM_ID NUMBER PRIMARY KEY PRODUCT_ID NUMBER(9) FOREIGN KEY references the ID column of the PRODUCT table QUANTITY NUMBER(9) UNIT_PRICE NUMBER(5,2) You need to disable the FOREIGN KEY constraint. Which statement should you use?':
+		'ALTER TABLE line_item DISABLE CONSTRAINT product_id_fk;',
+
+	'This SQL command will do what? ALTER TABLE employees ADD CONSTRAINT emp_manager_fk FOREIGN KEY(manager_id) REFERENCES employees(employee_id);':
+		'Add a FOREIGN KEY constraint to the EMPLOYEES table indicating that a manager must already be an employee.',
+
+	'A table can only have one unique key constraint defined. True or False?':
+		'False',
+
+	'What actions can be performed on or with Constraints?':
+		'Add, Drop, Enable, Disable, Cascade',
+
+	'The command to \'switch off\' a constraint is:':
+		'ALTER TABLE DISABLE CONSTRAINT',
+
+	'A column defined as NOT NULL can have a DEFAULT value of NULL. True or False?':
+		'False',
+
+	'You disabled the EMPLOYEE_ID_PK PRIMARY KEY constraint on the ID column in the EMPLOYEES table and imported 100 records. You need to enable the constraint and verify that the new and existing ID column values do not violate the PRIMARY KEY constraint. Evaluate this statement: ALTER TABLE employees ENABLE employee_id_pk; Which statement is true?':
+		'The statement will NOT execute because it contains a syntax error.',
+
+	'You need to create a composite primary key constraint on the EMPLOYEES table. Which statement is true?':
+		'The PRIMARY KEY constraint must be defined at the table level.',
+
+	'Once constraints have been created on a table, you will have to live with them as they are unless you drop and re-create the table. True or False?':
+		'False',
+
+	'The table that contains the Primary Key in a Foreign Key Constraint is known as:':
+		'Parent Table',
+
+	'Which statement about a non-mandatory foreign key constraint is true?':
+		'A foreign key value must either be null or match an existing value in the parent table.',
+
+	'If a Primary Key is made up of more than one column, one of the columns can be null. True or False?':
+		'False',
+
+	'When creating a referential constraint, which keyword(s) identifies the table and column in the parent table?':
+		'REFERENCES',
+
+	'Un ejemplo de la adición de una restricción de control para limitar el salario que un empleado dapat ganar es:':
+		'ALTER TABLE employees ADD CONSTRAINT emp_salary_ck CHECK (salary < 100000)',
+
+	'You can view the columns used in a constraint defined for a specific table by looking at which data dictionary table?':
+		'USER_CONS_COLUMNS',
+
+	'Which of the following pieces of code will successfully create a foreign key in the CDS table that references the SONGS table?':
+		'All of the above',
+
+	'A unique key constraint can only be defined on a not null column. True or False?':
+		'False',
+
+	'You need to display the names and definitions of constraints only in your schema. Which data dictionary view should you query?':
+		'USER_CONSTRAINTS',
+
+	'You can drop a column in a table with a simple ALTER TABLE DROP COLUMN statement, even if the column is referenced in a constraint. True or False?':
+		'False',
+
 } satisfies OracleQaBank;
+
 
