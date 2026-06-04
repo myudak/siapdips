@@ -2838,7 +2838,7 @@ export const ORACLE_QA_BANK = {
 		'MAXVALUE is 10^27 for an ascending sequence.|MINVALUE is equal to 1.',
 
 	'The EMPLOYEES table has an index named LN_IDX on the LAST_NAME column. You want to change this index so that it is on the FIRST_NAME column instead. Which SQL statement will do this?':
-		'None of the above.',
+		'None of the above; you cannot ALTER an index.',
 
 	'User Mary\'s schema contains an EMP table. Mary has Database Administrator privileges and executes the following statement: CREATE PUBLIC SYNONYM emp FOR mary.emp; User Susan now needs to SELECT from Mary\'s EMP table. Which of the following SQL statements can she use? (Choose two)':
 		'SELECT * FROM emp;|SELECT * FROM mary.emp;',
