@@ -2613,6 +2613,10 @@ export const ORACLE_QA_BANK = {
 	'A table can only have one unique key constraint defined. True or False?':
 		'False',
 
+	'Primary Key, Foreign Key, Unique Key, and Check Constraints can be added at which two levels? (Choose two)':
+		'Column|Table',
+
+
 	'What actions can be performed on or with Constraints?':
 		'Add, Drop, Enable, Disable, Cascade',
 
