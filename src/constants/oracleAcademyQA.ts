@@ -3035,6 +3035,9 @@ export const ORACLE_QA_BANK = {
 
 	'Evaluate this statement: CREATE SEQUENCE sales_item_id_seq START WITH 101 MAXVALUE 9000090 CYCLE; Which statement about this CREATE SEQUENCE statement is true?':
 		'The sequence will reuse numbers and will start with 101.',
+
+	'Evaluate this statement: DROP SEQUENCE line_item_id_seq; What does this statement accomplish?':
+		'It removes the sequence from the data dictionary.',
 } satisfies OracleQaBank;
 
 
