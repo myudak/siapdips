@@ -25,3 +25,8 @@ dist-ssr
 *.sln
 *.sw?
 *.zip
+
+# Dummy screenshots
+image.png
+image copy*.png
+

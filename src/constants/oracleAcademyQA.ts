@@ -1011,8 +1011,8 @@ export const ORACLE_QA_BANK = {
 		'SELECT last_name, first_name, team_id, salary FROM players WHERE salary BETWEEN 25000 AND 100000 AND team_id BETWEEN 1200 AND 1500 ORDER BY team_id, salary DESC;',
 	'The following statement represents a multi-row function. True or False? SELECT MAX(salary) FROM employees':
 		'True',
-	"The PLAYERS table contains these columns: PLAYERS TABLE: LAST_NAME VARCHAR2 (20) FIRST_NAME VARCHAR2 (20) SALARY NUMBER(8,2) TEAM_ID NUMBER(4) MANAGER_ID NUMBER(9) POSITION_ID NUMBER(4) You want to display all players' names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which statement should you use to achieve the required results?":
-		'SELECT last_name, first_name FROM players WHERE position_id >= 6900 ORDER BY last_name, first_name;',
+	"You want to display all players' names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which statement should you use to achieve the required results?":
+		'SELECT last_name, first_name FROM players WHERE position_id >= 6900 ORDER BY last_name, first_name;|position_id >= 6900',
 	'Evaluate this SQL statement: SELECT e.employee_id, e.last_name, e.first_name, m.manager_id FROM employees e, employees m ORDER BY e.last_name, e.first_name WHERE e.employee_id = m.manager_id; This statement fails when executed. Which change will correct the problem?':
 		'Reorder the clauses in the query.',
 	'Which columns can be added to the ORDER BY clause in the following SELECT statement? (Choose Three) SELECT first_name, last_name, salary, hire_date FROM employees WHERE department_id = 50 ORDER BY ?????;':
@@ -1059,7 +1059,7 @@ export const ORACLE_QA_BANK = {
 		"SELECT TO_CHAR(salary, '$999,999.00') FROM employees;",
 	'Below find the structures of the PRODUCTS and VENDORS tables: PRODUCTS PRODUCT_ID NUMBER PRODUCT_NAME VARCHAR2 (25) VENDOR_ID NUMBER CATEGORY_ID NUMBER VENDORS VENDOR_ID NUMBER VENDOR_NAME VARCHAR2 (25) ADDRESS VARCHAR2 (30) CITY VARCHAR2 (25) REGION VARCHAR2 (10) POSTAL_CODE VARCHAR2 (11) You want to create a query that will return an alphabetical list of products, including the product name and associated vendor name, for all products that have a vendor assigned. Which two queries could you use?':
 		'SELECT p.product_name, v.vendor_name FROM products p JOIN vendors v USING (vendor_id) ORDER BY p.product_name;|SELECT p.product_name, v.vendor_name FROM products p NATURAL JOIN vendors v ORDER BY p.product_name;',
-	'The following statement is an example of what kind of join? SELECT car.vehicle_id, driver.name FROM car LEFT OUTER JOIN driver ON (driver_id) ;':
+	'The following statement is an example of what kind of join?':
 		'Outer Join',
 	'Will the following statement work? SELECT department_name, last_name FROM employees, departments WHERE department_id = department_id;':
 		'No, Oracle will return a Column Ambiguously Defined error.',
@@ -1092,7 +1092,6 @@ export const ORACLE_QA_BANK = {
 		'No rows would be returned by the outer query.',
 	'Which comparison operator can only be used with a single-row subquery?':
 		'<>',
-	'Which operator can be used with a multiple-row subquery?': 'IN',
 	'Table aliases must be used when you are writing correlated subqueries. (True or false?)':
 		'False',
 	"You want to create a list of all albums that have been produced by the company. The list should include the title of the album, the artist's name, and the date the album was released. The ALBUMS table includes the following columns: ALB_TITLE VARCHAR2(150) NOT NULL ALB_ARTIST VARCHAR2(150) NOT NULL ALB_DATE DATE NOT NULL Which statement can you use to retrieve the necessary information?":
@@ -1105,8 +1104,6 @@ export const ORACLE_QA_BANK = {
 		'PROGRAMMING',
 	'Consider the following data in the Employees table: (last_name, commission_pct, manager_id) DATA: King, null, null Kochhar, null, 100 Vargas, null, 124 Zlotkey, .2, 100 What is the result of the following statement: SELECT last_name, COALESCE(commission_pct, manager_id, -1) comm FROM employees ;':
 		'King, -1\nKochhar, 100\nVargas, 124\nZlotkey, .2',
-	'Which SELECT statement implements a self join? [duplicate variant 2]':
-		'SELECT e.employee_id, m.manager_id FROM employees e, employees m WHERE m.employee_id = e.manager_id;',
 	'You need to create a report that lists all employees in department 10 (Sales) whose salary is not equal to $25,000 per year. Which query should you issue to accomplish this task?':
 		'SELECT last_name, first_name, salary FROM employees WHERE salary != 25000 AND dept_id = 10;',
 	'You have two tables named EMPLOYEES and SALES. You want to identify the sales representatives who have generated at least $100,000 in revenue. Which query should you issue?':
@@ -1166,9 +1163,6 @@ export const ORACLE_QA_BANK = {
 	'Evaluate this SELECT statement: SELECT last_name, first_name, department_id, manager_id FROM employees; You need to sort data by manager id values and then alphabetically by employee last name and first name values. Which ORDER BY clause could you use?':
 		'ORDER BY manager_id, last_name, first_name',
 
-	'The EMPLOYEES table contains these columns:':
-		"SELECT TO_CHAR(hire_date, 'Month DD, YYYY') FROM employees;",
-
 	'You query the database with this SQL statement:\nSELECT *\nFROM transaction\nWHERE product_id = 4569;\n\nWhich SQL SELECT statement capabilities are achieved when this statement is executed?':
 		'Selection and projection only',
 
@@ -1194,7 +1188,7 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'A join between tables where the result set includes matching values from both tables but does NOT return any unmatched rows could be called which of the following? (Choose three)':
 		'Equijoin|Simple join|Self join',
-	'A NATURAL JOIN is based on:': 'Columns with the same name and datatype',
+	'A NATURAL JOIN is based on:': 'Columns with the same name and datatype|same name and datatype|datatype',
 	'You need to join two tables that have two columns with the same name, datatype, and precision. Which type of join would you create to join the tables on both of the columns?':
 		'Natural join',
 	'For which condition would you use an equijoin query with the USING keyword?':
@@ -1212,15 +1206,13 @@ export const ORACLE_QA_BANK = {
 	'Which type of join returns rows from one table that have NO direct match in the other table?':
 		'Outer join',
 	'The primary advantages of using JOIN ON is: (Select two)':
-		'It permits columns that donﾒt have matching data types to be joined.|It permits columns with different names to be joined.',
+		'It permits columns that don\'t have matching data types to be joined.|It permits columns with different names to be joined.',
 	'The primary advantage of using JOIN ON is:':
 		'It permits columns with different names to be joined.',
 	'Which of the following database design concepts is implemented with a self join?':
 		'Recursive Relationship',
 	'Hierarchical queries can walk both Top-Down and Bottom-Up. True or False?':
 		'True',
-	'The following statement is an example of what kind of join?\nSELECT car.vehicle_id, driver.name\nFROM car\nLEFT OUTER JOIN driver ON (driver_id) ;':
-		'Outer Join',
 	'The following is a valid SQL statement.\nSELECT e.employee_id, e.last_name,     d.location_id, department_id\nFROM employees e JOIN departments d\nUSING (department_id) ;\n\nTrue or False?':
 		'True',
 	'Which keyword in a SELECT statement creates an equijoin by specifying a column name common to both tables?':
@@ -1239,7 +1231,7 @@ export const ORACLE_QA_BANK = {
 	'If you select rows from two tables (employees and departments) using the outer join specified in the example, what will you get?\nSELECT employees.last_name, employees.department_id, departments.department_name\nFROM employees\nLEFT OUTER JOIN departments\nON (employees.department_id = departments.department_id);':
 		'All employees including those that do not have a departement_id assigned to them',
 	'Which SELECT statement implements a self join?':
-		'SELECT item.part_id, type.product_id\nFROM part item JOIN part type\nON item.part_id = type.product_id;',
+		'SELECT item.part_id, type.product_id\nFROM part item JOIN part type\nON item.part_id = type.product_id;|SELECT worker.employee_id, manager.manager_id\nFROM employees worker JOIN employees manager\nON manager.employee_id = worker.manager_id;|SELECT e.employee_id, m.manager_id FROM employees e, employees m WHERE m.employee_id = e.manager_id;',
 	'The join column must be included in the select statement when you use the NATURAL JOIN clause. True or False?':
 		'False',
 	'Which two sets of join keywords create a join that will include unmatched rows from the first table specified in the SELECT statement?':
@@ -1248,10 +1240,6 @@ export const ORACLE_QA_BANK = {
 		'Columns with the same names must have the same datatype.',
 	'Evaluate this SELECT statement:\nSELECT *\nFROM employee worker JOIN employee manager\nON worker.mgr_id = manager.emp_id;\nWhich type of join is created by this SELECT statement?':
 		'a self join',
-	'Which SELECT statement implements a self join? [employees worker manager]':
-		'SELECT worker.employee_id, manager.manager_id\nFROM employees worker JOIN employees manager\nON manager.employee_id = worker.manager_id;',
-	'The following statement is an example of what kind of join?\nSELECT car.vehicle_id, driver.name\nFROM car\nLEFT OUTER JOIN driver USING(driver_id) ;':
-		'Outer Join',
 	'Which of the following statements is the simplest description of a nonequijoin?':
 		'A join condition containing something other than an equality operator',
 	'Which syntax would be used to retrieve all rows in both the EMPLOYEES and DEPARTMENTS tables, even when there is no match?':
@@ -1333,8 +1321,7 @@ export const ORACLE_QA_BANK = {
 	'The EMPLOYEES table includes these columns:\nEMPLOYEE_ID NUMBER(4) NOT NULL\nLAST_NAME VARCHAR2(15) NOT NULL\nFIRST_NAME VARCHAR2(10) NOT NULL\nHIRE_DATE DATE NOT NULL\n\nYou want to produce a report that provides the first names, last names and hire dates of those employees who were hired between March 1, 2000, and August 30, 2000. Which statements can you issue to accomplish this task?':
 		'SELECT last_name, first_name, hire_date\nFROM employees\nWHERE hire_date BETWEEN ’01-MAR-00′ AND ’30-AUG-00′;',
 
-	'The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\nYou want to display all players’ names with position 6900 or greater. You want the players names to be displayed alphabetically by last name and then by first name. Which In the real world, databases used by businesses generally have a single table. True or False?statement should you use to achieve the required results?':
-		'SELECT last_name, first_name\nFROM players\nWHERE position_id >= 6900\nORDER BY last_name, first_name;',
+	// duplicate players 6900 key removed
 
 	'Evaluate this SELECT statement:\nSELECT *\nFROM employees\nWHERE salary > 30000\nAND department_id = 10\nOR email IS NOT NULL;\nWhich statement is true?':
 		'The AND condition will be evaluated before the OR condition.',
@@ -1515,8 +1502,6 @@ export const ORACLE_QA_BANK = {
 	'Which symbol in the WHERE clause means "Not Equal To"? (Choose Two)':
 		'<>|NOT IN (..)',
 	'Which comparison condition means "Less Than or Equal To"?': '"<="',
-	'You attempt to query the database with this SQL statement:\nSELECT product_id "Product Number", category_id "Category", price "Price"\nFROM products\nWHERE "Category" = 5570\nORDER BY "Product Number";\n\nThis statement fails when executed. Which clause contains a syntax error?':
-		'WHERE "Category" = 5570',
 	'Which of the following is true of the ORDER BY clause:? (Choose Two)':
 		'Must be the last clause of the SQL statement|Defaults to an ascending order (ASC)',
 	'Evaluate this SELECT statement:\nSELECT first_name, last_name, email\nFROM employees\nORDER BY last_name;\n\nWhich statement is true?':
@@ -1537,8 +1522,7 @@ export const ORACLE_QA_BANK = {
 		'You can use a column alias in the ORDER BY clause.',
 	'Find the clause that will give the same results as:\nSELECT *\nFROM d_cds\nWHERE cd_id NOT IN(90, 91, 92);':
 		'WHERE cd_id != 90 and cd_id != 91 and cd_id != 92;',
-	"The PLAYERS table contains these columns:\nPLAYERS TABLE:\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nSALARY NUMBER(8,2)\nTEAM_ID NUMBER(4)\nMANAGER_ID NUMBER(9)\nPOSITION_ID NUMBER(4)\n\nYou want to display all players' names with position 6900 or greater.\nYou want the players names to be displayed alphabetically by last name and then by first name.\nWhich statement should you use to achieve the required results?":
-		'SELECT last_name, first_name\nFROM players\nWHERE position_id >= 6900\nORDER BY last_name, first_name;',
+	// duplicate players 6900 key removed
 	'Which of the following are TRUE regarding the logical AND operator?':
 		'TRUE AND FALSE return FALSE',
 	'Which statement about the default sort order is true?':
@@ -1549,8 +1533,6 @@ export const ORACLE_QA_BANK = {
 		'True',
 	"Which of the following would be returned by this SQL statement:\nSELECT First_name, last_name, department_id\nFROM employees\nWHERE department_id IN(50,80)\nAND first_name LIKE ' C% '\nOR last_name LIKE ' %s% '":
 		'All of the above',
-	'You query the database with this SQL statement:\nSELECT price\nFROM products\nWHERE price IN(1, 25, 50, 250)\nAND (price BETWEEN 25 AND 40 OR price > 50);\n\nWhich two values could the statement return? (Choose two.)':
-		'25|250',
 	'Which logical operator returns TRUE if either condition is true?': 'OR',
 	'Which statement about the logical operators is true?':
 		'The order of operator precedence is NOT, AND, and OR.',
@@ -1685,7 +1667,7 @@ export const ORACLE_QA_BANK = {
 	'When executed, which statement displays a zero if the TUITION_BALANCE value is zero and the HOUSING_BALANCE value is null?':
 		'SELECT NVL (tuition_balance + housing_balance, 0) "Balance Due"\nFROM student_accounts;',
 	'Which statement about group functions is true?':
-		'NVL, NVL2, and COALESCE can be used with group functions to replace null values.',
+		'Group functions ignore null values.|NVL, NVL2, and COALESCE can be used with group functions to replace null values.',
 	'Consider the following data in the Employees table: (last_name, commission_pct, manager_id)\nDATA:\nKing, null, null\nKochhar, null, 100\nVargas, null, 124\nZlotkey, .2, 100\nWhat is the result of the following statement:\nSELECT last_name, COALESCE(commission_pct, manager_id, -1) comm\nFROM employees ;':
 		'King, -1\nKochhar, 100\nVargas, 124\nZlotkey, .2',
 	'You need to replace null values in the DEPT_ID column with the text N/A. Which functions should you use?':
@@ -1756,4 +1738,604 @@ export const ORACLE_QA_BANK = {
 	// Added DP Section 3 Quiz Questions (2026-05-25)
 	'You query the database with this SQL statement:SELECT price FROM products WHERE price IN(1, 25, 50, 250) AND (price BETWEEN 25 AND 40 OR price > 50);Which two values could the statement return? (Choose Two)':
 		'25|250',
+
+	// Section 7 - SQL Joins from DeniAce Blog (2026-05-25)
+	'S7J Q1 Evaluate this SQL statement:\nSELECT e.employee_id, e.last_name, e.first_name, d.department_name\nFROM employees e, departments d\nWHERE e.department_id = d.department_id AND employees.department_id > 5000\nORDER BY 4;\n\nWhich clause contains a syntax error?':
+		'AND employees.department_id > 5000',
+	'S7J Q2 When must column names be prefixed by table names in join syntax?':
+		'When the same column name appears in more than one table of the query',
+	'S7J Q3 If table A has 10 rows and table B has 5 rows, how many rows will be returned if you perform a cartesian join on those two tables?':
+		'50',
+	'S7J Q4 What is produced when a join condition is not specified in a multiple-table query using Oracle proprietary Join syntax?':
+		'A Cartesian product',
+	'S7J Q5 The CUSTOMERS and SALES tables contain these columns:\nCUSTOMERS\nCUST_ID NUMBER(10) PRIMARY KEY\nCOMPANY VARCHAR2(30)\nLOCATION VARCHAR2(20)\n\nSALES\nSALES_ID NUMBER(5) PRIMARY KEY\nCUST_ID NUMBER(10) FOREIGN KEY\nTOTAL_SALES NUMBER(30)\n\nWhich SELECT statement will return the customer ID, the company and the total sales?':
+		'SELECT c.cust_id, c.company, s.total_sales\nFROM customers c, sales s\nWHERE c.cust_id = s.cust_id;',
+	'S7J Q6 You have the following EMPLOYEES table:\nEMPLOYEE_ID NUMBER(5) NOT NULL PRIMARY KEY\nFIRST_NAME VARCHAR2(25)\nLAST_NAME VARCHAR2(25)\nADDRESS VARCHAR2(35)\nCITY VARCHAR2(25)\nSTATE VARCHAR2(2)\nZIP NUMBER(9)\nTELEPHONE NUMBER(10)\nDEPARTMENT_ID NUMBER(5) NOT NULL FOREIGN KEY\n\nThe BONUS table includes the following columns:\nBONUS_ID NUMBER(5) NOT NULL PRIMARY KEY\nANNUAL_SALARY NUMBER(10)\nBONUS_PCT NUMBER(3, 2)\nEMPLOYEE_ID VARCHAR2(5) NOT NULL FOREIGN KEY\n\nYou want to determine the amount of each employee\'s bonus as a calculation of salary times bonus. Which of the following queries should you issue?':
+		'SELECT e.first_name, e.last_name, b.annual_salary * b. bonus_pct\nFROM employees e, bonus b\nWHERE e.employee_id = b.employee_id;',
+	'S7J Q7 The ID column in the CLIENT table that corresponds to the CLIENT_ID column of the ORDER table contains null values for rows that need to be displayed. Which type of join should you use to display the data?':
+		'Outer join',
+	'S7J Q8 Using Oracle Proprietary join syntax, which two operators can be used in an outer join condition using the outer join operator (+)?':
+		'AND and =',
+	'S7J Q9 You need to join the EMPLOYEES table and the SCHEDULES table, but the two tables do not have any corresponding columns. Which type of join will you create?':
+		'A non-equijoin',
+	'S7J Q10 Using Oracle Proprietary join syntax, which operator would you use after one of the column names in the WHERE clause when creating an outer join?':
+		'(+)',
+	'S7J Q11 Which statement about outer joins is true?':
+		'The OR operator cannot be used to link outer join conditions.',
+	'S7J Q12 The following is a valid outer join statement:\nSELECT c.country_name, d.department_name\nFROM countries c, departments d\nWHERE c.country_id (+) = d.country_id (+)\n\nTrue or False?':
+		'False',
+	'S7J Q13 What is the result of a query that selects from two tables but includes no join condition?':
+		'A Cartesian product',
+	'S7J Q14 Which statement about the join syntax of an Oracle Proprietary join syntax SELECT statement is true?':
+		'The WHERE clause represents the join criteria.',
+	'S7J Q15 If table A has 10 rows and table B has 5 rows, how many rows will be returned if you perform an equi-join on those two tables?':
+		'It depends on how many rows have matching data in each of the two tables.',
+	'S7J Q16 The PATIENTS and DOCTORS tables contain these columns:\nPATIENTS\nPATIENT_ID NUMBER(9)\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\n\nDOCTORS\nDOCTOR_ID NUMBER(9)\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\n\nYou issue this statement:\nSELECT patient_id, doctor_id\nFROM patients, doctors;\n\nWhich result will this statement provide?':
+		'A report containing all possible combinations of the PATIENT_ID and DOCTOR_ID values',
+	'S7J Q17 Which statement about joining tables with a non-equijoin is false?':
+		'A WHERE clause must specify a column in one table that is compared to a column in the second table',
+	'S7J Q18 To perform a valid outer join between DEPARTMENTS and EMPLOYEES to list departments without employees, select the correct WHERE clause for the following select statement:\nSELECT d.department_name, e.last_name\nFROM employees e, departments d\nWHERE':
+		'e.department_id(+) = d.department_id',
+	'S7J Q19 The EMPLOYEE_ID column in the EMPLOYEES table corresponds to the EMPLOYEE_ID column of the ORDERS table.\nThe EMPLOYEE_ID column in the ORDERS table contains null values for rows that you need to display.\nWhich type of join should you use to display the data?':
+		'Outer join',
+	'S7J Q20 Oracle proprietary JOINS can use the WHERE clause for conditions other than the join-condition. True or False?':
+		'True',
+	'S7J Q21 What is the minimum number of join conditions required to join 5 tables together?':
+		'4',
+	'S7J Q22 Nonequijoins are normally used with which of the following? (Choose Two)':
+		'Ranges of numbers|Ranges of dates',
+
+	'The AVG, SUM, VARIANCE, and STDDEV functions can be used with which of the following?':
+		'Only numeric data types',
+
+	'Which aggregate function can be used on a column of the DATE data type?':
+		'MAX',
+
+	'Group functions return a value for ________________ and ________________ null values in their computations.':
+		'a row set, ignore',
+
+	'The TRUCKS table contains these columns:\nTRUCKS:\nTYPE VARCHAR2(30)\nYEAR DATE\nMODEL VARCHAR2(20)\nPRICE NUMBER(10)\n\nWhich SELECT statement will return the average price for the 4x4 model?':
+		"SELECT AVG(price) FROM trucks WHERE model = '4x4';",
+
+	'The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(9)\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nSALARY NUMBER(7,2)\nDEPARTMENT_ID NUMBER(9)\n\nYou need to display the number of employees whose salary is greater than $50,000. Which SELECT would you use?':
+		'SELECT COUNT(*) FROM employees WHERE salary > 50000;',
+
+	'Evaluate this SQL statement:\nSELECT COUNT (amount)\nFROM inventory;\n\nWhat will occur when the statement is issued?':
+		'The statement will count the number of rows in the INVENTORY table where the AMOUNT column is not null.',
+
+	'To include null values in the calculations of a group function, you must:':
+		'Convert the null to a value using the NVL( ) function',
+
+	'Which statement about the COUNT function is true?':
+		'The COUNT function always ignores null values by default.',
+
+	'Which SELECT statement will calculate the number of rows in the PRODUCTS table?':
+		'SELECT COUNT (*) FROM products;',
+
+	'Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nYou need to determine the average payment amount made by each customer in January, February, and March of 2003.\nWhich SELECT statement should you use?':
+		"SELECT AVG(payment_amount) FROM payment WHERE payment_date BETWEEN '01-Jan-2003' AND '31-Mar-2003';",
+
+	'Group functions can avoid computations involving duplicate values by including which keyword?':
+		'DISTINCT',
+
+	'You need to calculate the average salary of employees in each department. Which group function will you use?':
+		'AVG',
+
+	'Which group function would you use to display the total of all salary values in the EMPLOYEES table?':
+		'SUM',
+
+	'Which group function would you use to display the lowest value in the SALES_AMOUNT column?':
+		'MIN',
+
+	'You need to compute the total salary amount for all employees in department 10. Which group function will you use?':
+		'SUM',
+
+	'The PRODUCTS table contains these columns:\n\nPROD_ID NUMBER(4)\nPROD_NAME VARCHAR2(30)\nPROD_CAT VARCHAR2(30)\nPROD_PRICE NUMBER(3)\nPROD_QTY NUMBER(4)\n\nThe following statement is issued:\n\nSELECT AVG(prod_price, prod_qty)\nFROM products;\n\nWhat happens when this statement is issued?':
+		'An error occurs.',
+
+	'Examine the following statement:\nSELECT department_id, manager_id, job_id, SUM(salary)\nFROM employees\nGROUP BY GROUPING SETS((department_id, manager_id), (department_id, job_id))\n\nWhat data will this query generate?':
+		'Sum of salaries for (department_id, job_id) and (department_id, manager_id)',
+
+	'Examine the following statement:\nSELECT department_id, manager_id, job_id, SUM(salary)\nFROM employees\nGROUP BY ROLLUP(department_id, manager_id)\n\nWhat extra data will this query generate?':
+		'The statement will fail.',
+
+	'You use ROLLUP to:':
+		'produce subtotal values',
+
+	'CUBE will cross-reference the columns listed in the ______ clause to create a superset of groups.':
+		'GROUP BY',
+
+	'Which of the following are correct SET operators? (choose two)':
+		'UNION, MINUS|UNION ALL, INTERSECT',
+
+	'The ___________ operator returns all rows from both tables, after eliminating duplicates.':
+		'UNION',
+
+	'To control the order of rows returned using SET operators, the ORDER BY clause is used ______ and is placed in the _____ SELECT statement of the query.':
+		'ONCE; LAST',
+
+	'Is the following statement correct?\nSELECT first_name, last_name, salary, department_id, COUNT(employee_id)\nFROM employees\nWHERE department_id = 50\nGROUP BY last_name, first_name, department_id;':
+		'No, because the statement is missing salary in the GROUP BY clause',
+
+	'What will the following SQL Statement do?\nSELECT job_id, COUNT(*)\nFROM employees\nGROUP BY job_id;':
+		'Displays each job id and the number of people assigned to that job id',
+
+	'The PLAYERS table contains these columns:\nPLAYER_ID NUMBER PK\nPLAYER_NAME VARCHAR2(30)\nTEAM_ID NUMBER\nHIRE_DATE DATE\nSALARY NUMBER(8,2)\n\nWhich clauses represent valid uses of aggregate functions? (Choose three.)':
+		'SELECT AVG(NVL(salary, 0))|ORDER BY AVG(salary)|HAVING MAX(salary) > 10000',
+
+	'The EMPLOYEES table contains these columns:\nID_NUMBER NUMBER Primary Key\nNAME VARCHAR2 (30)\nDEPARTMENT_ID NUMBER\nSALARY NUMBER (7,2)\nHIRE_DATE DATE\n\nEvaluate this SQL statement:\nSELECT id_number, name, department_id, SUM(salary)\nFROM employees\nWHERE salary > 25000\nGROUP BY department_id, id_number, name\nORDER BY hire_date;\n\nWhy will this statement cause an error?':
+		'The HIRE_DATE column is NOT included in the GROUP BY clause.',
+
+	'What is the best explanation as to why this SQL statement will NOT execute?\nSELECT department_id "Department", AVG (salary)"Average"\nFROM employees\nGROUP BY Department;':
+		'You cannot use a column alias in the GROUP BY clause.',
+
+	'The PRODUCTS table contains these columns:\nPROD_ID NUMBER(4)\nPROD_NAME VARCHAR(20)\nPROD_CAT VARCHAR2(15)\nPROD_PRICE NUMBER(5)\nPROD_QTY NUMBER(4)\n\nYou need to identify the minimum product price in each product category.\nWhich statement could you use to accomplish this task?':
+		'SELECT prod_cat, MIN (prod_price) FROM products GROUP BY prod_cat;',
+
+	'Evaluate this statement:\nSELECT department_id, AVG(salary)\nFROM employees\nWHERE job_id <> 69879\nGROUP BY job_id, department_id\nHAVING AVG(salary) > 35000\nORDER BY department_id;\n\nWhich clauses restricts the result? Choose two.':
+		'WHERE job_id <> 69879|HAVING AVG(salary) > 35000',
+
+	'Evaluate this SELECT statement:\nSELECT COUNT(employee_id), department_id\nFROM employees\nGROUP BY department_id;\n\nYou only want to include employees who earn more than 15000.\nWhich clause should you include in the SELECT statement?':
+		'WHERE salary > 15000',
+
+	'You use GROUPING functions to:':
+		'Identify the extra row values created by either a ROLLUP or CUBE operation',
+
+	'You use GROUPING functions to ______ database rows from tabulated rows.':
+		'DISTINGUISH',
+
+	'When using SET operators, the names of the matching columns must be identical in all of the SELECT statements used in the query. True or False?':
+		'False',
+
+	'Which of the following SQL statements could display the number of people with the same last name:\nSELECT last_name, COUNT(last_name)\nFROM EMPLOYEES\nGROUP BY last_name;':
+		'SELECT last_name, COUNT(last_name) FROM EMPLOYEES GROUP BY last_name;',
+
+	'How would you alter the following query to list only employees where two or more employees have the same last name?\nSELECT last_name, COUNT(employee_id)\nFROM EMPLOYEES\nGROUP BY last_name;':
+		'SELECT last_name, COUNT(last_name) FROM EMPLOYEES GROUP BY last_name HAVING COUNT(last_name) > 1;',
+
+	'You need to display the number of unique types of manufacturers at each location. Which SELECT statement should you use?\nSELECT location_id, COUNT(DISTINCT type)\nFROM manufacturer;':
+		'SELECT location_id, COUNT(DISTINCT type) FROM manufacturer GROUP BY location_id;',
+
+	'Which SELECT statement could you use to display the number of times each customer payment was made between January 1, 2003 and June 30, 2003 ?\nSELECT customer_id, COUNT(payment_id)\nFROM payment\nWHERE payment_date BETWEEN \'01-Jan-2003\' AND \'30-Jun-2003\';':
+		'SELECT customer_id, COUNT(payment_id) FROM payment WHERE payment_date BETWEEN \'01-Jan-2003\' AND \'30-Jun-2003\' GROUP BY customer_id;',
+
+	'Can group functions be nested at a depth of?':
+		'Two',
+
+	'Which group function would you use to display the average price of all products in the PRODUCTS table?':
+		'AVG',
+
+	'What two group functions can be used with any datatype?':
+		'MIN, MAX',
+
+	'You need to calculate the standard deviation for the cost of products produced in the Birmingham facility. Which group function will you use?':
+		'STDDEV',
+
+	'You attempt to query the database with this SQL statement:\nSELECT product_id "Product Number", category_id "Category", price "Price"\nFROM products\nWHERE "Category" = 5570\nORDER BY "Product Number";\n\nThis statement fails when executed. Which clause contains a syntax error?':
+		'WHERE',
+
+	'You query the database with this SQL statement:\nSELECT price\nFROM products\nWHERE price IN(1, 25, 50, 250)\nAND (price BETWEEN 25 AND 40 OR price > 50);\n\nWhich two values could the statement return? (Choose two.)':
+		'25|250',
+
+	'The STYLES table contains this data:\nSTYLE_ID STYLE_NAME CATEGORY COST\n895840 SANDAL 85940 12.00\n968950 SANDAL 85909 10.00\n869506 SANDAL 89690 15.00\n809090 LOAFER 89098 10.00\n890890 LOAFER 89789 14.00\n857689 HEEL 85940 11.00\n758960 SANDAL 86979\n\nYou issue this SELECT statement:\nSELECT COUNT(category)\nFROM styles;\n\nWhich value is displayed?':
+		'7',
+
+	'Using your existing knowledge of the employees table, would the following two statements produce the same result?\nSELECT COUNT(*)\nFROM employees;\n\nSELECT COUNT(commission_pct)\nFROM employees;':
+		'No',
+
+	'Given the following data in the employees table (employee_id, salary, commission_pct)\nDATA:\n(143, 2600, null\n144, 2500, null\n149, 10500, .2\n174, 11000, .3\n176, 8600, .2\n178, 7000, .15)\n\nWhat is the result of the following statement:\n\nSELECT AVG(commission_pct)\nFROM employees\nWHERE employee_id IN( 143,144,149,174,176,178);':
+		'0.2125',
+
+	'The PLAYERS and TEAMS tables contain these columns:\nPLAYERS\nPLAYER_ID NUMBER NOT NULL, PRIMARY KEY\nLAST_NAME VARCHAR2 (30) NOT NULL\nFIRST_NAME VARCHAR2 (25) NOT NULL\nTEAM_ID NUMBER\nPOSITION VARCHAR2 (25)\n\nTEAMS\nTEAM_ID NUMBER NOT NULL, PRIMARY KEY\nTEAM_NAME VARCHAR2 (25)\n\nYou need to create a report that lists the names of each team with more than three goal keepers.\nWhich SELECT statement will produce the desired result?':
+		'SELECT t.team_name, COUNT(p.player_id)\nFROM players p\nJOIN teams t ON (p.team_id = t.team_id)\nWHERE UPPER(p.position) = \'GOAL KEEPER\'\nGROUP BY t.team_name\nHAVING COUNT(p.player_id) > 3;',
+
+	'GROUPING SETS is another extension to the GROUP BY clause and is used to specify multiple groupings of data but provide a single result set. True or False?':
+		'True',
+
+	'MINUS will give you rows from the first query that are not present in the second query. (True or False?)':
+		'True',
+
+	'Is the following statement correct?\nSELECT department_id, AVG(salary)\nFROM employees;':
+		'No, because a GROUP BY department_id clause is needed',
+
+
+	// Section 10 Quiz Questions Added Automatically
+	'A multiple-row operator expects how many values?':
+		'One or more',
+
+	'The salary column of the f_staffs table contains the following values: 4000 5050 6000 11000 23000 Which of the following statements will return the last_name and first_name of those employees who earn more than 5000?':
+		'SELECT last_name, first_name FROM f_staffs WHERE salary IN (SELECT salary FROM f_staffs WHERE salary > 5000);',
+
+	'Examine the data in the PAYMENT table: PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT customer_id, payment_type FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_amount = 596.00 OR payment_date = \'20-Mar-2003\'); Which change could correct the problem?':
+		'Change the outer query WHERE clause to \'WHERE payment_id IN\'.',
+
+	'Which of the following statements contains a comparison operator that is used to restrict rows based on a list of values returned from an inner query? SELECT description FROM d_types WHERE code IN (SELECT type_code FROM d_songs); SELECT description FROM d_types WHERE code = ANY (SELECT type_code FROM d_songs); SELECT description FROM d_types WHERE code <> ALL (SELECT type_code FROM d_songs);':
+		'All of the above.',
+
+	'Group functions can be used in multiple-row subqueries in the HAVING and GROUP BY clauses. True or False?':
+		'True',
+
+	'The SQL multiple-row subquery extends the capability of the single-row syntax through the use of which three comparison operators? IN, ANY, and EVERY IN, ALL, and EVERY IN, ANY, and EQUAL':
+		'IN, ANY, and ALL',
+
+	'Which statement about the <> operator is true? The <> operator can be used':
+		'The <> operator can be used when a single-row subquery returns only one row.',
+
+	'Single row subqueries may not include this operator: > <>':
+		'ALL',
+
+	'Examine the structure of the EMPLOYEE, DEPARTMENT, and ORDERS tables. EMPLOYEE: EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) DEPARTMENT: DEPARTMENT_ID NUMBER(9) DEPARTMENT_NAME VARCHAR2(25) CREATION_DATE DATE ORDERS: ORDER_ID NUMBER(9) EMPLOYEE_ID NUMBER(9) DATE DATE CUSTOMER_ID NUMBER(9) You want to display all employees who had an order after the Sales department was established. Which of the following constructs would you use?':
+		'A single-row subquery',
+
+	'If you use the equality operator (=) with a subquery, how many values can the subquery return?':
+		'Only 1',
+
+	'The TEACHERS and CLASS_ASSIGNMENTS tables contain these columns: TEACHERS TEACHER_ID NUMBER(5) Primary Key NAME VARCHAR2 (25) SUBJECT_ID NUMBER(5) CLASS_ID NUMBER(5) CLASS_ASSIGNMENTS CLASS_ID NUMBER (5) Primary Key TEACHER_ID NUMBER (5) DATE MAX_CAPACITY NUMBER (3) All MAX_CAPACITY values are greater than 10. Which two SQL statements correctly use subqueries? (Choose two.)':
+		'SELECT * FROM teachers WHERE teacher_id = (SELECT teacher_id FROM class_assignments WHERE class_id = 45963);|SELECT * FROM class_assignments WHERE max_capacity = (SELECT AVG(max_capacity) FROM class_assignments);',
+
+	'Which operator can be used with a multiple-row subquery? LIKE':
+		'IN',
+
+	'Which answer is INCORRECT? The parent statement of a correlated subquery can be: A SELECT statement A DELETE statement An UPDATE statement':
+		'An INSERT statement',
+
+	'The Oracle server performs a correlated subquery when the subquery references a column from a table referred to in the parent. True or False?':
+		'True',
+
+	'In a non-correlated subquery, the outer query always executes prior to the inner query\'s execution. True or False? True':
+		'False',
+
+	'Subqueries are limited to four per SQL transaction. True or False? True':
+		'False',
+
+	'Which statement about subqueries is true? Subqueries should be enclosed in double quotation marks. Subqueries generally execute last, after the main or outer query executes. Subqueries cannot contain group functions. Subqueries are often used in a WHERE':
+		'clause to return values for an unknown conditional value.',
+
+	'When creating a report of all employees earning more than the average salary for their department, a __________ ____________ can be used to first calculate the average salary of each department, and then compare the salary for each employee to the average salary of that employeeﾒs department. WITH CLAUSE GROUP BY':
+		'CORRELATED SUBQUERY',
+
+	'Which statement is false? The WITH clause retrieves the results of one or more query blocks. The WITH clause stores the results for the user who runs the query. The WITH clause decreases':
+		'The WITH clause decreases performance.',
+
+	'Correlated Subqueries must reference the same tables in both the inner and outer queries. (True or False?) True':
+		'False',
+
+	'When a multiple-row subquery uses the NOT IN operator (equivalent to <>ALL), if one of the values returned by the inner query is a null value, the entire query returns: All rows that were selected by the inner query including the null values':
+		'No rows returned',
+
+	'You need to create a SELECT statement that contains a multiple-row subquery. Which comparison operator(s) can you use?':
+		'IN, ANY, and ALL',
+
+	'You are looking for Executive information using a subquery. What will the following SQL statement display? SELECT department_id, last_name, job_id FROM employees WHERE department_id IN (SELECT department_id FROM departments WHERE department_name = \'Executive\');':
+		'job ID for every employee in the Executive department',
+
+	'Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use?':
+		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);|FROM depart_hist WHERE old_dept_id = 15',
+
+	'Which of the following best describes the meaning of the ANY operator? Equal to any member in the list Equal to each value in the list Compare value to the first value returned by the subquery Compare value to each value returned':
+		'Compare value to each value returned by the subquery',
+
+	'Oracle allows you to write named subqueries in one single statement, as long as you start your statement with the keyword WITH. True or False?':
+		'True',
+
+	'Which statement is false? The WITH clause decreases':
+		'The WITH clause decreases performance.',
+
+	'Subqueries can only be placed in the WHERE clause. True or False? True':
+		'False',
+
+	'Which operator can be used with a multiple-row subquery?':
+		'IN',
+
+	'Using a subquery in which clause will return a syntax error? WHERE FROM HAVING You can use subqueries in all of the':
+		'above clauses.',
+
+	'Which comparison operator can only be used with a single-row subquery? IN':
+		'<>',
+
+	'You need to produce a report that contains all employee-related information for those employees who have Brad Carter as a supervisor. However, you are not sure which supervisor ID belongs to Brad Carter. Which query should you issue to accomplish this task?':
+		'SELECT * FROM employees WHERE supervisor_id = (SELECT employee_id FROM employees WHERE last_name = \'Carter\');',
+
+	'Which operator or keyword cannot be used with a multiple-row subquery? >':
+		'=',
+
+	'When a multiple-row subquery uses the NOT IN operator (equivalent to <>ALL), if one of the values returned by the inner query is a null value, the entire query returns: A list of Nulls':
+		'No rows returned',
+
+	'Evaluate this SQL statement: SELECT employee_id, last_name, salary FROM employees WHERE department_id IN (SELECT department_id FROM employees WHERE salary > 30000 AND salary < 50000); Which values will be displayed?':
+		'All employees who work in a department with employees who earn more than $30,000, but less than $50,000.',
+
+	'The SQL multiple-row subquery extends the capability of the single-row syntax through the use of which three comparison operators?':
+		'IN, ANY, and ALL',
+
+	'The WITH clause is a way of creating extra tables in the database. (True or False?)':
+		'False',
+
+	'In a correlated subquery, the outer and inner queries are joined on one or more columns. (True or False?)':
+		'True',
+
+	'If a single-row subquery returns a null value and uses the equality comparison operator, what will the outer query return? All the rows in the table':
+		'No rows',
+
+	'The SQL multiple-row subquery extends the capability of the single-row syntax through the use of which three comparison operators? IN, ANY, and EQUAL':
+		'IN, ANY, and ALL',
+
+	'Which comparison operator would you use to compare a value to every value returned by a subquery? IN ANY SOME':
+		'ALL',
+
+	'You need to display all the players whose salaries are greater than or equal to John Brown\'s salary. Which comparison operator should you use? = <=':
+		'>=',
+
+	'What will the following statement return: SELECT last_name, salary FROM employees WHERE salary < (SELECT salary FROM employees WHERE employee_id = 103);':
+		'employees who make less than employee 103',
+
+	'Which of the following is TRUE regarding the order of subquery execution? The subquery executes once after the main query. The result of the main query is used with the subquery. The subquery executes once before':
+		'the main query.',
+
+	'If a single-row subquery returns a null value and uses the equality comparison operator, what will the outer query return?':
+		'No rows',
+
+	'The result of this statement will be: SELECT last_name, job_id, salary, department_id FROM employees WHERE job_id = (SELECT job_id FROM employees WHERE employee_id = 141) AND department_id = (SELECT department_id FROM departments WHERE location_id =1500);':
+		'matches employee 141 and who work in location 1500',
+
+	'Which answer is INCORRECT? The parent statement of a correlated subquery can be:':
+		'An INSERT statement',
+
+	'The WITH clause enables a SELECT statement to define the subquery block at the start of the query, process the block just once, label the results, and then refer to the results multiple times. True or False?':
+		'True',
+
+	'Which of the following statements is a true guideline for using subqueries?':
+		'The outer and inner queries can reference more than one table. They can get data from different tables.',
+
+	'Evaluate this SELECT statement: SELECT customer_id, name FROM customer WHERE customer_id IN (SELECT customer_id FROM customer WHERE state_id = \'GA\' AND credit_limit > 500.00); What would happen if the inner query returned null?':
+		'No rows would be returned by the outer query.',
+
+	'Which statement about the ANY operator, when used with a multiple-row subquery, is true? The ANY operator is a synonym for the ALL operator. The ANY operator can be used with the LIKE and IN operators. The ANY operator compares every':
+		'The ANY operator compares a value to each value returned by the subquery.',
+
+	'Multiple-row subqueries must have NOT, IN, or ANY in the WHERE clause of the inner query. True or False? True':
+		'False',
+
+	'null, null, {}); Unknown30 Desember 2017 pukul 01.25 A correlated subquery is evaluated _____ for each row processed by the parent statement.':
+		'ONCE',
+
+	'Balasan Balas Gananjay Thanekar5 Agustus 2020 pukul 23.33 1- A correlated subquery will _______ a candidate row from an outer query, _______ the inner query using candidate row value, and _______ values from the inner query to qualify or disqualify the candidate row. ROLLUP; GRANT; DROP DELETE; UPDATE; INSERT':
+		'GET; EXECUTE; USE',
+
+	'Balasan Balas announ18 Agustus 2021 pukul 13.05 What is wrong with the following query? SELECT employee_id, last_name FROM employees WHERE salary = (SELECT MIN(salary) FROM employees GROUP BY department_id);':
+		'Subquery returns more than one row and single row comparison operator is used.|The results of the inner query are returned to the outer query.|You need to display all the orders that were placed on the same day as order number 25950.',
+
+	'Balasan Balas Unknown3 April 2022 pukul 18.05 Which best describes a multiple-row subquery?':
+		'A query that returns one or more rows from the inner SELECT statement',
+
+	'Balasan Balas Unknown8 April 2022 pukul 01.34 14. The EMPLOYEES and ORDERS tables contain these columns: EMPLOYEES EMPLOYEE_ID NUMBER(10) NOT NULL PRIMARY KEY FIRST_NAME VARCHAR2(30) LAST_NAME VARCHAR2(30) ADDRESS VARCHAR2(25) CITY VARCHAR2(20) STATE VARCHAR2(2) ZIP NUMBER(9) TELEPHONE NUMBER(10) ORDERS ORDER_ID NUMBER(10) NOT NULL PRIMARY KEY EMPLOYEE_ID NUMBER(10) NOT NULL FOREIGN KEY ORDER_DATE DATE TOTAL NUMBER(10) Which SELECT statement will return all orders generated by a sales representative named Franklin during the year 2001? SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = \'Franklin\')':
+		'SELECT order_id, total FROM ORDERS WHERE employee_id = (SELECT employee_id FROM employees WHERE last_name = \'Franklin\') AND order_date BETWEEN \'01-Jan-2001\' AND \'31-Dec-2001\';',
+
+	'Balasan Balas Unknown1 Mei 2024 pukul 23.54 Which best describes a single-row subquery? A query that returns one or more rows from the inner SELECT statement':
+		'A query that returns only one row from the inner SELECT statement',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.05 Examine the data in the PAYMENT table: > > > > PAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT 86590586 8908090 10-Jun-2003 BASIC 859.00 89453485 8549038 15-Feb-2003 INTEREST 596.00 85490345 5489304 20-Mar-2003 BASIC 568.00 This statement fails when executed: SELECT payment_date, customer_id, payment_amount FROM payment WHERE payment_id = (SELECT payment_id FROM payment WHERE payment_date >= \'05-Jan-2002\' OR payment_amount > 500.00); Which change could correct the problem? Remove the subquery WHERE clause. Remove the single quotes around the date value in the inner query WHERE clause. Include the PAYMENT_ID column in the select list of the outer query.':
+		'Change the outer query WHERE clause to \'WHERE payment_id IN\'.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.05 There can be more than one subquery returning information to the outer query. True or False?':
+		'True',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.06 What will the following statement return: SELECT last_name, salary FROM employees WHERE (department_id, job_id) = (SELECT department_id, job_id FROM employees WHERE employee_id = 103)':
+		'A list of last_names and salaries of employees that works in the same department and has the same job_id as that of employee 103.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.13 Evaluate this SELECT statement: SELECT student_id, last_name, first_name FROM student WHERE major_id NOT IN (SELECT major_id FROM majors WHERE department_head_id = 30 AND title = \'ADJUNCT\'); What would happen if the inner query returned a NULL value row? All the rows in the STUDENT table would be displayed.':
+		'No rows would be returned from the STUDENT table.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.18 In a subquery, the ALL operator compares a value to every value returned by the inner query. True or False?':
+		'True',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 00.19 If the subquery returns no rows, will the outer query return any values? Yes, Oracle will find the nearest value and rewrite your statement implicitly when you run it.':
+		'No, because the subquery will be treated like a null value.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.13 Which of the following is a valid reason why the query below will not execute successfully? SELECT employee_id, last_name, salary FROM employees WHERE department_id = (SELECT department_id FROM employees WHERE last_name like \'%u%\');':
+		'A single, rather than a multiple value operator was used.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.13 What would happen if you attempted to use a single-row operator with a multiple-row subquery? No rows will be selected. The data returned may or may not be correct.':
+		'An error would be returned.',
+
+	'Balasan Balas Unknown2 Mei 2024 pukul 01.17 Group functions can be used in subqueries even though they may return many rows. True or False?':
+		'True',
+
+	'Balasan Balas galih6 Juli 2024 pukul 03.21 What will the following statement return: SELECT last_name, salary FROM employees WHERE salary < (SELECT salary FROM employees WHERE employee_id = 103);':
+		'A list of last_names and salaries of employees who make less than employee 103',
+
+	'Balasan Balas galih6 Juli 2024 pukul 03.29 10. Evaluate the structure of the EMPLOYEES and DEPART_HIST tables: EMPLOYEES EMPLOYEE_ID NUMBER(9) LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) DEPART_HIST: EMPLOYEE_ID NUMBER(9) OLD_DEPT_ID NUMBER(9) NEW_DEPT_ID NUMBER(9) CHANGE_DATE DATE You want to generate a list of employees who are in department 10, but used to be in department 15. Which query should you use? SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist':
+		'SELECT employee_id, last_name, first_name, department_id FROM employees WHERE (employee_id, department_id) IN (SELECT employee_id, new_dept_id FROM depart_hist WHERE old_dept_id = 15);|FROM depart_hist WHERE old_dept_id = 15',
+
+	'Balasan Balas GenEtika30 Oktober 2024 pukul 00.36 Which statement about single-row and multiple-row subqueries is true? Multiple-row subqueries can be used with both single-row and multiple-row operators. Multiple-row subqueries can only be used in SELECT statements. Single-row operators can be used with both single-row and multiple-row subqueries.':
+		'Multiple-row subqueries cannot be used with the LIKE operator.',
+
+
+	'Examine the data in the PAYMENT table:\nPAYMENT_ID CUSTOMER_ID PAYMENT_DATE PAYMENT_TYPE PAYMENT_AMOUNT\n86590586 8908090 10-Jun-2003 BASIC 859.00\n89453485 8549038 15-Feb-2003 INTEREST 596.00\n85490345 5489304 20-Mar-2003 BASIC 568.00\n\nThis statement fails when executed:\nSELECT payment_date, customer_id, payment_amount\nFROM payment\nWHERE payment_id =\n (SELECT payment_id\n FROM payment\n WHERE payment_date >= \'05-JAN-2002\' OR payment_amount > 500.00);\n\nWhich change could correct the problem?':
+		"Change the outer query WHERE clause to 'WHERE payment_id IN'.",
+
+
+	// Subqueries Comment Quiz Fixes
+	'Which operator can be used with subqueries that return only one row?':
+		'LIKE',
+
+	'Subqueries can only be placed in the WHERE clause. True or False?':
+		'False',
+
+
+	'What will be the result of this statement?\n\nSELECT last_name, job_id, salary, department_id\nFROM employees\nWHERE job_id =\n  (SELECT job_id\n   FROM employees\n   WHERE employee_id = 141) AND\ndepartment_id =\n  (SELECT department_id\n   FROM departments\n   WHERE location_id =1500);':
+		'Only the employees whose job id matches employee 141 and who work in location 1500',
+
+
+	'In a correlated subquery, the outer and inner queries are joined on one or more columns. True or False?':
+		'True',
+
+	'Evaluate this SELECT statement that includes a subquery:\nSELECT last_name, first_name\nFROM customer\nWHERE area_code IN\n  (SELECT area_code\n   FROM sales\n   WHERE salesperson_id = 20);\n\nWhich statement is true about the given subquery?':
+		'The results of the inner query are returned to the outer query.',
+
+	'What would the following SQL statement return?\nSELECT COUNT(DISTINCT salary)\nFROM employees;':
+		'The number of unique salaries in the employees table',
+
+	// Section 12 Quiz (Oracle Database Programming with SQL)
+	'A column in a table can be given a default value. This option prevents NULL values from automatically being assigned to the column if a row is inserted without a specified value for the column. True or False ?':
+		'True',
+
+	'In developing the Employees table, you create a column called hire_date. You assign the hire_date column a DATE datatype with a DEFAULT value of 0 (zero). A user can come back later and enter the correct hire_date. This is __________.':
+		'A bad idea. The default value must match the DATE datatype of the column.',
+
+	'Aliases can be used with MERGE statements. True or False?':
+		'True',
+
+	'Multi-table inserts can be conditional or unconditional. True or False?':
+		'True',
+
+	'A multi-table insert statement can insert into more than one table. (True or False?)':
+		'True',
+
+	'Which of the following represents the correct syntax for an INSERT statement?':
+		"INSERT INTO customers VALUES ('3178', 'J.', 'Smith', '123 Main Street', 'Nashville', 'TN', '37777');",
+
+	'You need to delete a record in the EMPLOYEES table for Tim Jones, whose unique employee identification number is 348. The EMPLOYEES table contains these columns:\nEMPLOYEE_ID NUMBER(5) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nADDRESS VARCHAR2(30)\nPHONE NUMBER(10)\n\nWhich DELETE statement will delete the appropriate record without deleting any additional records?':
+		'DELETE FROM employees WHERE employee_id = 348;',
+
+	'The EMPLOYEES table contains the following columns:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFAST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2(20)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\nBONUS NUMBER(9,2)\n\nYou want to execute one DML statement to change the salary of all employees in department 10 to equal the new salary of employee number 89898. Currently, all employees in department 10 have the same salary value. Which statement should you execute?':
+		'UPDATE employees SET salary = (SELECT salary FROM employees WHERE employee_id = 89898) WHERE department_id = 10;',
+
+	'If the subquery returns one row, how many rows will be deleted from the employees table?\nDELETE FROM employees\nWHERE department_id =\n (SELECT department_id\n FROM departments\n WHERE department_name LIKE \'%Public%\');':
+		'All rows in the employees table of employees who work in the given department will be deleted.',
+
+	'What keyword in an UPDATE statement speficies the column that you want to change?':
+		'SET',
+
+	'To return a table summary on the customers table, which of the following is correct?':
+		'DESCRIBE customers, or DESC customers',
+
+	'The PRODUCTS table contains these columns:\nPRODUCT_ID NUMBER NOT NULL\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER NOT NULL\nLIST_PRICE NUMBER (7,2)\nCOST NUMBER (5,2)\nQTY_IN_STOCK NUMBER(4)\nLAST_ORDER_DT DATE DEFAULT SYSDATE NOT NUL\n\nWhich INSERT statement will execute successfully?':
+		"INSERT INTO products (product_id, product_name, supplier_id, list_price, cost, qty_in_stock) VALUES(2958, 'Cable', 8690, 7.09, 4.04, 700)",
+
+	'Assume all the column names are correct. The following SQL statement will execute which of the following?\nINSERT INTO departments\n(department_id, department_name, manager_id, location_id)\nVALUES\n(70, \'Public Relations\', 100, 1700);':
+		'70 will be inserted into the department_id column.',
+
+	'You need to copy rows from the EMPLOYEE table to the EMPLOYEE_HIST table. What could you use in the INSERT statement to accomplish this task?':
+		'A subquery',
+
+	'The STUDENTS table contains these columns:\nSTU_ID NUMBER(9) NOT NULL\nLAST_NAME VARCHAR2 (30) NOT NULL\nFIRST_NAME VARCHAR2 (25) NOT NULL\nDOB DATE\nSTU_TYPE_ID VARCHAR2(1) NOT NULL\nENROLL_DATE DATE\n\nYou create another table, named FT_STUDENTS, with an identical structure.You want to insert all full-time students who have a STU_TYPE_ID value of "F" into the new table. You execute this INSERT statement:\n\nINSERT INTO ft_students\n (SELECT stu_id, last_name, first_name, dob, stu_type_id, enroll_date\n FROM students\n WHERE UPPER(stu_type_id) = \'F\');\n\nWhat is the result of executing this INSERT statement?':
+		'All full-time students are inserted into the FT_STUDENTS table.',
+
+	'Which of the following statements will add a new customer to the customers table in the Global Fast Foods database?':
+		"INSERT INTO customers (id, first_name, last_name, address, city, state, zip, phone_number) VALUES (145, 'Katie', 'Hernandez', '92 Chico Way', 'Los Angeles', 'CA', 98008, 8586667641);",
+
+	'Which statement about the VALUES clause of an INSERT statement is true?':
+		'If no column list is specified, the values must be listed in the same order that the columns are listed in the table.',
+
+	'If the employees table has 7 rows, how many rows are inserted into the copy_emps table with the following statement:\nINSERT INTO copy_emps (employee_id, first_name, last_name, salary, department_id)\nSELECT employee_id, first_name, last_name, salary, department_id\nFROM employees':
+		'7 rows, as no WHERE-clause restricts the rows returned on the subquery.',
+
+	'Using the INSERT statement and assuming that a column can accept null values, how can you implicitly insert a null value in a column?':
+		'Omit the column in the column list.',
+
+	'Insert statements can be combined with subqueries to create more than one row per statement. True or False?':
+		'True',
+
+	'Which statement below will not insert a row of data into a table?':
+		"INSERT INTO (id, lname, fname, lunch_num) VALUES (143354, 'Roberts', 'Cameron', 6543);",
+
+	'Multi-table inserts are used when the same source data should be inserted into _____________ target table.':
+		'More than one',
+
+	'The DEFAULT keyword can be used in the following statements:':
+		'INSERT and UPDATE',
+
+	'The default value must match the __________ of the column.':
+		'Datatype',
+
+	'One of the sales representatives, Janet Roper, has informed you that she was recently married, and she has requested that you update her name in the employee database. Her new last name is Cooper. Janet is the only person with the last name of Roper that is employed by the company. The EMPLOYEES table contains these columns and all data is stored in lowercase:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2 (20)\nHIRE_DATE DATE\nSALARY NUMBER(10)\n\nWhich UPDATE statement will accomplish your objective?':
+		"UPDATE employees SET last_name = 'cooper' WHERE last_name = 'roper';",
+
+	'To change an existing row in a table, you can use the UPDATE or INSERT statements. True or False?':
+		'False',
+
+	'One of your employees was recently married. Her employee ID is still 189, however, her last name is now Rockefeller. Which SQL statement will allow you to reflect this change?':
+		"UPDATE my_employees SET last_name = 'Rockefeller' WHERE employee_ID = 189;",
+
+	'The TEACHERS and CLASS_ASSIGNMENTS tables contain these columns:\nTEACHERS:\nTEACHER_ID NUMBER(5)\nNAME VARCHAR2(25)\nSUBJECT_ID NUMBER(5)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\n\nCLASS_ASSIGNMENTS:\nCLASS_ID NUMBER(5)\nTEACHER_ID NUMBER(5)\nSTART_DATE DATE\nMAX_CAPACITY NUMBER(3)\n\nWhich scenario would require a subquery to return the desired results?':
+		'You need to create a report to display the teachers who teach more classes than the average number of classes taught by each teacher.',
+
+	'You need to remove a row from the EMPLOYEES table. Which statement would you use?':
+		'DELETE with a WHERE clause',
+
+	'The MERGE statement first tries to update one or more rows in a table that match the criteria; if no row matches the criteria for the update, a new row will automatically be inserted instead. True or False?':
+		'True',
+
+	'What would happen if you issued a DELETE statement without a WHERE clause?':
+		'All the rows in the table would be deleted.',
+
+	'DML is an acronym that stands for:':
+		'Data Manipulation Language',
+
+	'Using your knowledge of the employees table, what would be the result of the following statement:\nDELETE FROM employees;':
+		'All rows in the employees table will be deleted if there are no constraints on the table.',
+
+	'Examine the structures of the PLAYERS, MANAGERS, and TEAMS tables:\nPLAYERS:\nPLAYER_ID NUMBER Primary Key\nLAST_NAME VARCHAR2 (30)\nFIRST_NAME VARCHAR2 (25)\nTEAM_ID NUMBER\nMGR_ID NUMBER\nSIGNING_BONUS NUMBER(9,2)\nSALARY NUMBER(9,2)\n\nMANAGERS:\nMANAGER_ID NUMBER Primary Key\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nTEAM_ID NUMBER\n\nTEAMS:\nTEAM_ID NUMBER Primary Key\nTEAM_NAME VARCHAR2 (20)\nOWNER_LAST_NAME VARCHAR2 (20)\nOWNER_FIRST_NAME VARCHAR2 (20)\n\nWhich situation would require a subquery to return the desired result?':
+		'To display the names of the managers for all the teams owned by a given owner',
+
+	'You need to update the area code of employees that live in Atlanta. Evaluate this partial UPDATE statement:\nUPDATE employee\nSET area_code = 770\n\nWhich of the following should you include in your UPDATE statement to achieve the desired results?':
+		"WHERE city = 'Atlanta';",
+
+	// Section 12 Quiz (Oracle Database Programming with SQL) - Comments & Extras
+	'When inserting rows into a table, all columns must be given values. True or False?':
+		'False',
+
+	'What is the quickest way to use today\'s date when you are creating a new row?':
+		'Use the SYSDATE function.',
+
+	'Examine the structures of the PRODUCTS and SUPPLIERS tables:\nSUPPLIERS:\nSUPPLIER_ID NUMBER NOT NULL, Primary Key\nSUPPLIER_NAME VARCHAR2 (25)\nADDRESS VARCHAR2 (30)\nCITY VARCHAR2 (25)\nREGION VARCHAR2 (10)\nPOSTAL_CODE VARCHAR2 (11)\n\nPRODUCTS:\nPRODUCT_ID NUMBER NOT NULL, Primary Key\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER Foreign key to SUPPLIER_ID of the SUPPLIERS table\nCATEGORY_ID NUMBER\nQTY_PER_UNIT NUMBER\nUNIT_PRICE NUMBER (7,2)\nQTY_IN_STOCK NUMBER\nQTY_ON_ORDER NUMBER\nREORDER_LEVEL NUMBER\n\nYou want to delete any products supplied by the five suppliers located in Atlanta. Which script should you use?':
+		"DELETE FROM products WHERE supplier_id IN (SELECT supplier_id FROM suppliers WHERE UPPER(city) = 'ATLANTA');",
+
+	'Is the following statement valid, i.e. is it allowed to update rows in one table, based on a subquery from another table?\nUPDATE copy_emp\nSET department_id = (SELECT department_id\n FROM employees\n WHERE employee_id = 100)\nWHERE job_id = (SELECT job_id\n FROM employees\n WHERE employee_id = 200);':
+		'Yes, this is a perfectly valid statement.',
+
+	'The PLAYERS table contains these columns:\nPLAYER_ID NUMBER NOT NULL\nPLAYER_LNAME VARCHAR2(20) NOT NULL\nPLAYER_FNAME VARCHAR2(10) NOT NULL\nTEAM_ID NUMBER\nSALARY NUMBER(9,2)\n\nYou need to increase the salary of each player for all players on the Tiger team by 12.5 percent. The TEAM_ID value for the Tiger team is 5960. Which statement should you use?':
+		'UPDATE players SET salary = salary * 1.125 WHERE team_id = 5960;',
+
+	'In a conditional multi-table insert, you can specify either __________ or __________.':
+		'ALL; FIRST',
+
+	'The EMPLOYEES table contains the following columns:\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nDEPTARTMENT_ID VARCHAR2(20)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\nBONUS NUMBER(9,2)\n\nYou need to increase the salary for all employees in department 10 by 10 percent. You also need to increase the bonus for all employees in department 10 by 15 percent. Which statement should you use?':
+		'UPDATE employees SET salary = salary * 1.10, bonus = bonus * 1.15 WHERE department_id = 10;',
+
+	'You need to add a row to an existing table. Which DML statement should you use?':
+		'INSERT',
+
+	'You have been instructed to add a new customer to the CUSTOMERS table. Because the new customer has not had a credit check, you should not add an amount to the CREDIT column.\nThe CUSTOMERS table contains these columns:\nCUST_ID NUMBER(10)\nCOMPANY VARCHAR2(30)\nCREDIT NUMBER(10)\nPOC VARCHAR2(30)\nLOCATION VARCHAR2(30)\n\nWhich two INSERT statements will accomplish your objective?':
+		"INSERT INTO customers (cust_id, company, poc, location) VALUES (200, 'InterCargo', 'tflanders', 'samerica');|INSERT INTO customers VALUES (200, 'InterCargo', null, 'tflanders', 'samerica');",
+
+	'Which two commands can be used to modify existing data in a database row?':
+		'UPDATE|MERGE',
+
+	'Which of the following statements best describes what will happen to the student table in this SQL statement?\nUPDATE students\nSET lunch_number =\n    (SELECT lunch_number\n     FROM student\n     WHERE student_id = 17)\nWHERE student_id = 19;':
+		"The statement updates the student_table by replacing student id 19's lunch number with student id 17's lunch number.",
+
+	'If a default value was set for a null column, Oracle sets the column to the default value. However, if no default value was set when the column was created, Oracle inserts a space. True or False?':
+		'False',
+
+	'Using MERGE accomplishes an __________ and __________ simultaneously.':
+		'INSERT; UPDATE',
+
+	'Is it possible to insert more than one row at a time using an INSERT statement with a VALUES clause?':
+		'No, you can only create one row at a time when using the VALUES clause.',
+
+	'One employee has the last name of \'King\' in the employees table. How many rows will be deleted from the employees table with the following statement?\nDELETE FROM employees\nWHERE last_name = \'king\';':
+		'No rows will be deleted, as no employees match the WHERE-clause.',
+
+	'When inserting a new row, the null keyword can be included in the values list for any column that allows nulls. True or False?':
+		'True',
+
+	'If you are performing an UPDATE statement with a subquery, it MUST be a correlated subquery. True or False?':
+		'False',
+
+	'You want to enter a new record into the CUSTOMERS table. Which two commands can be used to create new rows?':
+		'INSERT, MERGE',
+
 } satisfies OracleQaBank;
+
