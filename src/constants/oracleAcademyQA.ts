@@ -3032,6 +3032,10 @@ export const ORACLE_QA_BANK = {
 
 	'Which one of the following statements about indexes is true?':
 		'An index is created automatically when a PRIMARY KEY constraint is created.',
+
+	'Evaluate this statement: CREATE SEQUENCE sales_item_id_seq START WITH 101 MAXVALUE 9000090 CYCLE; Which statement about this CREATE SEQUENCE statement is true?':
+		'The sequence will reuse numbers and will start with 101.',
 } satisfies OracleQaBank;
+
 
 
