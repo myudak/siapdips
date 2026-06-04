@@ -3038,6 +3038,9 @@ export const ORACLE_QA_BANK = {
 
 	'Evaluate this statement: DROP SEQUENCE line_item_id_seq; What does this statement accomplish?':
 		'It removes the sequence from the data dictionary.',
+
+	'Which keyword is used to remove a sequence?':
+		'Drop',
 } satisfies OracleQaBank;
 
 
