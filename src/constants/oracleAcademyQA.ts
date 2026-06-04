@@ -2809,6 +2809,9 @@ export const ORACLE_QA_BANK = {
 
 	'You administer an Oracle database which contains a table named EMPLOYEES. Luke, a database user, must create a report that includes the names and addresses of all employees. You do not want to grant Luke access to the EMPLOYEES table because it contains sensitive data. Which of the following actions should you perform first?':
 		'Create a view.',
+
+	'Your manager has just asked you to create a report that illustrates the salary range of all the employees at your company. Which of the following SQL statements will create a view called SALARY_VU based on the employee last names, department names, salaries, and salary grades for all employees? Use the EMPLOYEES, DEPARTMENTS, and JOB_GRADES tables. Label the columns Employee, Department, Salary, and Grade, respectively.':
+		'CREATE OR REPLACE VIEW salary_vu AS SELECT e.last_name "Employee", d.department_name "Department", e.salary "Salary", j. grade_level "Grade" FROM employees e, departments d, job_grades j WHERE e.department_id = d.department_id AND e.salary BETWEEN j.lowest_sal and j.highest_sal;',
 } satisfies OracleQaBank;
 
 
