@@ -2853,7 +2853,7 @@ export const ORACLE_QA_BANK = {
 		'All indexes.',
 
 	'Evaluate this CREATE SEQUENCE statement: CREATE SEQUENCE order_id_seq NOCYCLE NOCACHE; Which statement is true?':
-		'The sequence does not preallocate values and retain them in memory.',
+		'The sequence will start with 1.',
 
 	'The EMPLOYEES table contains these columns: EMPLOYEE_ID NUMBER NOT NULL (Primary Key), LAST_NAME VARCHAR2(20), FIRST_NAME VARCHAR2(20), DEPARTMENT_ID NUMBER (Foreign Key), HIRE_DATE DATE, SALARY NUMBER. On which column is an index automatically created?':
 		'EMPLOYEE_ID.',
