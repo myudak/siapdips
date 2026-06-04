@@ -2337,5 +2337,161 @@ export const ORACLE_QA_BANK = {
 	'You want to enter a new record into the CUSTOMERS table. Which two commands can be used to create new rows?':
 		'INSERT, MERGE',
 
+	'To store time with fractions of seconds, which datatype should be used for a table column?':
+		'TIMESTAMP',
+
+	'The ELEMENTS column is defined as:\nNUMBER(6,4)\nHow many digits to the right of the decimal point are allowed for the ELEMENTS column?':
+		'Four',
+
+	'The TIMESTAMP data type allows what?':
+		'Time to be stored as a date with fractional seconds.',
+
+	'Which data types stores variable-length character data? Select two.':
+		'CLOB|VARCHAR2',
+
+	'INTERVAL DAY TO SECOND stores a period of time in terms of days, hours, minutes, and seconds. True or False?':
+		'True',
+
+	"A column's data type can always be changed from NUMBER to VARCHAR2 but not from VARCHAR2 to NUMBER, provided the table is empty. True or False?":
+		'False',
+
+	'You can use the ALTER TABLE statement to:':
+		'All of the above',
+
+	'Evaluate this statement:\nALTER TABLE inventory \nMODIFY backorder_amount NUMBER(8,2);\n\nWhich task will this statement accomplish?':
+		'Changes the definition of the BACKORDER_AMOUNT column to NUMBER(8,2)',
+
+	'You need to remove all the data in the SCHEDULE table, the structure of the table, and the indexes associated with the table. Which statement should you use?':
+		'DROP TABLE',
+
+	'When you use ALTER TABLE to add a column, the new column:':
+		'Becomes the last column in the table',
+
+	'It is possible to create a table by using the CREATE TABLE command in conjunction with a subquery. True or False?':
+		'True',
+
+	'I have a table named School_Friends in my schema. You want to build a table in your schema named School_Friends. This is ______________, because ____________________________________.':
+		'possible; my schema is separate from yours, and it is okay for us to have like-named tables in our separate schemas.',
+
+	'Which statement about table and column names is true?':
+		'Table and column names must begin with a letter.',
+
+	'You are creating the EMPLOYEES table. This table should contain the COMMISSION_PCT column and use a value of 10 percent if no commission value is provided when a record is inserted. Which line should you include in the CREATE TABLE statement to accomplish this task?':
+		'commission_pct NUMBER(4,2) DEFAULT 0.10',
+
+	'Evaluate this CREATE TABLE statement:\n1. CREATE TABLE customer#1 ( \n2. cust_1 NUMBER(9), \n3. sales$ NUMBER(9), \n4. 2date DATE DEFAULT SYSDATE);\n\nWhich line of this statement will cause an error?':
+		'4',
+
+	'Which statement about data types is true?':
+		'The CHAR data type should be defined with a size that is not too large for the data it contains (or could contain) to save space in the database.',
+
+	"You are designing a table for the Human Resources department. This table must include a column that contains each employee's hire date. Which data type should you specify for this column?":
+		'DATE',
+
+	'To store large amounts of text you should simply create a series of VARCHAR2 columns in a table. True or False?':
+		'False',
+
+	'Which SQL statement below will correctly create the EMP table based on the structure of the EMPLOYEES table? Include only the EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY, and DEPARTMENT_ID columns.':
+		'CREATE TABLE emp\nAS\nSELECT employee_id, first_name, last_name, salary, department_id\nFROM employees;',
+
+	'Which CREATE TABLE statement will fail?':
+		'CREATE TABLE date (date_id NUMBER(9));',
+
+	'CREATE TABLE student_table \n    (id NUMBER(6), \n     lname VARCHAR(20), \n     fname VARCHAR(20), \n     lunch_num NUMBER(4));\nWhich of the following statements best describes the above SQL statement:':
+		'Creates a table named student_table with four columns: id, lname, fname, lunch_num',
+
+	"You want to issue the following command on a database that includes your company's inventory information: \nALTER TABLE products SET UNUSED COLUMN color;\nWhat will be the result of issuing this command?":
+		'The column named COLOR in the table named PRODUCTS will not be returned in subsequent reads of the table by Oracle, as it has been deleted logically.',
+
+	'The previous administrator created a table named CONTACTS, which contains outdated data. You want to remove the table and its data from the database. Which statement should you issue?':
+		'DROP TABLE',
+
+	'The FLASHBACK QUERY statement can restore data back to a point in time before the last COMMIT. True or False?':
+		'False',
+
+	"Evaluate this statement: \nWhich statement about this TRUNCATE TABLE statement is true?":
+		'You can issue this statement to retain the structure of the employees table.',
+
+	'You need to change the name of the EMPLOYEES table to the EMP table. Which statement should you use?':
+		'RENAME employees TO emp;',
+
+	'The TEAMS table contains these columns:\nTEAM_ID NUMBER(4) Primary Key\nTEAM_NAME VARCHAR2(20)\nMGR_ID NUMBER(9)\n\nThe TEAMS table is currently empty. You need to allow users to include text characters in the manager identification values. Which statement should you use to implement this?':
+		'ALTER TABLE teams\nMODIFY (mgr_id VARCHAR2(15));',
+
+	'Evaluate the structure of the EMPLOYEE table:\nEMPLOYEE_ID NUMBER(9) \nLAST_NAME VARCHAR2(25) \nFIRST_NAME VARCHAR2(25) \nDEPARTMENT_ID NUMBER(9) \nMANAGER_ID NUMBER(9) \nSALARY NUMBER(7,2)\n\nWhich statement should you use to increase the LAST_NAME column length to 35 if the column currently contains 200 records?':
+		'ALTER TABLE employee \nMODIFY (last_name VARCHAR2(35));',
+
+	'Which statement about a column is NOT true?':
+		'You can modify the data type of a column if the column contains non-null data.',
+
+	'Once they are created, external tables are accessed with normal SQL statements. (True or False?)':
+		'True',
+
+	'Which column name is valid?':
+		'NUMBER_1$',
+
+	'DCL, which is the acronym for Data Control Language, allows:':
+		'A Database Administrator the ability to grant privileges to users.',
+
+	'A column that will be used to store binary data up to 4 Gigabytes in size should be defined as which datatype?':
+		'BLOB',
+
+	'Which of the following are valid Oracle datatypes?':
+		'DATE, TIMESTAMP WITH LOCAL TIME ZONE, BLOB',
+
+	'Evaluate this CREATE TABLE statement:\nCREATE TABLE sales \n( \n sales_id NUMBER(9), \n customer_id NUMBER(9), \n employee_id NUMBER(9), \n description VARCHAR2(30), \n sale_date TIMESTAMP WITH LOCAL TIME ZONE DEFAULT SYSDATE, \n sale_amount NUMBER(7,2));\n\nWhich business requirement will this statement accomplish?':
+		"Today's date should be used if no value is provided for the sale date.",
+
+	'Examine the structure of the DONATIONS table.\nDONATIONS: \nPLEDGE_ID NUMBER \nDONOR_ID NUMBER \nPLEDGE_DT DATE \nAMOUNT_PLEDGED NUMBER (7,2) \nAMOUNT_PAID NUMBER (7,2) \nPAYMENT_DT DATE\n\nYou need to reduce the precision of the AMOUNT_PLEDGED column to 5 with a scale of 2 and ensure that when inserting a row into the DONATIONS table without a value for the AMOUNT_PLEDGED column, a price of $10.00 will automatically be inserted. The DONATIONS table currently contains NO records. Which statement is true?':
+		'Both changes can be accomplished with one ALTER TABLE statement.',
+
+	'Which command could you use to quickly remove all data from the rows in a table without deleting the table itself?':
+		'TRUNCATE TABLE',
+
+	'You need to remove all the rows from the SALES_HIST table. You want to release the storage space, but do not want to remove the table structure. Which statement should you use?':
+		'The TRUNCATE TABLE statement',
+
+	'What will be the result in the hire_date column following this insert statement:\n\nINSERT INTO employees VALUES (10, \'Natacha\', \'Hansen\', DEFAULT);':
+		'Statement will work and the hire_date column will have the value of the date when the statement was run.',
+
+	'You want to create a database table that will contain information regarding products that your company released during 2001. Which name can you assign to the table that you create?':
+		'PRODUCTS_2001',
+
+	'You want to create a table named TRAVEL that is a child of the EMPLOYEES table. Which of the following statements should you issue?':
+		'CREATE TABLE travel \n(destination_id number primary key, departure_date date, return_date date, emp_id number(10) REFERENCES employees (emp_id));',
+
+	'Evaluate this CREATE TABLE statement:\nCREATE TABLE sales \n(sales_id NUMBER, \ncustomer_id NUMBER, \nemployee_id NUMBER, \nsale_date TIMESTAMP WITH TIME ZONE, \nsale_amount NUMBER(7,2));\n\nWhich statement about the SALE_DATE column is true?':
+		"Data stored in the column will be returned in the database's local time zone.",
+
+	'Which statement about decreasing the width of a column is true?':
+		'When a character column contains data, you can decrease the width of the column if the existing data does not violate the new size.',
+
+	'Which statement about creating a table is true?':
+		"If no schema is explicitly included in a CREATE TABLE statement, the table is created in the current user's schema.",
+
+	'When creating a new table, which of the following naming rules apply. (Choose three)':
+		'Must begin with a letter|Must contain ONLY A - Z, a - z, 0 - 9, _ (underscore), $, and #|Must be between 1 to 30 characters long',
+
+	'You need to store the SEASONAL data in months and years. Which data type should you use?':
+		'INTERVAL YEAR TO MONTH',
+
+	'Comments can be added to a table by using the COMMENT ON TABLE statement. The comments being added are enclosed in:':
+		"Single quotes ' '",
+
+	'Which of the following will correctly change the name of the LOCATIONS table to NEW_LOCATIONS?':
+		'RENAME LOCATIONS TO NEW_LOCATIONS',
+
+	'The BLOB datatype can max hold 128 Terabytes of data. True or False?':
+		'True',
+
+	'Which statement should you use to decrease the width of the FIRST_NAME column to 10 if the column currently contains 1500 records, but none are longer than 10 bytes or characters?':
+		'ALTER TABLE players\nMODIFY (first_name VARCHAR2(10));',
+
+	'Your supervisor has asked you to modify the AMOUNT column in the ORDERS table. He wants the column to be configured to accept a default value of 250. The table contains data that you need to keep. Which statement should you issue to accomplish this task?':
+		'ALTER TABLE orders\nMODIFY (amount DEFAULT 250);',
+
+	"The EMPLOYEE_ID column currently contains 500 employee identification numbers. Business requirements have changed and you need to allow users to include text characters in the identification values. Which statement should you use to change this column's data type?":
+		'You CANNOT modify the data type of the EMPLOYEE_ID column, as the table is not empty.',
+
 } satisfies OracleQaBank;
 
