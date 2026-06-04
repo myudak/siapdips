@@ -2898,7 +2898,7 @@ export const ORACLE_QA_BANK = {
 		'USER_SEQUENCES',
 
 	'Which statement would you use to remove the LAST_NAME_IDX index on the LAST_NAME column of the EMPLOYEES table?':
-		'DROP INDEX last_name_idx.',
+		'DROP INDEX last_name_idx;',
 
 	'All tables must have indexes on them otherwise they cannot be queried. True or False?':
 		'False',
