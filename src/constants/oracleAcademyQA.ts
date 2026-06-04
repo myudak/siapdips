@@ -2412,6 +2412,8 @@ export const ORACLE_QA_BANK = {
 	'The FLASHBACK TABLE to BEFORE DROP can restore only the table structure, but not its data back to before the table was dropped. True or False?':
 		'False',
 
+	"You need to store the HIRE_DATE value with a time zone displacement value and allow data to be returned in the user's local session time zone. Which data type should you use?":
+		'TIMESTAMP WITH LOCAL TIME ZONE',
 
 	"Evaluate this statement: \nWhich statement about this TRUNCATE TABLE statement is true?":
 		'You can issue this statement to retain the structure of the employees table.',
