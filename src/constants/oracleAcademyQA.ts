@@ -2669,6 +2669,144 @@ export const ORACLE_QA_BANK = {
 	'You can drop a column in a table with a simple ALTER TABLE DROP COLUMN statement, even if the column is referenced in a constraint. True or False?':
 		'False',
 
+	'Evaluate this CREATE VIEW statement: CREATE VIEW emp_view AS SELECT SUM(salary) FROM employees; Which statement is true?':
+		'You cannot update data in the EMPLOYEES table using the EMP_VIEW view.',
+
+	'Which keyword(s) would you include in a CREATE VIEW statement to create the view whether or not the base table exists?':
+		'FORCE',
+
+	'Views must be used to select data from a table. As soon as a view is created on a table, you can no longer select directly from the table. True or False?':
+		'False',
+
+	'A view can be used to keep a history record of old data from the underlying tables, so even if a row is deleted from a table, you can still select the row through the view. True or False?':
+		'False',
+
+	'In order to query a database using a view, which of the following statements applies?':
+		'You can retrieve data from a view as you would from any table.',
+
+	'If a database administrator wants to ensure that changes performed through a view do not violate existing constraints, which clause should he include when creating the view?':
+		'WITH CHECK OPTION',
+
+	'What is the purpose of including the WITH CHECK OPTION clause when creating a view?':
+		'To insure that no rows are updated through the view that would prevent those rows from being returned by the view in the future.',
+
+	'Only one type of view exists. True or False?':
+		'False',
+
+	'For a View created using the WITH CHECK OPTION keywords, which of the following statements are true?':
+		'Prohibits changing rows not returned by the subquery in the view definition.',
+
+	'You cannot insert data through a view if the view includes ______.':
+		'A GROUP BY clause',
+
+	'When you drop a view, the data it contains is also deleted. True or False?':
+		'False',
+
+	'Evaluate this CREATE VIEW statement: CREATE VIEW sales_view AS SELECT customer_id, region, SUM(sales_amount) FROM sales WHERE region IN (10, 20, 30, 40) GROUP BY region, customer_id; Which statement is true?':
+		'You cannot modify data in the SALES table using the SALES_VIEW view.',
+
+	'You want to create a view based on the SALESREP table. You plan to grant access to this view to members of the Sales department. You want Sales employees to be able to update the SALESREP table through the view, which you plan to name SALESREP_VIEW. What should not be specified in your CREATE VIEW statement?':
+		'A GROUP BY clause',
+
+	'How do you remove a view?':
+		'DROP VIEW view_name',
+
+	'When you drop a table referenced by a view, the view is automatically dropped as well. True or False?':
+		'False',
+
+	'Which statement about an inline view is true?':
+		'An inline view is a subquery in the FROM clause, often named with an alias.',
+
+	'A Top-N Analysis is capable of ranking a top or bottom set of results. True or False?':
+		'True',
+
+	'Which of these Keywords is typically used with a Top-N Analysis?':
+		'Rownum',
+
+	'You must create a view that will display the name, customer identification number, new balance, finance charge, and credit limit of all customers. You issue this statement: CREATE OR REPLACE VIEW CUST_CREDIT_V AS SELECT c.last_name, c.customer_id, a.new_balance, a.finance_charge, a.credit_limit FROM customers c, accounts a WHERE c.account_id = a.account_id WITH READ ONLY; Which type of SQL command can be issued on the CUST_CREDIT_V view?':
+		'SELECT',
+
+	'You administer an Oracle database. Jack manages the Sales department. He and his employees often find it necessary to query the database to identify customers and their orders. He has asked you to create a view that will simplify this procedure for himself and his staff. The view should not accept INSERT, UPDATE, or DELETE operations. Which of the following statements should you issue?':
+		'CREATE VIEW sales_view AS (SELECT c.companyname, c.city, o.orderid, o. orderdate, o.total FROM customers c, orders o WHERE c.custid = o.custid) WITH READ ONLY;',
+
+	'Which statement about performing DML operations on a view is true?':
+		'You can perform DML operations on simple views.',
+
+	'Which option would you use when creating a view to ensure that no DML operations occur on the view?':
+		'WITH READ ONLY',
+
+	'Unlike tables, views contain no data of their own. True or False?':
+		'True',
+
+	'Which of the following statements is a valid reason for using a view?':
+		'Views provide data independence for infrequent users and application programs. One view can be used to retrieve data from several tables. Views can be used to provide data security.',
+
+	'You need to create a view on the SALES table, but the SALES table has not yet been created. Which statement is true?':
+		'You can use the FORCE option to create the view before the SALES table has been created.',
+
+	'Which of the following keywords cannot be used when creating a view?':
+		'They are all valid keywords when creating views.',
+
+	'A view can contain a select statement with a subquery. True or False?':
+		'True',
+
+	'The FACULTY table contains these columns: FACULTYID VARCHAR2(5) NOT NULL PRIMARY KEY FIRST_NAME VARCHAR2(20) LAST_NAME VARCHAR2(20) ADDRESS VARCHAR2(35) CITY VARCHAR2(15) STATE VARCHAR2(2) ZIP NUMBER(9) TELEPHONE NUMBER(10) STATUS VARCHAR2(2) NOT NULL The COURSE table contains these columns: COURSEID VARCHAR2(5) NOT NULL PRIMARY KEY SUBJECT VARCHAR2(5) TERM VARCHAR2(6) FACULTYID VARCHAR2(5) NOT NULL FOREIGN KEY You have been asked to compile a report that identifies all adjunct professors who will be teaching classes in the upcoming term. You want to create a view that will simplify the creation of this report. Which CREATE VIEW statements will accomplish this task?':
+		'CREATE VIEW pt_view AS (SELECT first_name, last_name, status, courseid, subject, term FROM faculty f, course c WHERE f.facultyid = c.facultyid);',
+
+	'What is one advantage of using views?':
+		'To provide restricted data access',
+
+	'You can create a view if the view subquery contains an inline view. True or False?':
+		'True',
+
+	'The EMPLOYEES table contains these columns: EMPLOYEE_ID NUMBER LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER JOB_ID NUMBER MANAGER_ID NUMBER SALARY NUMBER(9,2) COMMISSOIN NUMBER(7,2) HIRE_DATE DATE Which SELECT statement could be used to display the 10 lowest paid clerks that belong to department 70?':
+		'SELECT ROWNUM "Ranking",last_name||\',\'||first_name "Employee", salary "Salary" FROM (SELECT last_name, first_name, salary, job_id FROM employees WHERE job_id LIKE \'CLERK\' AND department_id = 70 ORDER BY salary) WHERE ROWNUM <=10;',
+
+	'Which of the following describes a top-N query?':
+		'A top-N query returns a limited result set, returning data based on highest or lowest criteria.',
+
+	'Which of these is not a valid type of View?':
+		'ONLINE',
+
+	'Given the following view, which operations would be allowed on the emp_dept view? CREATE OR REPLACE VIEW emp_dept AS SELECT SUBSTR(e.first_name,1,1) ||\' \'||e.last_name emp_name, e.salary, e.hire_date, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id AND d.department_id >=50;':
+		'SELECT, UPDATE of some columns, DELETE',
+
+	'You need to create a new view on the EMPLOYEES table to update salary information for employees in Department 50. You need to ensure that DML operations through the view can not change salary values in other departments. Which clause should be included in the CREATE VIEW statement?':
+		'WITH CHECK OPTION',
+
+	'You create a view on the EMPLOYEES and DEPARTMENTS tables to display salary information per department. What will happen if you issue the following statement? CREATE OR REPLACE VIEW sal_dept AS SELECT SUM(e.salary) sal, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id GROUP BY d.department_name;':
+		'A complex view is created that returns the sum of salaries per department.',
+
+	'Evaluate this view definition: CREATE OR REPLACE VIEW part_name_v AS SELECT DISTINCT part_name FROM parts WHERE cost >= 45; Which of the following statements using the PART_NAME_V view will execute successfully?':
+		'SELECT * FROM part_name_v;',
+
+	'Any select statement can be stored in the database as a view. True or False?':
+		'True',
+
+	'Which statement about the CREATE VIEW statement is true?':
+		'A CREATE VIEW statement CAN contain a join query.',
+
+	'Which statement would you use to alter a view?':
+		'CREATE OR REPLACE VIEW',
+
+	'Examine the view below and choose the operation that CANNOT be performed on it. CREATE VIEW dj_view (last_name, number_events) AS SELECT c.last_name, COUNT(e.name) FROM d_clients c, d_events e WHERE c.client_number = e.client_number GROUP BY c.last_name;':
+		'INSERT INTO dj_view VALUES (\'Turner\', 8);',
+
+	'Which action can be performed by using DML statements?':
+		'Deleting records in a table',
+
+	'Which of the following is true about ROWNUM?':
+		'It is the number assigned to each row returned from a query as it is read from the table.',
+
+	'Which of the following DML operations is not allowed when using a Simple View created with read only?':
+		'All of the above',
+
+	'An inline view is an unnamed select statement found:':
+		'Enclosed in parentheses within the FROM clause of a surrounding query.',
+
+	'Given the following CREATE VIEW statement, what data will be returned? CREATE OR REPLACE VIEW emp_dept AS SELECT SUBSTR(e.first_name,1,1) ||\' \'||e.last_name emp_name, e.salary, e.hire_date, d.department_name FROM employees e, departments d WHERE e.department_id = d.department_id AND d.department_id >=50;':
+		'First character from employee first_name concatenated to the last_name, the salary, the hire_date, and the department_name of all employees working in department number 50 or higher.',
+
 } satisfies OracleQaBank;
 
 
