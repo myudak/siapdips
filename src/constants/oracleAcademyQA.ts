@@ -3256,6 +3256,8 @@ export const ORACLE_QA_BANK = {
 		'NUMBER',
 	'You can use DROP COLUMN to drop all columns in a table, leaving a table structure with no columns. True or False?':
 		'False',
+	'Evaluate this statement: DELETE FROM customer; Which statement is true?':
+		'The statement deletes all the rows from the CUSTOMER table.',
 } satisfies OracleQaBank;
 
 
