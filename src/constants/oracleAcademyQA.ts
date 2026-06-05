@@ -3238,6 +3238,8 @@ export const ORACLE_QA_BANK = {
 		'INSERT, UPDATE, DELETE, MERGE',
 	'A software verification and validation method.':
 		'Unit testing',
+	'Unit testing is done prior to a database going into production to ensure a random number of business requirements functions properly. True or False?':
+		'False',
 } satisfies OracleQaBank;
 
 
