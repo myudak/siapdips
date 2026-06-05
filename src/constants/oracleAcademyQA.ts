@@ -3232,6 +3232,10 @@ export const ORACLE_QA_BANK = {
 		'True',
 	'If UserB has privileges to see the data in a table, as soon as UserA has entered data into that table, UserB can see that data. True or False?':
 		'False',
+
+	// Additional QA from screenshot (2026-06-05)
+	'What kinds of transactions should you test against your tables and views?':
+		'INSERT, UPDATE, DELETE, MERGE',
 } satisfies OracleQaBank;
 
 
