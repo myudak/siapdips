@@ -3200,6 +3200,38 @@ export const ORACLE_QA_BANK = {
 		'Named groups of related privileges given to a user or another role.',
 	'Which statement would you use to remove an object privilege granted to a user?':
 		'REVOKE',
+
+	// Section 18 Quiz - Database Programming With SQL (DeniAce blog, 2026-06-05)
+	"Steven King's row in the EMPLOYEES table has EMPLOYEE_ID = 100 and SALARY = 24000. A user issues the following statements in the order shown: UPDATE employees SET salary = salary * 2 WHERE employee_id = 100; COMMIT; UPDATE employees SET salary = 30000 WHERE employee_id = 100; The user's database session now ends abnormally. What is now King's salary in the table?":
+		'48000',
+	'Table MYTAB contains only one column of datatype CHAR(1). A user executes the following statements in the order shown. INSERT INTO mytab VALUES (\'A\'); INSERT INTO mytab VALUES (\'B\'); COMMIT; INSERT INTO mytab VALUES (\'C\'); ROLLBACK; Which rows does the table now contain?':
+		'A and B',
+	'If Oracle crashes, your changes are automatically rolled back. True or False?':
+		'True',
+	'Examine the following statements: UPDATE employees SET salary = 15000; SAVEPOINT upd1_done; UPDATE employees SET salary = 22000; SAVEPOINT upd2_done; DELETE FROM employees; You want to retain all the employees with a salary of 15000; What statement would you execute next?':
+		'ROLLBACK TO SAVEPOINT upd1_done;',
+	'COMMIT saves all outstanding data changes? True or False?':
+		'True',
+	'Examine the following statements: INSERT INTO emps SELECT * FROM employees; -- 107 rows inserted. SAVEPOINT Ins_Done; DELETE employees; -- 107 rows deleted SAVEPOINT Del_Done; UPDATE emps SET last_name = \'Smith\'; How would you undo the last Update only?':
+		'ROLLBACK to SAVEPOINT Del_Done',
+	'Examine the following statements: INSERT INTO emps SELECT * FROM employees; -- 107 rows inserted. SAVEPOINT Ins_Done; CREATE INDEX emp_lname_idx ON employees(last_name); UPDATE emps SET last_name = \'Smith\'; What happens if you issue a Rollback statement?':
+		'The update of last_name is undone, but the insert was committed by the CREATE INDEX statement.',
+	'Which SQL statement is used to remove all the changes made by an uncommitted transaction?':
+		'ROLLBACK',
+	'You need not worry about controlling your transactions. Oracle does it all for you. True or False?':
+		'False',
+	'When you logout of Oracle, your data changes are automatically rolled back. True or False?':
+		'False',
+	'User BOB\'s CUSTOMERS table contains 20 rows. BOB inserts two more rows into the table but does not COMMIT his changes. User JANE now executes: SELECT COUNT(*) FROM bob.customers; What result will JANE see?':
+		'20',
+	'Which of the following best describes the term "read consistency"?':
+		'It prevents other users from seeing changes to a table until those changes have been committed',
+	'A transaction makes several successive changes to a table. If required, you want to be able to rollback the later changes while keeping the earlier changes. What must you include in your code to do this?':
+		'A savepoint',
+	'If a database crashes, all uncommitted changes are automatically rolled back. True or False?':
+		'True',
+	'If UserB has privileges to see the data in a table, as soon as UserA has entered data into that table, UserB can see that data. True or False?':
+		'False',
 } satisfies OracleQaBank;
 
 
