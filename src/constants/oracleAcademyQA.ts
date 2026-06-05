@@ -3236,6 +3236,8 @@ export const ORACLE_QA_BANK = {
 	// Additional QA from screenshot (2026-06-05)
 	'What kinds of transactions should you test against your tables and views?':
 		'INSERT, UPDATE, DELETE, MERGE',
+	'A software verification and validation method.':
+		'Unit testing',
 } satisfies OracleQaBank;
 
 
