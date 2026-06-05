@@ -3182,6 +3182,22 @@ export const ORACLE_QA_BANK = {
 
 	'Which statement would you use to grant a role to users?':
 		'GRANT',
+
+	// Section 17 Quiz - Additional from DeniAce blog (2026-06-05)
+	'Which of the following are object privileges? (Choose two)':
+		'INSERT|SELECT',
+	'By Controlling User Access with Oracle Database Security, you can give access to specific Objects in the Database. True or False?':
+		'True',
+	'Select the correct REGULAR EXPRESSION functions: (Choose two)':
+		'REGEXP_INSTR, REGEXP_SUBSTR|REGEXP_LIKE, REGEXP_REPLACE',
+	'Which of these SQL functions used to manipulate strings is NOT a valid regular expression function?':
+		'REGEXP',
+	'You want to grant privileges to user CHAN that will allow CHAN to update the data in the EMPLOYEES table. Which type of privileges will you grant to CHAN?':
+		'Object privileges',
+	'Which of the following privileges must be assigned to a user account in order for that user to connect to an Oracle database?':
+		'CREATE SESSION',
+	'Roles are:':
+		'Named groups of related privileges given to a user or another role.',
 } satisfies OracleQaBank;
 
 
