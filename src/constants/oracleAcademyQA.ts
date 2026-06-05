@@ -3240,6 +3240,8 @@ export const ORACLE_QA_BANK = {
 		'Unit testing',
 	'Unit testing is done prior to a database going into production to ensure a random number of business requirements functions properly. True or False?':
 		'False',
+	'Unit testing may be a composite of many different possible cases, or approaches, a user would opt to execute a transaction. True or False?':
+		'True',
 } satisfies OracleQaBank;
 
 
