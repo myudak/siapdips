@@ -3242,6 +3242,20 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'Unit testing may be a composite of many different possible cases, or approaches, a user would opt to execute a transaction. True or False?':
 		'True',
+
+	// Final Exam Database Programming With SQL — DeniAce blog (2026-06-05)
+	'DELETE statements can use correlated subqueries? (True or False?)':
+		'True',
+	'A table can have more than one UNIQUE key constraint. True or False?':
+		'True',
+	'ALTER USER bob IDENTIFIED BY jim;\nWhich statement about the result of executing this statement is true?':
+		'A new password is assigned to user BOB.',
+	'Which of the following SQL statements will create a table called Birthdays with three columns for storing employee number, name and date of birth?':
+		'CREATE TABLE Birthdays (Empno NUMBER, Empname CHAR(20), Birthdate DATE);',
+	'You are designing a table for the Sales department. You need to include a column that contains each sales total. Which data type should you specify for this column?':
+		'NUMBER',
+	'You can use DROP COLUMN to drop all columns in a table, leaving a table structure with no columns. True or False?':
+		'False',
 } satisfies OracleQaBank;
 
 
