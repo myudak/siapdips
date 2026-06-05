@@ -3041,6 +3041,147 @@ export const ORACLE_QA_BANK = {
 
 	'Which keyword is used to remove a sequence?':
 		'Drop',
+
+	'Regular expressions used as check constraints are another way to ensure data is formatted correctly prior to being written into the database table. True or False?':
+		'True',
+
+	'Regular expressions are a method of describing both simple and complex patterns for searching and manipulating. True or False?':
+		'True',
+
+	'REGULAR EXPRESSIONS can be used as part of a contraint definition. (True or False?)':
+		'True',
+
+	'A role can be granted to another role. True or False?':
+		'True',
+
+	'Which of the following simplifies the administration of privileges?':
+		'A role',
+
+	'Which keyword would you use to grant an object privilege to all database users?':
+		'PUBLIC',
+
+	'User CRAIG creates a view named INVENTORY_V, which is based on the INVENTORY table. CRAIG wants to make this view available for querying to all database users. Which of the following actions should CRAIG perform?':
+		'He should assign the SELECT privilege to all database users for INVENTORY_V view.',
+
+	'If you are granted privileges to your friend\'s object, by default you may also grant access to this same object to other users. True or False?':
+		'False',
+
+	'Which data dictionary view shows which system privileges have been granted to a user?':
+		'USER_SYS_PRIVS',
+
+	'A Schema is a collection of Objects such as Tables, Views, and Sequences. True or False?':
+		'True',
+
+	'The database administrator wants to allow user Marco to create new tables in his own schema. Which privilege should be granted to Marco?':
+		'CREATE TABLE',
+
+	'You are the database administrator. You want to create a new user JONES with a password of MARK, and allow this user to create his own tables. Which of the following should you execute?':
+		'CREATE USER jones IDENTIFIED BY mark;\nGRANT CREATE SESSION TO jones;\nGRANT CREATE TABLE TO jones;',
+
+	'Which Object Privilege (other than Alter) can be granted to a Sequence?':
+		'SELECT',
+
+	'Object privileges are:':
+		'Required to manipulate the content of objects in the database.',
+
+	'The following table shows some of the output from one of the data dictionary views. Which view is being queried? USERNAME PRIVILEGE ADMIN_OPTION USCA_ORACLE_SQL01_S08 CREATE VIEW NO USCA_ORACLE_SQL01_S08 CREATE TABLE NO USCA_ORACLE_SQL01_S08 CREATE SYNONYM NO USCA_ORACLE_SQL01_S08 CREATE TRIGGER NO USCA_ORACLE_SQL01_S08 CREATE SEQUENCE NO USCA_ORACLE_SQL01_S08 CREATE DATABASE NO':
+		'user_sys_privs (lists system privileges granted to the user)',
+
+	'Which of the following best describes a role in an Oracle database?':
+		'A role is a name for a group of privileges.',
+
+	'A schema is:':
+		'A collection of objects, such as tables, views, and sequences.',
+
+	'System privileges are:':
+		'Required to gain access to the database.',
+
+	'You grant user AMY the CREATE SESSION privilege. Which type of privilege have you granted to AMY?':
+		'A system privilege',
+
+	'User ADAM has successfully logged on to the database in the past, but today he receives an error message stating that (although he has entered his password correctly) he cannot log on. What is the most likely cause of the problem?':
+		'ADAM\'s CREATE SESSION privilege has been revoked.',
+
+	'Which of the following are system privileges? (Choose two)':
+		'CREATE TABLE|CREATE SYNONYM',
+
+	'_________________ are special characters that have a special meaning, such as a wildcard character, a repeating character, a non-matching character, or a range of characters. You can use several of these symbols in pattern matching.':
+		'Meta characters',
+
+	'REGULAR EXPRESSIONS does exactly the same as LIKE--no more and no less. (True or False?)':
+		'False',
+
+	'Which of the following best describes the purpose of the REFERENCES object privilege on a table?':
+		'It allows a user to create foreign key constraints on the table.',
+
+	'When a user is logged into one database, he is restricted to working with objects found in that database. True or False?':
+		'False',
+
+	'What Oracle feature simplifies the process of granting and revoking privileges?':
+		'Role',
+
+	'Which of the following statements about granting object privileges is false?':
+		'Object privileges can only be granted through roles.',
+
+	'When granting an object privilege, which option would you include to allow the grantee to grant the privilege to another user?':
+		'WITH GRANT OPTION',
+
+	'You create a view named EMPLOYEES_VIEW on a subset of the EMPLOYEES table. User AUDREY needs to use this view to create reports. Only you and Audrey should have access to this view. Which of the following actions should you perform?':
+		'GRANT SELECT ON employees_view TO audrey;',
+
+	'Scott King owns a table called employees. He issues the following statement: GRANT select ON employees TO PUBLIC; Allison Plumb has been granted CREATE SESSION by the DBA. She logs into the database and issues the following statement: GRANT select ON scott_king.employees TO jennifer_cho; True or False: Allison\'s statement will fail.':
+		'True',
+
+	'Which of the following Object Privileges can be granted on an individual column on a table? (Choose two)':
+		'Update|References',
+
+	'REGULAR EXPRESSIONS can be used on CHAR, CLOB, and VARCHAR2 datatypes? (True or False)':
+		'True',
+
+	'Parentheses are not used to identify the sub expressions within the expression. True or False?':
+		'False',
+
+	'User JAMES has created a CUSTOMERS table and wants to allow all other users to SELECT from it. Which command should JAMES use to do this?':
+		'GRANT SELECT ON customers TO PUBLIC;',
+
+	'You need to grant user BOB SELECT privileges on the EMPLOYEES table. You want to allow BOB to grant this privileges to other users. Which statement should you use?':
+		'GRANT SELECT ON employees TO bob WITH GRANT OPTION;',
+
+	'User BOB\'s schema contains an EMPLOYEES table. BOB executes the following statement: GRANT SELECT ON employees TO mary WITH GRANT OPTION; Which of the following statements can MARY now execute successfully? (Choose two)':
+		'GRANT SELECT ON bob.employees TO PUBLIC;|SELECT FROM bob.employees;',
+
+	'User CHANG has been granted SELECT, UPDATE, INSERT, and DELETE privileges on the EMPLOYEES table. You now want to prevent Chang from adding or deleting rows from the table, while still allowing him to read and modify existing rows. Which statement should you use to do this?':
+		'REVOKE INSERT, DELETE ON employees FROM chang;',
+
+	'Which of the following is NOT a database object?':
+		'Subquery',
+
+	'Which statement would you use to add privileges to a role?':
+		'GRANT',
+
+	'Which of the following statements is true?':
+		'Database Links allow users to work on remote database objects without having to log into the other database.',
+
+	'User SUSAN creates an EMPLOYEES table, and then creates a view EMP_VIEW which shows only the FIRST_NAME and LAST_NAME columns of EMPLOYEES. User RUDI needs to be able to access employees\' names but no other data from EMPLOYEES. Which statement should SUSAN execute to allow this?':
+		'GRANT SELECT ON emp_view TO rudi;',
+
+	'To join a table in your database to a table on a second (remote) Oracle database, you need to use:':
+		'A database link',
+
+	'You want to grant user BOB the ability to change other users\' passwords. Which privilege should you grant to BOB?':
+		'The ALTER USER privilege',
+
+	'To take away a privilege from a user, you use which command?':
+		'REVOKE',
+
+	'User1 owns a table and grants select on it WITH GRANT OPTION to User2. User2 then grants select on the same table to User3. If User1 revokes select privileges from User2, will User3 be able to access the table?':
+		'No',
+
+	'Which of these is NOT a System Privilege granted by the DBA?':
+		'Create Index',
+
+	'Which statement would you use to grant a role to users?':
+		'GRANT',
 } satisfies OracleQaBank;
 
 
