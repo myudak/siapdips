@@ -3265,6 +3265,8 @@ export const ORACLE_QA_BANK = {
 		'Rename a table.',
 	'Which of the following statements best describes indexes and their use?':
 		'They contain the column value and pointers to the data in the table, but the data is sorted.',
+	'Examine the structure of the EMPLOYEES table: EMPLOYEE_ID NUMBER(9) PRIMARY KEY LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER(9) MANAGER_ID NUMBER(9) SALARY NUMBER(7,2) You have been instructed to create an index on the LAST_NAME column of the EMPLOYEES table. The index should not be unique. Which statement should you use?':
+		'CREATE INDEX emp_lname_idx ON employees(last_name);',
 } satisfies OracleQaBank;
 
 
