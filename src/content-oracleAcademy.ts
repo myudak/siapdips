@@ -45,6 +45,10 @@ function normalizeText(txt: string | null | undefined): string {
     .replace(/\s*\(\s*choose\s+\w+\.?\s*\)/gi, "")
     .replace(/\s*\(\s*select\s+\w+\.?\s*\)/gi, "")
     .replace(/\s*\(\s*choose\s+all\s+correct\s+answers?\.?\s*\)/gi, "")
+    // Strip (True or False?) or standalone True or False? suffix so that keys
+    // with or without parentheses always match the CE page text.
+    .replace(/\s*\(\s*true\s+or\s+false\?\)\s*/gi, "")
+    .replace(/\s*true\s+or\s+false\?\s*/gi, "")
     .replace(/\s*mark\s+for\s+review/gi, "")
     // Collapse multiple whitespace into a single space
     .replace(/\s+/g, " ")
