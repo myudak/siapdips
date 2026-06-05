@@ -3210,7 +3210,7 @@ export const ORACLE_QA_BANK = {
 		'True',
 	'Examine the following statements: UPDATE employees SET salary = 15000; SAVEPOINT upd1_done; UPDATE employees SET salary = 22000; SAVEPOINT upd2_done; DELETE FROM employees; You want to retain all the employees with a salary of 15000; What statement would you execute next?':
 		'ROLLBACK TO SAVEPOINT upd1_done;',
-	'COMMIT saves all outstanding data changes? True or False?':
+	'COMMIT saves all outstanding data changes. True or False?':
 		'True',
 	'Examine the following statements: INSERT INTO emps SELECT * FROM employees; -- 107 rows inserted. SAVEPOINT Ins_Done; DELETE employees; -- 107 rows deleted SAVEPOINT Del_Done; UPDATE emps SET last_name = \'Smith\'; How would you undo the last Update only?':
 		'ROLLBACK to SAVEPOINT Del_Done',
