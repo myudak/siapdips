@@ -3198,6 +3198,8 @@ export const ORACLE_QA_BANK = {
 		'CREATE SESSION',
 	'Roles are:':
 		'Named groups of related privileges given to a user or another role.',
+	'Which statement would you use to remove an object privilege granted to a user?':
+		'REVOKE',
 } satisfies OracleQaBank;
 
 
