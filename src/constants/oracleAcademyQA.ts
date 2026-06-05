@@ -3261,6 +3261,10 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'Evaluate this statement: DELETE FROM customer; Which statement is true?':
 		'The statement deletes all the rows from the CUSTOMER table.',
+	'RENAME old_name to new_name can be used to:':
+		'Rename a table.',
+	'Which of the following statements best describes indexes and their use?':
+		'They contain the column value and pointers to the data in the table, but the data is sorted.',
 } satisfies OracleQaBank;
 
 
