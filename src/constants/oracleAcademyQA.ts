@@ -2705,6 +2705,9 @@ export const ORACLE_QA_BANK = {
 	'Evaluate this CREATE VIEW statement: CREATE VIEW sales_view AS SELECT customer_id, region, SUM(sales_amount) FROM sales WHERE region IN (10, 20, 30, 40) GROUP BY region, customer_id; Which statement is true?':
 		'You cannot modify data in the SALES table using the SALES_VIEW view.',
 
+	'Evaluate this CREATE VIEW statement: CREATE VIEW pt_view AS (SELECT first_name, last_name, status, courseid, subject, term FROM faculty f, course c WHERE f.facultyid = c.facultyid); Which type of view will this statement create?':
+		'Complex',
+
 	'You want to create a view based on the SALESREP table. You plan to grant access to this view to members of the Sales department. You want Sales employees to be able to update the SALESREP table through the view, which you plan to name SALESREP_VIEW. What should not be specified in your CREATE VIEW statement?':
 		'A GROUP BY clause',
 
