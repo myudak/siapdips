@@ -14,6 +14,9 @@ export const ORACLE_QA_BANK = {
 	'A specialized type of software, which controls and manages the hardware in a computer system.':
 		'Operating System',
 
+	'A table has a column: RESPONSE_TIME. This is used to store the difference between the time the problem was reported and the time the problem was resolved. Data in the RESPONSE_TIME column needs to be stored in days, hours, minutes and seconds. Which data type should you use?':
+		'INTERVAL DAY TO SECOND',
+
 	'Personal computers (PCs) have been in existence since 1950.': 'False',
 
 	'The overall mission of the Oracle Corporation is to use the internet and fast processing servers to build its own network.':
@@ -150,11 +153,17 @@ export const ORACLE_QA_BANK = {
 
 	'An ERD is an example of a Physical Model. True or False?': 'False',
 
+	'An example of adding a check constraint to limit the salary that an employee can earn is:':
+		'ALTER TABLE employees ADD CONSTRAINT emp_salary_ck CHECK (salary < 100000)',
+
 	"Which of the following statements are true about ERD's? (Choose Two)":
 		'You should not model derivable data., A piece of information should only be found in one place on an ERD.',
 
 	'Which of the following statements about attributes are true?':
 		'They have a data type, such as number or character string.|They must be single valued.|They describe, qualify, quantify, classify, or specify an entity.',
+
+	'After issuing a SET UNUSED command on a column, another column with the same name can be added using an ALTER TABLE statement. True or False?':
+		'True',
 
 	'All of the following could be attributes of an ENTITY called PERSON, except which one?':
 		'Natacha Hansen',
@@ -2279,6 +2288,9 @@ export const ORACLE_QA_BANK = {
 	'Examine the structures of the PLAYERS, MANAGERS, and TEAMS tables:\nPLAYERS:\nPLAYER_ID NUMBER Primary Key\nLAST_NAME VARCHAR2 (30)\nFIRST_NAME VARCHAR2 (25)\nTEAM_ID NUMBER\nMGR_ID NUMBER\nSIGNING_BONUS NUMBER(9,2)\nSALARY NUMBER(9,2)\n\nMANAGERS:\nMANAGER_ID NUMBER Primary Key\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\nTEAM_ID NUMBER\n\nTEAMS:\nTEAM_ID NUMBER Primary Key\nTEAM_NAME VARCHAR2 (20)\nOWNER_LAST_NAME VARCHAR2 (20)\nOWNER_FIRST_NAME VARCHAR2 (20)\n\nWhich situation would require a subquery to return the desired result?':
 		'To display the names of the managers for all the teams owned by a given owner',
 
+	'You need to update both the DEPARTMENT_ID and LOCATION_ID columns in the EMPLOYEES table using one UPDATE statement. Which clause should you include in the UPDATE statement to update multiple columns?':
+		'The SET clause',
+
 	'You need to update the area code of employees that live in Atlanta. Evaluate this partial UPDATE statement:\nUPDATE employee\nSET area_code = 770\n\nWhich of the following should you include in your UPDATE statement to achieve the desired results?':
 		"WHERE city = 'Atlanta';",
 
@@ -2469,6 +2481,9 @@ export const ORACLE_QA_BANK = {
 	'Evaluate this CREATE TABLE statement:\nCREATE TABLE sales \n(sales_id NUMBER, \ncustomer_id NUMBER, \nemployee_id NUMBER, \nsale_date TIMESTAMP WITH TIME ZONE, \nsale_amount NUMBER(7,2));\n\nWhich statement about the SALE_DATE column is true?':
 		"Data stored in the column will be returned in the database's local time zone.",
 
+	'Examine this CREATE TABLE statement:\nCREATE TABLE emp_load\n(employee_number CHAR(5),\nemployee_dob CHAR(20),\nemployee_last_name CHAR(20),\nemployee_first_name CHAR(15),\nemployee_middle_name CHAR(15),\nemployee_hire_date DATE)\nORGANIZATION EXTERNAL\n(TYPE ORACLE_LOADER\nDEFAULT DIRECTORY def_dir1\nACCESS PARAMETERS\n(RECORDS DELIMITED BY NEWLINE\nFIELDS\n(employee_number CHAR(2),\nemployee_dob CHAR(20),\nemployee_last_name CHAR(18),\nemployee_first_name CHAR(11),\nemployee_middle_name CHAR(11),\nemployee_hire_date CHAR(10) date_format DATE mask "mm/dd/yyyy"))\nLOCATION (\'info.dat\'));\nWhat kind of table is created here?':
+		'An external table with the data stored in a file outside the database.',
+
 	'Which statement about decreasing the width of a column is true?':
 		'When a character column contains data, you can decrease the width of the column if the existing data does not violate the new size.',
 
@@ -2558,6 +2573,9 @@ export const ORACLE_QA_BANK = {
 
 	'You need to ensure that each value in the SEAT_ID column is unique or null. Which constraint should you define on the SEAT_ID column?':
 		'UNIQUE',
+
+	'Which statement about constraints is true?':
+		'NOT NULL constraints can only be specified at the column level.',
 
 	'Which statement about the NOT NULL constraint is true?':
 		'The NOT NULL constraint must be defined at the column level.',
@@ -2763,7 +2781,7 @@ export const ORACLE_QA_BANK = {
 		'True',
 
 	'The EMPLOYEES table contains these columns: EMPLOYEE_ID NUMBER LAST_NAME VARCHAR2(25) FIRST_NAME VARCHAR2(25) DEPARTMENT_ID NUMBER JOB_ID NUMBER MANAGER_ID NUMBER SALARY NUMBER(9,2) COMMISSOIN NUMBER(7,2) HIRE_DATE DATE Which SELECT statement could be used to display the 10 lowest paid clerks that belong to department 70?':
-		'SELECT ROWNUM "Ranking",last_name||\',\'||first_name "Employee", salary "Salary" FROM (SELECT last_name, first_name, salary, job_id FROM employees WHERE job_id LIKE \'CLERK\' AND department_id = 70 ORDER BY salary) WHERE ROWNUM <=10;',
+		'SELECT ROWNUM "Ranking",last_name||\',\'||first_name "Employee", salary "Salary" FROM (SELECT last_name, first_name, salary, job_id FROM employees WHERE job_id LIKE \'CLERK\' AND department_id = 7 ORDER BY salary) WHERE ROWNUM <=10',
 
 	'Which of the following describes a top-N query?':
 		'A top-N query returns a limited result set, returning data based on highest or lowest criteria.',
@@ -2957,6 +2975,9 @@ export const ORACLE_QA_BANK = {
 	'You want to speed up the following query by creating an index: SELECT * FROM employees WHERE salary * 12 > 100000; Which index should you create?':
 		'CREATE INDEX emp_sal_idx ON employees(salary * 12);',
 
+	'You want to speed up the following query by creating an index: SELECT * FROM employees WHERE (salary * 12) > 100000; Which of the following will achieve this?':
+		'Create a function-based index on (salary * 12).',
+
 	'For which column would you create an index?':
 		'A column with a large number of null values',
 
@@ -3052,6 +3073,9 @@ export const ORACLE_QA_BANK = {
 		'True',
 
 	'REGULAR EXPRESSIONS can be used as part of a contraint definition. (True or False?)':
+		'True',
+
+	'REGULAR EXPRESSIONS can be used on CHAR, CLOB, and VARCHAR2 datatypes. True or False?':
 		'True',
 
 	'A role can be granted to another role. True or False?':
@@ -3257,6 +3281,9 @@ export const ORACLE_QA_BANK = {
 		'CREATE TABLE Birthdays (Empno NUMBER, Empname CHAR(20), Birthdate DATE);',
 	'You are designing a table for the Sales department. You need to include a column that contains each sales total. Which data type should you specify for this column?':
 		'NUMBER',
+	'The data type of a column can never be changed once it has been created. True or False?':
+		'False',
+
 	'You can use DROP COLUMN to drop all columns in a table, leaving a table structure with no columns. True or False?':
 		'False',
 	'Evaluate this statement: DELETE FROM customer; Which statement is true?':
