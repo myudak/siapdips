@@ -1357,6 +1357,9 @@ export const ORACLE_QA_BANK = {
 
 	'The main reason that constraints are added to a table is:':
 		'Constraints ensure data integrity',
+
+	'The CUSTOMER_FINANCE table contains these columns:\nCUSTOMER_ID NUMBER(9)\nNEW_BALANCE NUMBER(7,2)\nPREV_BALANCE NUMBER(7,2)\nPAYMENTS NUMBER(7,2)\nFINANCE_CHARGE NUMBER(7,2)\nCREDIT_LIMIT NUMBER(7)\n\nYou execute this statement:\nSELECT ROWNUM "Rank", customer_id, new_balance\nFROM (SELECT customer_id, new_balance FROM customer_finance)\nWHERE ROWNUM <= 25\nORDER BY new_balance DESC;\n\nWhat statement is true?':
+		'The statement will not necessarily return the 25 highest new balance values, as the inline view has no ORDER BY clause.',
 	'Databases are used in most countries and by most governments. Life, as we know it, would change drastically if we no longer had access to databases. True or False?':
 		'True',
 	'Most of the well know Internet search engines use databases to store data. True or False?':
