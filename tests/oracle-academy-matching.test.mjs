@@ -65,6 +65,83 @@ test("normalizeText: normalizes non-breaking spaces", () => {
 	assert.equal(normalizeText("hello\u00A0world"), "hello world");
 });
 
+test("normalizeText: strips section prefixes (S4, S6 Q1, S7J Q1, etc.)", () => {
+	assert.equal(
+		normalizeText("S4 A business rule such as this is best enforced by:"),
+		"a business rule such as this is best enforced by:"
+	);
+	assert.equal(
+		normalizeText("S6 Q1 Examine ENTITY CLIENT (#CLIENT ID, FIRST NAME)"),
+		"examine entity client (#client id, first name)"
+	);
+	assert.equal(
+		normalizeText("S7J Q1 Evaluate this SQL statement:"),
+		"evaluate this sql statement:"
+	);
+	assert.equal(
+		normalizeText("S8 Q1 Which scenarios should be modeled so that historical data is kept?"),
+		"which scenarios should be modeled so that historical data is kept?"
+	);
+	assert.equal(
+		normalizeText("S9 Q1 Arc to physical design:"),
+		"arc to physical design:"
+	);
+});
+
+test("normalizeText: strips question number prefixes (8., 10., etc.)", () => {
+	assert.equal(
+		normalizeText("8. Unique Identifiers:"),
+		"unique identifiers:"
+	);
+	assert.equal(
+		normalizeText("10. Unique Identifiers: Mark for Review"),
+		"unique identifiers:"
+	);
+	assert.equal(
+		normalizeText("1. A specialized type of software which controls hardware:"),
+		"a specialized type of software which controls hardware:"
+	);
+});
+
+test("normalizeText: strips blog/forum comment artifacts (Balasan Balas ... pukul HH.MM)", () => {
+	assert.equal(
+		normalizeText("Balasan Balas Unknown2 Mei 2024 pukul 00.05 A correlated subquery is evaluated"),
+		"a correlated subquery is evaluated"
+	);
+	assert.equal(
+		normalizeText("Balasan Balas galih6 Juli 2024 pukul 03.29 Which of the following query should you use?"),
+		"which of the following query should you use?"
+	);
+	assert.equal(
+		normalizeText("Balasan Balas GenEtika30 Oktober 2024 pukul 00.36 Which statement about subqueries is true?"),
+		"which statement about subqueries is true?"
+	);
+});
+
+test("normalizeText: section prefix followed by number prefix both stripped", () => {
+	assert.equal(
+		normalizeText("S6 Q1 8. Which of the following are examples of ENTITY: Instance?"),
+		"which of the following are examples of entity: instance?"
+	);
+});
+
+test("normalizeText: does NOT strip legitimate text that happens to start with digit+dot", () => {
+	// Full SQL statement that starts with a digit prefix pattern
+	assert.equal(
+		normalizeText("SELECT 1.0 AS value FROM dual"),
+		"select 1.0 as value from dual"
+	);
+});
+
+test("normalizeText: blog artifact followed by embedded number prefix both stripped", () => {
+	// Blog artifacts can have embedded number prefixes like "14." after the timestamp
+	// Blog strip should run BEFORE number prefix strip to catch these
+	assert.equal(
+		normalizeText("Balasan Balas Unknown8 April 2024 pukul 01.34 14. The EMPLOYEES table"),
+		"the employees table"
+	);
+});
+
 // ---------------------------------------------------------------------------
 // parseExpectedAnswers
 // ---------------------------------------------------------------------------

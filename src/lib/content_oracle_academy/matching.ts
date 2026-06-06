@@ -1,5 +1,13 @@
 /**
- * Normalize text: trim, collapse spaces, lowercase.
+ * Normalize text: trim, collapse spaces, lowercase, strip prefixes/suffixes.
+ *
+ * Strips:
+ * - instruction suffixes (choose N answers, select N answers, etc.)
+ * - "(True or False?)" variations
+ * - "Mark for review"
+ * - section prefixes (S4, S6 Q1, S7J Q15, etc.) — scraping artifacts
+ * - question number prefixes (8., 10., etc.) — UI numbering
+ * - blog/forum comment artifacts ("Balasan Balas ... pukul HH.MM")
  */
 export function normalizeText(txt: string | null | undefined): string {
 	if (!txt) return "";
@@ -23,6 +31,16 @@ export function normalizeText(txt: string | null | undefined): string {
 		.replace(/\s*\(\s*true\s+or\s+false\?\)\s*/gi, "")
 		.replace(/\s*true\s+or\s+false\?\s*/gi, "")
 		.replace(/\s*mark\s+for\s+review/gi, "")
+		// Strip section prefixes: S4, S6 Q1, S7J Q15, S8 Q1, S9 Q1, etc.
+		// These are organisational labels added during scraping, not part of the actual question.
+		.replace(/^\s*s\d+[a-z]?\s*(?:q\d+\s*)?/i, "")
+		// Strip blog/forum comment artifacts: "Balasan Balas ... pukul HH.MM " prefix
+		// Some questions were scraped from blog comment threads and have this prefix.
+		.replace(/^\s*balasan\s+balas\s+.+?\d{1,2}\.\d{2}\s*/i, "")
+		// Strip question number prefixes: 8., 10., 1., etc.
+		// Oracle Academy quiz pages number questions in the UI; the numbers are not part of the text.
+		// Must come AFTER blog artifact strip so that numbers in blog-recovered text are also cleaned.
+		.replace(/^\s*\d+\.\s+/, "")
 		// Collapse multiple whitespace into a single space
 		.replace(/\s+/g, " ")
 		// Normalize curly quotes to straight quotes
