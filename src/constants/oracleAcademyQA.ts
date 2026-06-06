@@ -1354,6 +1354,9 @@ export const ORACLE_QA_BANK = {
 	'In the real world, databases used by businesses generally have a single table. True or False?':
 		'False',
 	'What language is used to query data in a Relational Database?': 'SQL',
+
+	'The main reason that constraints are added to a table is:':
+		'Constraints ensure data integrity',
 	'Databases are used in most countries and by most governments. Life, as we know it, would change drastically if we no longer had access to databases. True or False?':
 		'True',
 	'Most of the well know Internet search engines use databases to store data. True or False?':
