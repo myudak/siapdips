@@ -3305,6 +3305,9 @@ export const ORACLE_QA_BANK = {
 
 	'Which of the following is TRUE regarding simple views?':
 		'Simple views can be used to perform DML operations.',
+
+	'You need to create a view that will display the name, employee identification number, first and last name, salary, and department identification number. The display should be sorted by salary from lowest to highest, then by last name and first name alphabetically. The view definition should be created regardless of the existence of the EMPLOYEES table. No DML may be performed when using this view. Evaluate these statements:\n\nCREATE OR REPLACE NOFORCE VIEW EMP_SALARY_V\nAS SELECT employee_id, last_name, first_name, salary, department_id\nFROM employees WITH READ ONLY;\nSELECT *\nFROM emp_salary_v\nORDER BY salary, last_name, first_name;\n\nWhich statement is true?':
+		'The CREATE VIEW statement will fail if the EMPLOYEES table does not exist.',
 } satisfies OracleQaBank;
 
 

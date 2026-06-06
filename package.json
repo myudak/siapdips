@@ -1,7 +1,7 @@
 {
 	"name": "siapdipss",
 	"private": true,
-	"version": "1.4.1053",
+	"version": "1.4.1054",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
