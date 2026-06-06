@@ -1785,6 +1785,8 @@ export const ORACLE_QA_BANK = {
 		'The WHERE clause represents the join criteria.',
 	'S7J Q15 If table A has 10 rows and table B has 5 rows, how many rows will be returned if you perform an equi-join on those two tables?':
 		'It depends on how many rows have matching data in each of the two tables.',
+	'If table A has 10 rows and table B has 5 rows, how many rows will be returned if you perform a equi-join on those two tables?':
+		'It depends on how many rows have matching data in each of the two tables.',
 	'S7J Q16 The PATIENTS and DOCTORS tables contain these columns:\nPATIENTS\nPATIENT_ID NUMBER(9)\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\n\nDOCTORS\nDOCTOR_ID NUMBER(9)\nLAST_NAME VARCHAR2 (20)\nFIRST_NAME VARCHAR2 (20)\n\nYou issue this statement:\nSELECT patient_id, doctor_id\nFROM patients, doctors;\n\nWhich result will this statement provide?':
 		'A report containing all possible combinations of the PATIENT_ID and DOCTOR_ID values',
 	'S7J Q17 Which statement about joining tables with a non-equijoin is false?':
