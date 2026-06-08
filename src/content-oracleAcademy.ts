@@ -1,4 +1,9 @@
 import { ORACLE_QA_BANK } from "@/constants/oracleAcademyQA";
+import {
+	isMatchResilient,
+	normalizeText,
+	parseExpectedAnswers,
+} from "@/lib/content_oracle_academy/matching";
 
 const HELPER_ID = "oracle-academy-helper";
 const AUTO_HELPER_KEY = "oracleAcademyHelperEnabled";
@@ -26,34 +31,8 @@ let autoAnswerEnabled = false;
 let helperStatusEl: HTMLDivElement | null = null;
 let customQa: Record<string, string> = {};
 
-/**
- * Normalize text: trim, collapse spaces, lowercase.
- */
-function normalizeText(txt: string | null | undefined): string {
-  if (!txt) return "";
-  
-  return txt
-    // Convert non-breaking spaces to normal spaces
-    .replace(/\u00A0/g, " ")
-    // Normalize dashes/quotes to ASCII
-    .replace(/[\u2013\u2014]/g, "-")
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/[\u201C\u201D]/g, '"')
-    // Strip common instruction suffixes to make matching incredibly resilient
-    .replace(/\s*\(\s*choose\s+\w+\s*answers?\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*select\s+\w+\s*answers?\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*choose\s+\w+\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*select\s+\w+\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*choose\s+all\s+correct\s+answers?\.?\s*\)/gi, "")
-    .replace(/\s*mark\s+for\s+review/gi, "")
-    // Collapse multiple whitespace into a single space
-    .replace(/\s+/g, " ")
-    // Normalize curly quotes to straight quotes
-    .replace(/[""]/g, '"')
-    .replace(/[']/g, "'")
-    .trim()
-    .toLowerCase();
-}
+// normalizeText, parseExpectedAnswers, isMatchResilient imported from
+// @/lib/content_oracle_academy/matching
 
 function getQuestionElement(): HTMLElement | null {
   return document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body");
@@ -399,21 +378,6 @@ async function saveCustomQaPair(
  * - Splits on commas.
  * - Strips leading "and"/"or".
  */
-function parseExpectedAnswers(answerRaw: string): string[] {
-  const normalized = normalizeText(answerRaw);
-  if (!normalized) return [];
-
-  if (normalized.includes("|")) {
-    return normalized
-      .split("|")
-      .map((part) => part.trim().replace(/^(and|or)\s+/, ""))
-      .filter(Boolean);
-  }
-
-  // Default: treat the whole normalized string as a single expected answer.
-  return [normalized];
-}
-
 function clickNextButtonOnce(): boolean {
   const btn =
     document.querySelector<HTMLButtonElement>("#nextModButton") ||
@@ -689,19 +653,7 @@ function answerCurrentQuestion(): boolean {
       const btnText = (textSpan?.textContent || "").trim();
       const btnNorm = normalizeText(btnText || ariaLabel);
 
-      const isMatchResilient = (str1: string, str2: string): boolean => {
-        const s1 = str1.trim();
-        const s2 = str2.trim();
-        if (s1 === s2) return true;
-        // Avoid substring matching for short words/pure numbers to prevent false positives (e.g. 50 matching 250)
-        const isShortOrNumeric =
-          s1.length <= 3 ||
-          s2.length <= 3 ||
-          /^\d+$/.test(s1) ||
-          /^\d+$/.test(s2);
-        if (isShortOrNumeric) return false;
-        return s1.includes(s2) || s2.includes(s1);
-      };
+      // isMatchResilient is imported from @/lib/content_oracle_academy/matching
 
       const multiMatch =
         effectiveExpected.length > 0
