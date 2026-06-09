@@ -63,17 +63,25 @@ jobs:
 
       - name: Install Chrome Web Store CLI
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
-        run: npm install -g chrome-webstore-upload-cli
+        run: npm install -g chrome-webstore-upload-cli@4.0.1
 
       - name: Upload to Chrome Web Store
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
+        env:
+          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         run: |
+          : "${EXTENSION_ID:?Missing EXTENSION_ID GitHub Actions secret}"
+          : "${PUBLISHER_ID:?Missing PUBLISHER_ID GitHub Actions secret}"
+          : "${CLIENT_ID:?Missing CLIENT_ID GitHub Actions secret}"
+          : "${CLIENT_SECRET:?Missing CLIENT_SECRET GitHub Actions secret}"
+          : "${REFRESH_TOKEN:?Missing REFRESH_TOKEN GitHub Actions secret}"
+
           echo "Uploading extension..."
-          chrome-webstore-upload upload --source dist \
-            --extension-id ${{ secrets.EXTENSION_ID }} \
-            --client-id ${{ secrets.CLIENT_ID }} \
-            --client-secret ${{ secrets.CLIENT_SECRET }} \
-            --refresh-token ${{ secrets.REFRESH_TOKEN }}
+          chrome-webstore-upload upload --source dist
 
       - name: Build Firefox Package
         run: |
@@ -121,12 +129,3 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Publish Extension
-      #   run: |
-      #     echo "Publishing extension..."
-      #     chrome-webstore-upload publish \
-      #       --extension-id ${{ secrets.EXTENSION_ID }} \
-      #       --client-id ${{ secrets.CLIENT_ID }} \
-      #       --client-secret ${{ secrets.CLIENT_SECRET }} \
-      #       --refresh-token ${{ secrets.REFRESH_TOKEN }}
