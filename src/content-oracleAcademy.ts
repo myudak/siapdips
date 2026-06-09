@@ -4,6 +4,15 @@ import {
 	normalizeText,
 	parseExpectedAnswers,
 } from "@/lib/content_oracle_academy/matching";
+import {
+	CHATGPT_HOME_URL,
+	buildChatGptSearchUrl,
+	buildOracleChatGptPrompt,
+	buildOracleQuestionCopyText,
+	normalizeOraclePromptText,
+	shouldUseChatGptClipboardFallback,
+	type OracleChoiceMode,
+} from "@/lib/content_oracle_academy/chatgpt";
 
 const HELPER_ID = "oracle-academy-helper";
 const AUTO_HELPER_KEY = "oracleAcademyHelperEnabled";
@@ -43,6 +52,40 @@ function getQuestionText(): string | null {
   if (!questionEl) return null;
   const text = questionEl.innerText.trim();
   return text || null;
+}
+
+function getOracleQuestionChoices(): string[] {
+  return Array.from(
+    document.querySelectorAll<HTMLElement>(".choice-SelectArea .choice-Text")
+  )
+    .map((choice) =>
+      normalizeOraclePromptText(choice.innerText || choice.textContent || "")
+        .replace(/\s*\n\s*/g, " ")
+    )
+    .filter(Boolean);
+}
+
+function getOracleChoiceMode(): OracleChoiceMode {
+  const onlyOneChoice = document.querySelector<HTMLInputElement>(
+    "#P190_ONLY_ONE_CHOICE"
+  )?.value;
+
+  if (onlyOneChoice?.toUpperCase() === "Y") return "single";
+  if (onlyOneChoice?.toUpperCase() === "N") return "multiple";
+
+  const choiceButtons = Array.from(
+    document.querySelectorAll<HTMLElement>(".choice-SelectArea")
+  );
+  if (choiceButtons.some((choice) => choice.getAttribute("role") === "radio")) {
+    return "single";
+  }
+  if (
+    choiceButtons.some((choice) => choice.getAttribute("role") === "checkbox")
+  ) {
+    return "multiple";
+  }
+
+  return "unknown";
 }
 
 /**
@@ -420,41 +463,129 @@ function stopAutoNextLoop() {
   }
 }
 
-function copyQuestionText(): boolean {
-  const questionEl = getQuestionElement();
-  if (!questionEl) {
+function copyTextWithFallback(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).then(
+      () => true,
+      () => copyTextWithLegacyFallback(text)
+    );
+  }
+
+  return Promise.resolve(copyTextWithLegacyFallback(text));
+}
+
+function copyTextWithLegacyFallback(text: string): boolean {
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand("copy");
+    textarea.remove();
+    return copied;
+  } catch (error) {
+    console.debug("[Oracle Academy] Clipboard fallback failed:", error);
+    return false;
+  }
+}
+
+function openSecureExternalTab(url: string): boolean {
+  const opened = window.open("about:blank", "_blank");
+  if (!opened) return false;
+
+  try {
+    opened.opener = null;
+    const referrerPolicy = opened.document.createElement("meta");
+    referrerPolicy.name = "referrer";
+    referrerPolicy.content = "no-referrer";
+    opened.document.head.appendChild(referrerPolicy);
+    opened.location.replace(url);
+    return true;
+  } catch (error) {
+    console.debug("[Oracle Academy] Failed to open external tab:", error);
+    opened.close();
+    return false;
+  }
+}
+
+function openCurrentQuestionInChatGpt(): boolean {
+  const question = getQuestionText();
+  if (!question) {
     showToast("Question element not found.", "error");
     return false;
   }
 
-  const text = questionEl.innerText.trim();
-  if (!text) {
-    showToast("Question text is empty.", "error");
+  const choices = getOracleQuestionChoices();
+  if (!choices.length) {
+    showToast("Answer choices not found.", "error");
     return false;
   }
 
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(text).then(
-      () => showToast("Question copied.", "success"),
-      () => {
-        showToast("Failed to copy question.", "error");
-      }
-    );
-  } else {
-    try {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      showToast("Question copied.", "success");
-    } catch (err) {
-      console.debug("[Oracle Academy] Clipboard fallback failed:", err);
-      showToast("Failed to copy question.", "error");
+  const prompt = buildOracleChatGptPrompt({
+    question,
+    choices,
+    mode: getOracleChoiceMode(),
+  });
+  const searchUrl = buildChatGptSearchUrl(prompt);
+
+  if (!shouldUseChatGptClipboardFallback(searchUrl)) {
+    const opened = openSecureExternalTab(searchUrl);
+    if (!opened) {
+      showToast("ChatGPT tab was blocked by the browser.", "error");
       return false;
     }
+
+    showToast("Opening question in ChatGPT Search.", "success");
+    return true;
   }
+
+  const opened = openSecureExternalTab(CHATGPT_HOME_URL);
+
+  void copyTextWithFallback(prompt).then((copied) => {
+    if (!opened && !copied) {
+      showToast("ChatGPT tab blocked and prompt copy failed.", "error");
+      return;
+    }
+    if (!opened) {
+      showToast("Tab blocked. Prompt copied for manual paste.", "error");
+      return;
+    }
+    if (!copied) {
+      showToast("ChatGPT opened, but prompt copy failed.", "error");
+      return;
+    }
+
+    showToast("Prompt panjang disalin. Paste di ChatGPT.", "success");
+  });
+
+  return Boolean(opened);
+}
+
+function copyQuestionText(): boolean {
+  const question = getQuestionText();
+  if (!question) {
+    showToast("Question element not found.", "error");
+    return false;
+  }
+
+  const choices = getOracleQuestionChoices();
+  if (!choices.length) {
+    showToast("Answer choices not found.", "error");
+    return false;
+  }
+
+  const text = buildOracleQuestionCopyText(question, choices);
+  void copyTextWithFallback(text).then((copied) => {
+    showToast(
+      copied
+        ? `Question + ${choices.length} choices copied.`
+        : "Failed to copy question and choices.",
+      copied ? "success" : "error"
+    );
+  });
+
   return true;
 }
 
@@ -869,7 +1000,7 @@ function createHelper(): void {
   });
 
   const titleText = document.createElement("span");
-  titleText.textContent = "Siap DiPS · Oracle Academy";
+  titleText.textContent = "Siap DiPS · Oracle Academy v-1.4.1069";
   Object.assign(titleText.style, {
     lineHeight: "1.2",
   });
@@ -1235,6 +1366,84 @@ function createHelper(): void {
     copyQuestionText();
   });
   panel.appendChild(copyBtn);
+
+const chatGptBtn = document.createElement("button");
+
+chatGptBtn.innerHTML = `
+  <img
+    src="https://upload.wikimedia.org/wikipedia/commons/1/13/ChatGPT-Logo.png"
+    alt="ChatGPT"
+    style="
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      flex-shrink: 0;
+    "
+  />
+
+  <span>Answer ChatGPT</span>
+
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    style="
+      margin-left: 2px;
+      flex-shrink: 0;
+    "
+  >
+    <path d="M7 17L17 7" />
+    <path d="M7 7h10v10" />
+  </svg>
+`;
+
+Object.assign(chatGptBtn.style, {
+  width: "100%",
+  padding: "9px 10px",
+  border: "1px solid #86efac",
+  borderRadius: "9px",
+  background:
+    "linear-gradient(135deg, rgba(236,253,245,1) 0%, rgba(220,252,231,1) 100%)",
+  color: "#166534",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "13px",
+  transition:
+    "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
+  marginBottom: "8px",
+
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "6px",
+});
+
+chatGptBtn.addEventListener("mouseenter", () => {
+  chatGptBtn.style.boxShadow = "0 9px 18px rgba(22,101,52,0.15)";
+  chatGptBtn.style.transform = "translateY(-1px)";
+  chatGptBtn.style.background =
+    "linear-gradient(135deg, rgba(220,252,231,1) 0%, rgba(187,247,208,1) 100%)";
+});
+
+chatGptBtn.addEventListener("mouseleave", () => {
+  chatGptBtn.style.boxShadow = "none";
+  chatGptBtn.style.transform = "translateY(0)";
+  chatGptBtn.style.background =
+    "linear-gradient(135deg, rgba(236,253,245,1) 0%, rgba(220,252,231,1) 100%)";
+});
+
+chatGptBtn.addEventListener("click", () => {
+  openCurrentQuestionInChatGpt();
+});
+
+panel.appendChild(chatGptBtn);
+
 
   const copyQaBtn = document.createElement("button");
   copyQaBtn.textContent = "Copy Q&A JSON";

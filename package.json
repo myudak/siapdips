@@ -1,7 +1,7 @@
 {
   "name": "siapdipss",
   "private": true,
-  "version": "1.4.1056",
+  "version": "1.4.1057",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -28,6 +28,8 @@
     "test:dyandra": "node --test --experimental-strip-types tests/dyandra-helper.test.mjs",
     "test:seb": "node --test --experimental-strip-types tests/seb-hash.test.mjs",
     "test:oracle-matching": "node --test --experimental-strip-types tests/oracle-academy-matching.test.mjs",
+    "test:oracle-chatgpt": "node --test --experimental-strip-types tests/oracle-academy-chatgpt.test.mjs",
+    "test:moodle-chatgpt": "node --test --experimental-strip-types tests/moodle-chatgpt.test.mjs",
     "watch:chrome": "vite build --mode chrome --watch",
     "watch:firefox": "vite build --mode firefox --watch",
     "watch:edge": "vite build --mode edge --watch",

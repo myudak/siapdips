@@ -65,6 +65,17 @@ test("normalizeText: normalizes non-breaking spaces", () => {
 	assert.equal(normalizeText("hello\u00A0world"), "hello world");
 });
 
+test("normalizeText: normalizes escaped whitespace from QA bank keys", () => {
+	const qaKey =
+		"what would the following sql statement return?\\nselect count(distinct salary)\\nfrom employees;";
+	const pageText = `What would the following SQL statement return?
+
+SELECT COUNT(DISTINCT salary)
+FROM employees;`;
+
+	assert.equal(normalizeText(qaKey), normalizeText(pageText));
+});
+
 test("normalizeText: strips section prefixes (S4, S6 Q1, S7J Q1, etc.)", () => {
 	assert.equal(
 		normalizeText("S4 A business rule such as this is best enforced by:"),

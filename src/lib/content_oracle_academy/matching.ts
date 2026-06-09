@@ -13,6 +13,8 @@ export function normalizeText(txt: string | null | undefined): string {
 	if (!txt) return "";
 
 	return txt
+		// Imported QA keys may contain literal "\\n" instead of real line breaks.
+		.replace(/\\[nrt]/gi, " ")
 		// Convert non-breaking spaces to normal spaces
 		.replace(/\u00A0/g, " ")
 		// Normalize dashes/quotes to ASCII

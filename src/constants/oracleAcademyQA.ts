@@ -992,8 +992,7 @@ export const ORACLE_QA_BANK = {
 		'False',
 	'the keywords join _____________ should be used to join tables with the same column names but different datatypes.':
 		'USING',
-	'which of the following conditions will cause an error on a natural join?':
-		'If the columns having the same names have different data types, then an error is returned.',
+
 	'which query represents the correct syntax for a left outer join?':
 		'SELECT companyname, orderdate, total\\nFROM customers c\\nLEFT OUTER JOIN orders o\\nON c.cust_id = o.cust_id;',
 	'which query will retrieve all the rows in the employees table, even if there is no match in the departments table?':
@@ -1020,6 +1019,18 @@ export const ORACLE_QA_BANK = {
 		'Full outer joins',
 	'for which of the following tables will all the values be retrieved even if there is no match in the other?\\nselect employees.last_name, employees.department_id, departments.department_name\\nfrom employees\\nleft outer join departments\\non (employees.department_id = departments.department_id);':
 		'employees',
+
+  "Evaluate this SELECT statement:\n\nSELECT patient.lname || ', ' || patient.fname as \"Patient\", physician.lname || ', ' || physician.fname as \"Physician\", admission.admission\nFROM patient\nJOIN physician\nON (physician.physician_id": "ON (physician.physician_id = admission.physician_id);",
+  "Evaluate this CREATE TABLE statement:\n\nCREATE TABLE line_item ( line_item_id NUMBER(9), order_id NUMBER(9), product_id NUMBER(9));\n\nYou are a member of the SYSDBA role, but are logged in under your own schema. You issue this CREATE TABLE statement. Which statement is true?": "You created the table in your schema.",
+  "The following script will run successfully. True or False?\n \nSELECT TO_CHAR(TO_DATE('25-Dec-2004','dd-Mon-yyyy'))\nFROM dual": "True",
+  "Which of the following statements will work?": "SELECT first_name ||' '||last_name NAME, department_id DEPARTMENT, salary*12 \"ANNUAL SALARY\" FROM employees WHERE last_name = 'King';",
+  "Evaluate this SELECT statement:\n\nSELECT ROWNUM \"Rank\", customer_id, new_balance\nFROM (SELECT customer_id, new_balance\n     FROM customer_finance\n     ORDER BY new_balance DESC)\nWHERE ROWNUM <= 25;\n\n\nWhich type of query is this SELECT statement?": "A Top-n query",
+  "Evaluate this SELECT statement:\n\nSELECT MAX(salary), department_id\nFROM employees\nGROUP BY department_id;\n\nWhich values are displayed?": "The highest salary in each department",
+  "The following is a valid SQL statement.\n\nSELECT employees.employee_id, employees.last_name,     departments.location_id, department_id \nFROM employees JOIN departments \nUSING (department_id) ;\n\nTrue or False?": "True",
+  "A multi-table insert statement must have a subquery at the end of the statement. True or False?": "True",
+  "It is possible to have an indexed column in a table where a value in the table column does not exist in the index. True or False?": "False",
+  "In a non-correlated subquery, the outer query always executes prior to the inner query's execution. True or False?": "False",
+  "The SPEED_TIME column should store a fractional second value.\n\nWhich data type should you use?": "TIMESTAMP",
 	'you can do nonequi-joins with ansi-syntax.': 'True',
 	'evaluate this select statement:\\n\\nselect patient.lname || \\\', \\\' || patient.fname as "patient", physician.lname || \\\', \\\' || physician.fname as "physician", admission.admission\\nfrom patient\\njoin physician\\non (physician.physician_id = admission.physician_id)\\njoin admission\\non (patient.patient_id = admission.patient_id);\\n\\nwhich clause generates an error?':
 		'ON (physician.physician_id = admission.physician_id);',
@@ -1401,6 +1412,43 @@ export const ORACLE_QA_BANK = {
 		'LOWER',
 	'what function would you use to return the highest date in a month?':
 		'LAST_DAY',
+
+  "User BOB's schema contains an EMPLOYEES table. BOB executes the following statement:\n\nGRANT SELECT ON employees TO mary WITH GRANT OPTION;\n\nWhich of the following statements can MARY now execute successfully? (Choose Two)": "GRANT SELECT ON bob.employees TO PUBLIC; | SELECT FROM bob.employees;",
+  "User Mary's schema contains an EMP table. Mary has Database Administrator privileges and executes the following statement:\n\nCREATE PUBLIC SYNONYM emp FOR mary.emp;\n\nUser Susan now needs to SELECT from Mary's EMP table.  Which of the following SQL statements can she use?  (Choose Two)": "SELECT * FROM mary.emp; | SELECT * FROM emp;",
+  "Evaluate this statement:\n\nSELECT po_itemid_seq.CURRVAL\nFROM dual;\n\nWhat does this statement accomplish?": "It displays the current value of the PO_ITEM_ID_SEQ sequence.",
+  "You issue this statement:\n\nALTER SEQUENCE po_sequence INCREMENT BY 2;\n\nWhich statement is true?": "Future sequence numbers generated will increase by 2 each time a number is generated.",
+  "For which column would you create an index?": "The column contains a wide range of values",
+  "The CUSTOMER_FINANCE table contains these columns:\n\nCUSTOMER_ID NUMBER(9) \nNEW_BALANCE NUMBER(7,2) \nPREV_BALANCE NUMBER(7,2) \nPAYMENTS NUMBER(7,2) \nFINANCE_CHARGE NUMBER(7,2) \nCREDIT_LIMIT NUMBER(7)\n\nYou created a Top-n query report that displays the account numbers and new balance of the 800 accounts that have the highest new balance value. The results are sorted by payments value from highest to lowest.\n\nWhich SELECT statement clause is included in your query?": "Inner query: ORDER BY new_balance DESC",
+  "The EMPLOYEES table contains these columns:\n\nEMPLOYEE_ID NUMBER\nLAST_NAME VARCHAR2(25)\nFIRST_NAME VARCHAR2(25)\nDEPARTMENT_ID NUMBER\nJOB_ID NUMBER\nMANAGER_ID NUMBER\nSALARY NUMBER(9,2)\nCOMMISSION NUMBER(7,2)\nHIRE_DATE DATE\n\n\nWhich SELECT statement could be used to display the 10 lowest paid clerks that belong to department 70?": "SELECT ROWNUM \"Ranking\",last_name||','||first_name \"Employee\", salary \"Salary\" FROM (SELECT last_name, first_name, salary, job_id FROM employees WHERE job_id LIKE 'CLERK' AND department_id = 70 ORDER BY salary) WHERE ROWNUM <= 10",
+  "Using the pseudocolumn ROWNUM in a view has no implications on the ability to do DMLs through the view. True or False?": "False",
+  "How many PRIMARY KEY constraints can be created for each table?": "One and only one",
+  "Which of the following best describes the function of a CHECK constraint?": "A CHECK constraint defines restrictions on the values that can be entered in a column or combination of columns.",
+  "The DEPARTMENTS table contains these columns:\n\n\nDEPARTMENT_ID NUMBER, Primary Key\nDEPARTMENT_ABBR VARCHAR2(4)\nDEPARTMENT_NAME VARCHAR2(30)\nMANAGER_ID NUMBER\n\nThe EMPLOYEES table contains these columns:\n\nEMPLOYEE_ID NUMBER\nLAST_NAME VARCHAR2(25)\nFIRST_NAME VARCHAR2(25)\nDEPARTMENT_ID NUMBER\nJOB_ID NUMBER\nMANAGER_ID NUMBER\nSALARY NUMBER(9,2)\nHIRE_DATE DATE\n\nEvaluate this statement:\n\nALTER TABLE employees\nADD CONSTRAINT REFERENTIAL (manager_id) TO departments(manager_id);\n\nWhich statement is true?": "The ALTER TABLE statement fails because the ADD CONSTRAINT clause contains a syntax error.",
+  "You need to add a PRIMARY KEY to the DEPARTMENTS table. Which statement should you use?": "ALTER TABLE departments ADD CONSTRAINT dept_id_pk PRIMARY KEY (dept_id);",
+  "Which of the following is not a valid Oracle constraint type?": "EXTERNAL KEY",
+  "The PO_DETAILS table contains these columns:\n\n\nPO_NUM NUMBER NOT NULL, Primary Key\nPO_LINE_ID NUMBER NOT NULL, Primary Key\nPRODUCT_ID NUMBER Foreign Key to PRODUCT_ID column of the PRODUCTS table\nQUANTITY NUMBER\nUNIT_PRICE NUMBER(5,2)\n\nEvaluate this statement:\n\nALTER TABLE po_details\nDISABLE CONSTRAINT product_id_pk CASCADE;\n\nFor which task would you issue this statement?": "To disable the PRIMARY KEY and any FOREIGN KEY constraints that are dependent on the PO_NUM column",
+
+  "Which symbol is used to perform an outer join?": "(+)",
+  "The EMPLOYEES table contains the following columns:\n\n\nEMPLOYEE_ID NUMBER(10) PRIMARY KEY\nLAST_NAME VARCHAR2(20)\nFIRST_NAME VARCHAR2(20)\nDEPARTMENT_ID VARCHAR2(20)\nHIRE_DATE DATE\nSALARY NUMBER(9,2)\nBONUS NUMBER(9,2)\n\nYou need to increase the salary for all employees in department 10 by 10 percent. You also need to increase the bonus for all employees in department 10 by 15 percent. Which statement should you use?": "UPDATE employees SET salary = salary * 1.10, bonus = bonus * 1.15 WHERE department_id = 10;",
+  "The PRODUCTS table contains these columns:\n\n\nPRODUCT_ID NUMBER NOT NULL\nPRODUCT_NAME VARCHAR2 (25)\nSUPPLIER_ID NUMBER NOT NULL\nLIST_PRICE NUMBER (7,2)\nCOST NUMBER (5,2)\nQTY_IN_STOCK NUMBER(4)\nLAST_ORDER_DT DATE DEFAULT SYSDATE NOT NUL\n\nWhich INSERT statement will execute successfully?": "INSERT INTO products (product_id, product_name, supplier_id, list_price, cost, qty_in_stock)VALUES(2958, 'Cable', 8690, 7.09, 4.04, 700)",
+  "Which of the following best describes the function of an outer join?": "An outer join will return all rows that meet the join criteria and will return NULL values from one table if no rows from the other table satisfy the join criteria.",
+  "The PLAYERS table contains these columns:\n\nPLAYER_ID NUMBER PK \nPLAYER_NAME VARCHAR2 (30) \nTEAM_ID NUMBER \nHIRE_DATE DATE \nSALARY NUMBER (8,2)\n\nWhich clauses represent valid uses of aggregate functions? (Choose Three)": "HAVING MAX(salary) > 10000 | SELECT AVG(NVL(salary, 0)) | ORDER BY AVG(salary)",
+  "The following statement is an example of a nonequi-join.  True or False?\n\nSELECT e.last_name, e.salary, j.grade_level \nFROM employees e, job_grades j \nWHERE e.salary \n    BETWEEN j.lowest_sal AND j.highest_sal;": "True",
+  "The PAYMENT table contains these columns:\n\nPAYMENT_ID NUMBER(9) PK \nPAYMENT_DATE DATE \nCUSTOMER_ID NUMBER(9)\n\nWhich SELECT statement could you use to display the number of times each customer payment was made between January 1, 2003 and June 30, 2003?": "SELECT customer_id, COUNT(payment_id) FROM payment WHERE payment_date BETWEEN '01-Jan-2003' AND '30-Jun-2003' GROUP BY customer_id;",
+  "INTERSECT will give you the common rows found in both queries. True or False?": "True",
+  "What is the quickest way to use today's date when you are creating a new row?": "Use the SYSDATE function.",
+  "All systems need rigorous testing before they are delivered to end users. True or False?": "True",
+  "User BOB's CUSTOMERS table contains 20 rows. BOB inserts two more rows into the table but does not COMMIT his changes. User JANE now executes:\n\nSELECT COUNT(*) FROM bob.customers;\n\nWhat result will JANE see?": "20",
+  "You need to create a report to display all employees that were hired on or before January 1, 1996. The data should display in this format:\n\nEmployee\tStart Date and Salary\n148\nChoices - Just one correct!\nSELECT employee_id ||'\"- \"|| last_name \"Employee\",\n    hire_date ||\" / \"|| salary Start Date and Salary\"\nFROM employees\nWHERE hire_date <= '01-Jan-1996';\n\n\n\nSELECT employee_id ||' - '|| last_name \"Employee\",\n    hire_date ||' / '|| salary \"Start Date and Salary\"\nFROM employees\nWHERE hire_date <= '01-Jan-1996';\n\n\n\nSELECT employee_id || - || last_name \"Employee\",\n    hire_date || / || salary \"Start Date and Salary\nFROM employees\nWHERE hire_date <= '01-Jan-1996';\n\n\n\nSELECT employee_id ||' '|| last_name \"Employee\",\n    hire_date ||' '|| salary \"Start Date and Salary\"\nFROM employees\nWHERE hire_date <= 01-Jan-1996';\n\n\n\nSELECT employee_id ||' - '|| last_name 'Employee',\n    hire_date ||' / '|| salary 'Start Date and Salary\"\nFROM employees\nWHERE hire_date <= '01-Jan-1996';\n\n\n\n© 2026, Oracle and/or its affiliates.\nContact Us\nTerms of Use\nPrivacy\nAccessibility\nThird Party Notices\nCookie Preferences\nAbout Oracle\nVersion 2.0.2026318 Built with  using Oracle APEX": "SELECT employee_id ||' - '|| last_name \"Employee\", hire_date ||' / '|| salary \"Start Date and Salary\" FROM employees WHERE hire_date <= '01-Jan-1996';",
+  "Which query represents the correct syntax for a left outer join?": "SELECT companyname, orderdate, total FROM customers LEFT OUTER JOIN orders ON customers.cust_id = orders.cust_id;",
+  "Testing is done by programmers. True or False?": "True",
+  "The CUSTOMERS table exists in user Mary's schema. Which statement should you use to create a synonym for all database users on the CUSTOMERS table?": "CREATE PUBLIC SYNONYM cust FOR mary.customers;",
+  "Which statement about performing DML operations on a view is true?": "You cannot modify data in a view if the view contains a group function.",
+  "What system privilege must be held in order to login to an Oracle database?": "CREATE SESSION",
+  "Assuming there are no Foreign Keys on the EMPLOYEES table, if the following subquery returns one row, how many rows will be deleted from the EMPLOYEES table?\n\n\nDELETE FROM employees\nWHERE department_id =\n     (SELECT department_id\n     FROM departments\n     WHERE department_name LIKE '%Public%');": "All the rows in the EMPLOYEES table with department_ids matching the department_id returned by the subquery.",
+  "DELETE statements can use correlated subqueries. True or False?": "True",
+  "Evaluate this statement\n\nALTER TABLE employees\nENABLE CONSTRAINT emp_id_pk;\n\nFor which task would you issue this statement?": "To activate the previously disabled constraint on the EMPLOYEE_ID column while creating a PRIMARY KEY index",
+  "Table MYTAB contains only one column of datatype CHAR(1). A user executes the following statements in the order shown.\n\nINSERT INTO mytab VALUES ('A'); \nINSERT INTO mytab VALUES ('B'); \nCOMMIT;\nINSERT INTO mytab VALUES ('C'); \nROLLBACK;\n\nWhich rows does the table now contain?": "A and B",
 	'which of the following sql statements will correctly display the last name and the number of weeks employed for all employees in department 90?':
 		'SELECT last_name, (SYSDATE-hire_date)/7 AS WEEKS\\nFROM employees\\nWHERE department_id = 90;',
 	'which sql function can be used to remove heading or trailing characters (or both) from a character string?':
@@ -1955,6 +2003,8 @@ export const ORACLE_QA_BANK = {
 	'what will be the result of this statement?\\n\\nselect last_name, job_id, salary, department_id\\nfrom employees\\nwhere job_id =\\n (select job_id\\n from employees\\n where employee_id = 141) and\\ndepartment_id =\\n (select department_id\\n from departments\\n where location_id =1500);':
 		'Only the employees whose job id matches employee 141 and who work in location 1500',
 
+  "Examine the data in the PAYMENT table:\n\nPAYMENT_ID\tCUSTOMER_ID\tPAYMENT_DATE\tPAYMENT_TYPE\tPAYMENT_AMOUNT\n86590586\t8908090\t10-Jun-2003\tBASIC\t859.00\n89453485\t8549038\t15-Feb-2003\tINTEREST\t596.00\n85490345\t5489304\t20-Mar-2003\tBASIC\t568.00\n\nThis statement fails when executed:\n\nSELECT customer_id, payment_type\nFROM payment\nWHERE payment_id =\n    (SELECT payment_id\n    FROM payment\n    WHERE payment_amount = 596.00 OR payment_date = '20-Mar-2003'); \n\nWhich change could correct the problem?": "Change the outer query WHERE clause to 'WHERE payment_id IN'.",
+
 
 	'in a correlated subquery, the outer and inner queries are joined on one or more columns.':
 		'True',
@@ -1964,7 +2014,11 @@ export const ORACLE_QA_BANK = {
 
 	'what would the following sql statement return?\\nselect count(distinct salary)\\nfrom employees;':
 		'The number of unique salaries in the employees table',
+  "Examine the data from the LINE_ITEM table:\n\nLINE_ITEM_ID\tORDER_ID\tPRODUCT_ID\tPRICE\tDISCOUNT\n890898\t847589\t848399\t8.99\t0.10\n768385\t862459\t849869\t5.60\t0.05\n867950\t985490\t945809\t5.60\t\n954039\t439203\t438925\t5.25\t0.15\n543949\t349302\t453235\t4.50\t\n\nYou query the LINE_ITEM table and a value of 5 is returned. Which SQL statement did you execute?": "SELECT COUNT(*)FROM line_item;",
 
+
+  "What would the following SQL statement return?\n\nSELECT COUNT(first_name)\nFROM employees;": "The total number of rows in the employees table"
+,
 	// Section 12 Quiz (Oracle Database Programming with SQL)
 	'a column in a table can be given a default value. this option prevents null values from automatically being assigned to the column if a row is inserted without a specified value for the column. true or false ?':
 		'True',
@@ -2414,6 +2468,8 @@ export const ORACLE_QA_BANK = {
 	'primary key, foreign key, unique key, and check constraints can be added at which two levels?':
 		'Column|Table',
 
+  "You need to create a report to display the names of products with a cost value greater than the average cost of all products. Which SELECT statement should you use?": "SELECT product_name FROM products WHERE cost > (SELECT AVG(cost) FROM products);",
+  "To do a logical delete of a column without the performance penalty of rewriting all the table datablocks, you can issue the following command:": "Alter table set unused",
 
 	'what actions can be performed on or with constraints?':
 		'Add, Drop, Enable, Disable, Cascade',
@@ -2561,7 +2617,7 @@ export const ORACLE_QA_BANK = {
 		'True',
 
 	'the employees table contains these columns: employee_id number last_name varchar2(25) first_name varchar2(25) department_id number job_id number manager_id number salary number(9,2) commissoin number(7,2) hire_date date which select statement could be used to display the 10 lowest paid clerks that belong to department 70?':
-		'SELECT ROWNUM "Ranking",last_name||\\\',\\\'||first_name "Employee", salary "Salary" FROM (SELECT last_name, first_name, salary, job_id FROM employees WHERE job_id LIKE \\\'CLERK\\\' AND department_id = 7 ORDER BY salary) WHERE ROWNUM <=10',
+		'SELECT ROWNUM "Ranking",last_name||\\\',\\\'||first_name "Employee", salary "Salary" FROM (SELECT last_name, first_name, salary, job_id FROM employees WHERE job_id LIKE \\\'CLERK\\\' AND department_id = 70 ORDER BY salary) WHERE ROWNUM <=10',
 
 	'which of the following describes a top-n query?':
 		'A top-N query returns a limited result set, returning data based on highest or lowest criteria.',
@@ -3006,6 +3062,10 @@ export const ORACLE_QA_BANK = {
 	'which statement would you use to remove an object privilege granted to a user?':
 		'REVOKE',
 
+  "Which of the following conditions will cause an error on a NATURAL JOIN?": "If the columns having the same names have different data types.",
+  "Given this employee table:\n\n(employee_id NUMBER(10) NOT NULL,\nfirst_name VARCHAR2(25) NOT NULL,\nlast_name VARCHAR2(30) NOT NULL,\nhire_date DATE DEFAULT sysdate)\n\nWhat will be the result in the hire_date column following this insert statement:\n\nINSERT INTO employees VALUES (10, 'Natacha', 'Hansen', DEFAULT);": "Statement will work and the hire_date column will have the value of the date when the statement was run.",
+  "To perform a valid outer join between DEPARMENTS and EMPLOYEES to list departments without employees, select the correct WHERE clause for the following select statement:\n\nSELECT d.department_name, e.last_name\nFROM employees e, departments d\nWHERE": "e.department_id(+) = d.department_id",
+  "User ADAM has successfully logged on to the database in the past, but today he receives an error message stating that (although he has entered his password correctly) he cannot log on. What is the most likely cause of the problem?": "ADAM's CREATE SESSION privilege has been revoked.",
 	// Section 18 Quiz - Database Programming With SQL (DeniAce blog, 2026-06-05)
 	"steven king's row in the employees table has employee_id = 100 and salary = 24000. a user issues the following statements in the order shown: update employees set salary = salary * 2 where employee_id = 100; commit; update employees set salary = 30000 where employee_id = 100; the user's database session now ends abnormally. what is now king's salary in the table?":
 		"48000",

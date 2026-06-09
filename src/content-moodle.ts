@@ -1,6 +1,14 @@
 console.log("myudak -- content-moodle.ts loaded");
 
 import { createHelperDefault } from "./lib/content_moodle";
+import {
+  MOODLE_CHATGPT_HOME_URL,
+  buildMoodleChatGptPrompt,
+  buildMoodleChatGptSearchUrl,
+  normalizeMoodlePromptText,
+  shouldUseMoodleChatGptClipboardFallback,
+  type MoodleChatGptChoiceMode,
+} from "./lib/content_moodle/chatgpt";
 
 interface MoodleQuestionOption {
   key: string;
@@ -24,6 +32,7 @@ const ASK_AI_SHORTCUT_KEY = "a";
 const ASK_AI_SHORTCUT_LABEL = "Alt+A";
 const ASK_AI_SHORTCUT_BOUND_KEY = "__siapDipsMoodleAskAiShortcutBound";
 const ASK_AI_BUTTON_SELECTOR = 'button[data-myudak-action="ask-ai"]';
+const CHATGPT_BUTTON_ACTION = "answer-chatgpt";
 
 chrome.storage.local.get(["moodleHelper"], (result) => {
   if (result.moodleHelper === undefined) {
@@ -53,6 +62,7 @@ document
       questionPayload.questionText
     );
     const buttonGoogleSoal = createGoogleButton(questionPayload.questionText);
+    const buttonChatGpt = createChatGptButton(question);
     const buttonAskAi = createAiButton(questionPayload, question);
 
     chrome.storage.local.get(["copySoal", "googleSoal", "askAi"], (result) => {
@@ -78,6 +88,7 @@ document
 
     formulation.appendChild(buttonCopySoal);
     formulation.appendChild(buttonGoogleSoal);
+    formulation.appendChild(buttonChatGpt);
     formulation.appendChild(buttonAskAi);
   });
 
@@ -89,6 +100,227 @@ function createBaseButton(text: string): HTMLButtonElement {
   button.type = "button";
   button.style.marginTop = "10px";
   button.classList.add("btn", "btn-secondary", "btn-myudak");
+  return button;
+}
+
+function getMoodleChatGptChoiceMode(
+  question: HTMLElement
+): MoodleChatGptChoiceMode {
+  if (question.querySelector('.answer input[type="checkbox"]')) {
+    return "multiple";
+  }
+  if (question.querySelector('.answer input[type="radio"]')) {
+    return "single";
+  }
+  return "unknown";
+}
+
+function getMoodleChatGptPayload(question: HTMLElement) {
+  const questionTextElement = question.querySelector<HTMLElement>(".qtext");
+  const questionLabel =
+    question.querySelector<HTMLElement>("div.info > h3")?.textContent?.trim() ||
+    "Moodle Question";
+  const questionText = normalizeMoodlePromptText(
+    questionTextElement?.innerText ||
+      questionTextElement?.textContent ||
+      ""
+  );
+
+  const optionInputs = Array.from(
+    question.querySelectorAll<HTMLInputElement>(
+      '.answer input[type="radio"], .answer input[type="checkbox"]'
+    )
+  ).filter(
+    (input) =>
+      input.value !== "-1" &&
+      !input.classList.contains("visually-hidden") &&
+      input.getAttribute("aria-hidden") !== "true"
+  );
+
+  const options = optionInputs
+    .map((input, index) => {
+      const labelId = input.getAttribute("aria-labelledby");
+      const labelElement = labelId
+        ? question.querySelector<HTMLElement>(`#${CSS.escape(labelId)}`)
+        : input.closest<HTMLElement>(".r0, .r1")?.querySelector<HTMLElement>(
+            '[data-region="answer-label"]'
+          );
+      if (!labelElement) return null;
+
+      const labelClone = labelElement.cloneNode(true) as HTMLElement;
+      const answerNumber = labelClone.querySelector<HTMLElement>(".answernumber");
+      const key =
+        answerNumber?.textContent?.replace(/[^a-z0-9]/gi, "").toLowerCase() ||
+        String.fromCharCode(97 + index);
+      answerNumber?.remove();
+
+      const text = normalizeMoodlePromptText(
+        labelClone.innerText || labelClone.textContent || ""
+      ).replace(/\s*\n\s*/g, " ");
+
+      return text ? { key, text } : null;
+    })
+    .filter((option): option is { key: string; text: string } => Boolean(option));
+
+  if (!questionText || !options.length) return null;
+
+  return {
+    questionLabel,
+    questionText,
+    options,
+    mode: getMoodleChatGptChoiceMode(question),
+  };
+}
+
+function copyMoodleTextWithLegacyFallback(text: string): boolean {
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    const copied = document.execCommand("copy");
+    textarea.remove();
+    return copied;
+  } catch (error) {
+    console.debug("[Moodle ChatGPT] Clipboard fallback failed:", error);
+    return false;
+  }
+}
+
+function copyMoodleText(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).then(
+      () => true,
+      () => copyMoodleTextWithLegacyFallback(text)
+    );
+  }
+  return Promise.resolve(copyMoodleTextWithLegacyFallback(text));
+}
+
+function openMoodleExternalTab(url: string): boolean {
+  const opened = window.open("about:blank", "_blank");
+  if (!opened) return false;
+
+  try {
+    opened.opener = null;
+    const referrerPolicy = opened.document.createElement("meta");
+    referrerPolicy.name = "referrer";
+    referrerPolicy.content = "no-referrer";
+    opened.document.head.appendChild(referrerPolicy);
+    opened.location.replace(url);
+    return true;
+  } catch (error) {
+    console.debug("[Moodle ChatGPT] Failed to open tab:", error);
+    opened.close();
+    return false;
+  }
+}
+
+function openMoodleQuestionInChatGpt(question: HTMLElement): boolean {
+  const payload = getMoodleChatGptPayload(question);
+  if (!payload) {
+    showToast("Soal atau pilihan jawaban tidak ditemukan", "error");
+    return false;
+  }
+
+  const prompt = buildMoodleChatGptPrompt(payload);
+  const searchUrl = buildMoodleChatGptSearchUrl(prompt);
+
+  if (!shouldUseMoodleChatGptClipboardFallback(searchUrl)) {
+    if (!openMoodleExternalTab(searchUrl)) {
+      showToast("Tab ChatGPT diblokir browser", "error");
+      return false;
+    }
+    showToast("Membuka soal di ChatGPT Search", "success");
+    return true;
+  }
+
+  const opened = openMoodleExternalTab(MOODLE_CHATGPT_HOME_URL);
+  void copyMoodleText(prompt).then((copied) => {
+    if (opened && copied) {
+      showToast("Prompt panjang disalin. Paste di ChatGPT.", "success");
+    } else if (copied) {
+      showToast("Tab diblokir. Prompt sudah disalin.", "error");
+    } else {
+      showToast("Gagal membuka ChatGPT dan menyalin prompt", "error");
+    }
+  });
+
+  return opened;
+}
+
+function createChatGptButton(question: HTMLElement): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.myudakAction = CHATGPT_BUTTON_ACTION;
+  button.title = "Buka soal dan pilihan jawaban di ChatGPT Search";
+  button.setAttribute("aria-label", "Answer ChatGPT");
+  button.innerHTML = `
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/1/13/ChatGPT-Logo.png"
+      alt=""
+      referrerpolicy="no-referrer"
+      style="width:18px;height:18px;object-fit:contain;flex-shrink:0"
+    />
+    <span>Answer ChatGPT</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      style="margin-left:2px;flex-shrink:0"
+    >
+      <path d="M7 17L17 7"></path>
+      <path d="M7 7h10v10"></path>
+    </svg>
+  `;
+
+  Object.assign(button.style, {
+    padding: "9px 10px",
+    border: "1px solid #86efac",
+    borderRadius: "9px",
+    background:
+      "linear-gradient(135deg, rgba(236,253,245,1) 0%, rgba(220,252,231,1) 100%)",
+    color: "#166534",
+    fontWeight: "700",
+    cursor: "pointer",
+    fontSize: "13px",
+    transition:
+      "transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease",
+    marginTop: "10px",
+    marginRight: "0.5rem",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    verticalAlign: "middle",
+  });
+
+  button.addEventListener("mouseenter", () => {
+    button.style.boxShadow = "0 9px 18px rgba(22,101,52,0.15)";
+    button.style.transform = "translateY(-1px)";
+    button.style.background =
+      "linear-gradient(135deg, rgba(220,252,231,1) 0%, rgba(187,247,208,1) 100%)";
+  });
+  button.addEventListener("mouseleave", () => {
+    button.style.boxShadow = "none";
+    button.style.transform = "translateY(0)";
+    button.style.background =
+      "linear-gradient(135deg, rgba(236,253,245,1) 0%, rgba(220,252,231,1) 100%)";
+  });
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    openMoodleQuestionInChatGpt(question);
+  });
+
   return button;
 }
 
