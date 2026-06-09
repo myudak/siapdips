@@ -17,9 +17,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
 type Feature = {
   title: string;
   eyebrow: string;
@@ -115,16 +112,19 @@ const storeLinks = [
     name: "Chrome Web Store",
     href: "https://chromewebstore.google.com/detail/siap-dips-your-campus-com/inpmbpkngacgeljphlapgdgdjmoffild",
     label: "Install Chrome",
+    icon: "/images/chrome-store.png",
   },
   {
     name: "Firefox Add-ons",
     href: "https://addons.mozilla.org/en-US/firefox/addon/siap-dips/",
     label: "Install Firefox",
+    icon: "/images/firefox-addons.jpg",
   },
   {
     name: "Microsoft Edge Add-ons",
     href: "https://microsoftedge.microsoft.com/addons/detail/siap-dips-your-campus-co/hlmmkdnclolciolbhaacjmphkmbceopl",
     label: "Install Edge",
+    icon: "/images/edge.png",
   },
 ];
 
@@ -209,8 +209,8 @@ function FeatureCard({ feature }: { feature: Feature }) {
   const Icon = feature.icon;
 
   return (
-    <article className={`feature-card accent-${feature.accent}`}>
-      <div className="feature-video">
+    <article className="feature-card">
+      <div className={`feature-video accent-${feature.accent}`}>
         <video
           src={feature.video}
           autoPlay
@@ -222,10 +222,10 @@ function FeatureCard({ feature }: { feature: Feature }) {
         <div className="video-fallback">{feature.title}</div>
       </div>
       <div className="feature-copy">
-        <Badge className="feature-badge">
-          <Icon size={13} />
+        <span className="feature-badge">
+          <Icon size={14} />
           {feature.eyebrow}
-        </Badge>
+        </span>
         <h3>{feature.title}</h3>
         <p>{feature.description}</p>
       </div>
@@ -246,20 +246,18 @@ function App() {
           <a href="#workflow">Flow</a>
           <a href="#privasi">Privasi</a>
         </div>
-        <Button className="nav-cta" asChild>
-          <a href="#mulai">
-            Mulai lihat
-            <ArrowRight />
-          </a>
-        </Button>
+        <a href="#mulai" className="nav-cta">
+          Mulai lihat
+          <ArrowRight size={16} />
+        </a>
       </nav>
 
       <section className="hero-section" id="top">
         <div className="hero-copy reveal reveal-delay-1">
-          <Badge className="hero-badge">
-            <Sparkles size={14} />
+          <span className="hero-badge">
+            <Sparkles size={16} />
             Campus companion buat mahasiswa Undip
-          </Badge>
+          </span>
           <h1>Browser kamu, tapi lebih ngerti ritme kuliah.</h1>
           <p>
             Siap Dips bantu rapihin SIAP, Kulon, Todoist, jadwal, IPK, form
@@ -267,18 +265,14 @@ function App() {
             korporat.
           </p>
           <div className="hero-actions">
-            <Button size="lg" asChild>
-              <a href={storeLinks[0].href} target="_blank" rel="noreferrer">
-                <Rocket />
-                Install Chrome
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <a href="#fitur">
-                <Play />
-                Lihat promonya
-              </a>
-            </Button>
+            <a href={storeLinks[0].href} target="_blank" rel="noreferrer" className="btn-primary">
+              <Rocket size={20} />
+              Install Chrome
+            </a>
+            <a href="#fitur" className="btn-secondary">
+              <Play size={20} />
+              Lihat promonya
+            </a>
           </div>
           <div className="store-strip" aria-label="Link instalasi browser">
             {storeLinks.map((store) => (
@@ -288,6 +282,7 @@ function App() {
                 rel="noreferrer"
                 key={store.name}
               >
+                <img src={store.icon} alt={store.name} className="store-icon" />
                 {store.name}
                 <ArrowRight size={14} />
               </a>
@@ -315,7 +310,7 @@ function App() {
           <div className="pain-list reveal reveal-delay-1">
             {painPoints.map((point) => (
               <div className="pain-item" key={point}>
-                <CheckCircle2 size={18} />
+                <CheckCircle2 size={24} />
                 <span>{point}</span>
               </div>
             ))}
@@ -325,7 +320,7 @@ function App() {
 
       <section className="feature-section" id="fitur" aria-labelledby="fitur-title">
         <div className="section-heading reveal">
-          <Badge className="section-badge">Feature reel</Badge>
+          <span className="section-badge">Feature reel</span>
           <h2 id="fitur-title">Fitur yang kelihatan kecil, tapi sering nyelametin waktu.</h2>
           <p>
             Video ini pakai footage fitur asli dari project, jadi yang kamu lihat
@@ -341,7 +336,7 @@ function App() {
 
       <section className="workflow-section" id="workflow" aria-labelledby="workflow-title">
         <div className="section-heading reveal">
-          <Badge className="section-badge">Flow harian</Badge>
+          <span className="section-badge">Flow harian</span>
           <h2 id="workflow-title">Dipakai seperti browser biasa, cuma lebih sat-set.</h2>
         </div>
         <div className="workflow-grid">
@@ -362,17 +357,17 @@ function App() {
       <section className="trust-section" id="privasi" aria-labelledby="trust-title">
         <div className="trust-panel reveal">
           <div>
-            <Badge className="section-badge">
-              <ShieldCheck size={13} />
+            <span className="section-badge">
+              <ShieldCheck size={16} />
               Privasi dan kontrol
-            </Badge>
+            </span>
             <h2 id="trust-title">Data penting tetap kamu yang pegang.</h2>
+            <p>
+              Pengaturan, cache, token opsional, dan konfigurasi helper disimpan
+              di storage extension. Integrasi eksternal seperti Todoist atau AI
+              hanya jalan ketika kamu sendiri yang mengaktifkan dan mengisi token.
+            </p>
           </div>
-          <p>
-            Pengaturan, cache, token opsional, dan konfigurasi helper disimpan
-            di storage extension. Integrasi eksternal seperti Todoist atau AI
-            hanya jalan ketika kamu sendiri yang mengaktifkan dan mengisi token.
-          </p>
           <div className="trust-points">
             <span>Tanpa backend wajib</span>
             <span>Token opsional</span>
@@ -383,7 +378,7 @@ function App() {
 
       <section className="cta-section" id="mulai" aria-labelledby="cta-title">
         <div className="cta-card reveal">
-          <Badge className="section-badge">Siap dicoba</Badge>
+          <span className="section-badge">Siap dicoba</span>
           <h2 id="cta-title">Bikin browser kuliahmu lebih ngerti kerjaanmu.</h2>
           <p>
             Pilih browser yang kamu pakai, install extension-nya, lalu buka
@@ -391,17 +386,17 @@ function App() {
           </p>
           <div className="cta-actions">
             {storeLinks.map((store) => (
-              <Button
-                size="lg"
-                variant={store.name === "Chrome Web Store" ? "default" : "outline"}
-                asChild
+              <a
+                className={store.name === "Chrome Web Store" ? "btn-primary" : "btn-secondary"}
+                href={store.href}
+                target="_blank"
+                rel="noreferrer"
                 key={store.name}
               >
-                <a href={store.href} target="_blank" rel="noreferrer">
-                  {store.label}
-                  <ArrowRight />
-                </a>
-              </Button>
+                <img src={store.icon} alt={store.name} className="store-icon-large" />
+                {store.label}
+                <ArrowRight size={18} />
+              </a>
             ))}
           </div>
         </div>

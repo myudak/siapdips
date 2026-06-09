@@ -1,4 +1,4 @@
-name: Deploy Chrome Extension
+name: Deploy Browser Extensions
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]') || contains(github.event.head_commit.message, '[release]') # Runs manually, on '[deploy]', or on '[release]' for CRX release upload only
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]') || contains(github.event.head_commit.message, '[release]') # Manual and [deploy] publish stores; [release] only creates release assets.
 
     steps:
       - name: Checkout Repository
@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install Dependencies & Build
         run: |
@@ -40,10 +40,16 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           TAG="v${VERSION}"
           ASSET_NAME="siapdips-${TAG}.crx"
+          FIREFOX_ASSET_NAME="siap-dips-firefox-${TAG}.zip"
+          SOURCE_ASSET_NAME="siap-dips-source-${TAG}.zip"
+          FIREFOX_ADDON_GUID=$(node -p "require('./src/manifest-firefox.json').browser_specific_settings.gecko.id")
 
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "asset_name=${ASSET_NAME}" >> "$GITHUB_OUTPUT"
+          echo "firefox_asset_name=${FIREFOX_ASSET_NAME}" >> "$GITHUB_OUTPUT"
+          echo "source_asset_name=${SOURCE_ASSET_NAME}" >> "$GITHUB_OUTPUT"
+          echo "firefox_addon_guid=${FIREFOX_ADDON_GUID}" >> "$GITHUB_OUTPUT"
 
       - name: Pack CRX
         run: |
@@ -69,12 +75,47 @@ jobs:
             --client-secret ${{ secrets.CLIENT_SECRET }} \
             --refresh-token ${{ secrets.REFRESH_TOKEN }}
 
-      - name: Upload CRX to GitHub Release
+      - name: Build Firefox Package
+        run: |
+          npm run build:firefox
+          node scripts/package-extension.mjs firefox --no-build
+          mv "release/siap-dips-firefox-v${{ steps.release.outputs.version }}.zip" \
+            "${{ steps.release.outputs.firefox_asset_name }}"
+
+      - name: Package Source for Mozilla Review
+        run: |
+          git archive \
+            --format=zip \
+            --output="${{ steps.release.outputs.source_asset_name }}" \
+            HEAD \
+            -- . \
+            ":(exclude)dist.crx" \
+            ":(exclude)dist.pem" \
+            ":(exclude)dist.zip"
+
+      - name: Publish to Firefox Add-ons
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
+        uses: wdzeng/firefox-addon@v1.2.1
+        with:
+          addon-guid: ${{ steps.release.outputs.firefox_addon_guid }}
+          xpi-path: ${{ steps.release.outputs.firefox_asset_name }}
+          source-file-path: ${{ steps.release.outputs.source_asset_name }}
+          jwt-issuer: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          jwt-secret: ${{ secrets.FIREFOX_JWT_SECRET }}
+          approval-notes: |
+            Build instructions are provided in FIREFOX_BUILD_INSTRUCTIONS.md.
+            Run `npm install --legacy-peer-deps`, then `npm run build:firefox`.
+            The generated extension is written to `dist/`.
+
+      - name: Upload Browser Packages to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release.outputs.tag }}
           name: ${{ steps.release.outputs.tag }}
-          files: ${{ steps.release.outputs.asset_name }}
+          files: |
+            ${{ steps.release.outputs.asset_name }}
+            ${{ steps.release.outputs.firefox_asset_name }}
+            ${{ steps.release.outputs.source_asset_name }}
           fail_on_unmatched_files: true
           overwrite_files: true
           generate_release_notes: true

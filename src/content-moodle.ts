@@ -200,20 +200,18 @@ function copyMoodleText(text: string): Promise<boolean> {
 }
 
 function openMoodleExternalTab(url: string): boolean {
-  const opened = window.open("about:blank", "_blank");
-  if (!opened) return false;
-
   try {
-    opened.opener = null;
-    const referrerPolicy = opened.document.createElement("meta");
-    referrerPolicy.name = "referrer";
-    referrerPolicy.content = "no-referrer";
-    opened.document.head.appendChild(referrerPolicy);
-    opened.location.replace(url);
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.style.display = "none";
+    document.documentElement.appendChild(link);
+    link.click();
+    link.remove();
     return true;
   } catch (error) {
     console.debug("[Moodle ChatGPT] Failed to open tab:", error);
-    opened.close();
     return false;
   }
 }
