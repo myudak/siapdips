@@ -85,6 +85,7 @@ function rewriteManifestPlugin(mode: string): Plugin {
       const templatePath = resolveManifestTemplatePath(mode);
       const template = fs.readFileSync(templatePath, "utf-8");
       const manifest = JSON.parse(template) as {
+        version?: string;
         background?: {
           service_worker?: string;
           scripts?: string[];
@@ -93,6 +94,10 @@ function rewriteManifestPlugin(mode: string): Plugin {
           js?: string[];
         }>;
       };
+
+      // Sync version from package.json so we only bump in one place.
+      const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, "package.json"), "utf-8"));
+      manifest.version = pkg.version;
 
       if (manifest.background?.service_worker) {
         manifest.background.service_worker = resolveBuiltFile("background");

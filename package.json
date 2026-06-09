@@ -1,7 +1,7 @@
 {
   "name": "siapdipss",
   "private": true,
-  "version": "1.4.974",
+  "version": "1.4.1056",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -27,6 +27,7 @@
     "fix:dupe-keys": "node scripts/remove-duplicate-object-keys.mjs",
     "test:dyandra": "node --test --experimental-strip-types tests/dyandra-helper.test.mjs",
     "test:seb": "node --test --experimental-strip-types tests/seb-hash.test.mjs",
+    "test:oracle-matching": "node --test --experimental-strip-types tests/oracle-academy-matching.test.mjs",
     "watch:chrome": "vite build --mode chrome --watch",
     "watch:firefox": "vite build --mode firefox --watch",
     "watch:edge": "vite build --mode edge --watch",

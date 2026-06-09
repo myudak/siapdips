@@ -1,4 +1,9 @@
 import { ORACLE_QA_BANK } from "@/constants/oracleAcademyQA";
+import {
+	isMatchResilient,
+	normalizeText,
+	parseExpectedAnswers,
+} from "@/lib/content_oracle_academy/matching";
 
 const HELPER_ID = "oracle-academy-helper";
 const AUTO_HELPER_KEY = "oracleAcademyHelperEnabled";
@@ -26,34 +31,8 @@ let autoAnswerEnabled = false;
 let helperStatusEl: HTMLDivElement | null = null;
 let customQa: Record<string, string> = {};
 
-/**
- * Normalize text: trim, collapse spaces, lowercase.
- */
-function normalizeText(txt: string | null | undefined): string {
-  if (!txt) return "";
-  
-  return txt
-    // Convert non-breaking spaces to normal spaces
-    .replace(/\u00A0/g, " ")
-    // Normalize dashes/quotes to ASCII
-    .replace(/[\u2013\u2014]/g, "-")
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/[\u201C\u201D]/g, '"')
-    // Strip common instruction suffixes to make matching incredibly resilient
-    .replace(/\s*\(\s*choose\s+\w+\s*answers?\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*select\s+\w+\s*answers?\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*choose\s+\w+\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*select\s+\w+\.?\s*\)/gi, "")
-    .replace(/\s*\(\s*choose\s+all\s+correct\s+answers?\.?\s*\)/gi, "")
-    .replace(/\s*mark\s+for\s+review/gi, "")
-    // Collapse multiple whitespace into a single space
-    .replace(/\s+/g, " ")
-    // Normalize curly quotes to straight quotes
-    .replace(/[""]/g, '"')
-    .replace(/[']/g, "'")
-    .trim()
-    .toLowerCase();
-}
+// normalizeText, parseExpectedAnswers, isMatchResilient imported from
+// @/lib/content_oracle_academy/matching
 
 function getQuestionElement(): HTMLElement | null {
   return document.querySelector<HTMLElement>("#question-Text .t-ContentBlock-body");
@@ -399,21 +378,6 @@ async function saveCustomQaPair(
  * - Splits on commas.
  * - Strips leading "and"/"or".
  */
-function parseExpectedAnswers(answerRaw: string): string[] {
-  const normalized = normalizeText(answerRaw);
-  if (!normalized) return [];
-
-  if (normalized.includes("|")) {
-    return normalized
-      .split("|")
-      .map((part) => part.trim().replace(/^(and|or)\s+/, ""))
-      .filter(Boolean);
-  }
-
-  // Default: treat the whole normalized string as a single expected answer.
-  return [normalized];
-}
-
 function clickNextButtonOnce(): boolean {
   const btn =
     document.querySelector<HTMLButtonElement>("#nextModButton") ||
@@ -619,6 +583,9 @@ function answerCurrentQuestion(): boolean {
   let clicked = false;
   let matchedCount = 0;
 
+  // Tracking clicked buttons to avoid duplicate clicks
+  const clickedButtons = new Set<HTMLButtonElement>();
+
   // Layer 1: Attempt exact match for single-select questions first to avoid substring collisions
   if (effectiveExpected.length === 0) {
     const exactBtn = choiceButtons.find((btn) => {
@@ -636,6 +603,7 @@ function answerCurrentQuestion(): boolean {
       console.log("[Oracle Academy] Found exact choice match:", btnText || ariaLabel);
       exactBtn.click();
       clicked = true;
+      clickedButtons.add(exactBtn);
 
       const flagInput = exactBtn.querySelector<HTMLInputElement>(
         'input[name="f01"].qzlab-choice'
@@ -645,42 +613,77 @@ function answerCurrentQuestion(): boolean {
     }
   }
 
-  // Layer 2 & 3: Fallback to multi-select or substring matching if exact match wasn't found
-  for (const btn of choiceButtons) {
-    const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
-    const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
-    const btnText = (textSpan?.textContent || "").trim();
-    const btnNorm = normalizeText(btnText || ariaLabel);
+  // Pass 1: Exact matches for effectiveExpected items (helps avoid any substring collisions)
+  if (effectiveExpected.length > 0) {
+    for (const exp of effectiveExpected) {
+      const exactBtn = choiceButtons.find((btn) => {
+        if (clickedButtons.has(btn)) return false;
+        const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
+        const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
+        const btnText = (textSpan?.textContent || "").trim();
+        const btnNorm = normalizeText(btnText || ariaLabel);
+        return btnNorm === exp;
+      });
 
-    const multiMatch =
-      effectiveExpected.length > 0
-        ? effectiveExpected.some(
-            (exp) =>
-              exp === btnNorm || exp.includes(btnNorm) || btnNorm.includes(exp)
-          )
-        : false;
-    const singleMatch =
-      effectiveExpected.length === 0 &&
-      (btnNorm === answerTextNorm ||
-        btnNorm.includes(answerTextNorm) ||
-        answerTextNorm.includes(btnNorm));
+      if (exactBtn) {
+        const ariaLabel = (exactBtn.getAttribute("aria-label") || "").trim();
+        const textSpan = exactBtn.querySelector<HTMLSpanElement>(".choice-Text");
+        const btnText = (textSpan?.textContent || "").trim();
+        console.log("[Oracle Academy] Clicking choice (exact Pass 1):", btnText || ariaLabel);
+        exactBtn.click();
+        clicked = true;
+        clickedButtons.add(exactBtn);
+        matchedCount += 1;
 
-    if (multiMatch || singleMatch) {
-      console.log("[Oracle Academy] Clicking choice (fallback):", btnText || ariaLabel);
-      btn.click();
-      clicked = true;
-      matchedCount += 1;
-
-      const flagInput = btn.querySelector<HTMLInputElement>(
-        'input[name="f01"].qzlab-choice'
-      );
-      if (flagInput) flagInput.value = "Y";
-
-      const idInput = btn.querySelector<HTMLInputElement>('input[name="f02"]');
-      if (idInput) {
-        console.log("[Oracle Academy] Choice f02 id:", idInput.value);
+        const flagInput = exactBtn.querySelector<HTMLInputElement>(
+          'input[name="f01"].qzlab-choice'
+        );
+        if (flagInput) flagInput.value = "Y";
       }
-      // For multi-select, keep looping to click all matches
+    }
+  }
+
+  // Pass 2: Fallback (substring/resilient) matches for remaining items
+  if (effectiveExpected.length === 0 || matchedCount < effectiveExpected.length) {
+    for (const btn of choiceButtons) {
+      if (clickedButtons.has(btn)) continue;
+
+      const ariaLabel = (btn.getAttribute("aria-label") || "").trim();
+      const textSpan = btn.querySelector<HTMLSpanElement>(".choice-Text");
+      const btnText = (textSpan?.textContent || "").trim();
+      const btnNorm = normalizeText(btnText || ariaLabel);
+
+      // isMatchResilient is imported from @/lib/content_oracle_academy/matching
+
+      const multiMatch =
+        effectiveExpected.length > 0
+          ? effectiveExpected.some(
+              (exp) => isMatchResilient(exp, btnNorm)
+            )
+          : false;
+      const singleMatch =
+        effectiveExpected.length === 0 &&
+        (btnNorm === answerTextNorm ||
+          btnNorm.includes(answerTextNorm) ||
+          answerTextNorm.includes(btnNorm));
+
+      if (multiMatch || singleMatch) {
+        console.log("[Oracle Academy] Clicking choice (fallback Pass 2):", btnText || ariaLabel);
+        btn.click();
+        clicked = true;
+        clickedButtons.add(btn);
+        matchedCount += 1;
+
+        const flagInput = btn.querySelector<HTMLInputElement>(
+          'input[name="f01"].qzlab-choice'
+        );
+        if (flagInput) flagInput.value = "Y";
+
+        const idInput = btn.querySelector<HTMLInputElement>('input[name="f02"]');
+        if (idInput) {
+          console.log("[Oracle Academy] Choice f02 id:", idInput.value);
+        }
+      }
     }
   }
 

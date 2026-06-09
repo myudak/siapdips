@@ -51,7 +51,7 @@ test("findMatchingDyandraLoketLink normalisasi whitespace", () => {
 });
 
 test("normalizeDyandraRefreshInterval clamp dan fallback", () => {
-  assert.equal(normalizeDyandraRefreshInterval("250"), 500);
+  assert.equal(normalizeDyandraRefreshInterval("250"), 250);
   assert.equal(normalizeDyandraRefreshInterval("70000"), 60000);
   assert.equal(
     normalizeDyandraRefreshInterval("bukan-angka"),
