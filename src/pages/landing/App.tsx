@@ -26,13 +26,17 @@ type Feature = {
   accent: "mint" | "sky" | "sun" | "coral" | "ink" | "lime";
 };
 
+const landingBase = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/`;
+const landingAsset = (path: string) =>
+  `${landingBase}${path.replace(/^\/+/, "")}`;
+
 const featureReel: Feature[] = [
   {
     title: "Jadwal kuliah yang kebaca",
     eyebrow: "SIAP",
     description:
       "Ambil jadwal dari portal kampus, tampilkan rapi, dan bantu kamu ingat ritme minggu ini.",
-    video: "/video/vid-jadwal-2.mp4",
+    video: landingAsset("video/vid-jadwal-2.mp4"),
     icon: CalendarDays,
     accent: "sky",
   },
@@ -41,7 +45,7 @@ const featureReel: Feature[] = [
     eyebrow: "Akademik",
     description:
       "Pantau performa tanpa perlu bolak-balik buka halaman yang sama tiap semester.",
-    video: "/video/vid-ipk.mp4",
+    video: landingAsset("video/vid-ipk.mp4"),
     icon: GraduationCap,
     accent: "mint",
   },
@@ -50,7 +54,7 @@ const featureReel: Feature[] = [
     eyebrow: "Belajar",
     description:
       "Bikin platform belajar terasa lebih ringan dipakai buat tugas dan materi harian.",
-    video: "/video/vid-learnsocial.mp4",
+    video: landingAsset("video/vid-learnsocial.mp4"),
     icon: BookOpenCheck,
     accent: "lime",
   },
@@ -59,7 +63,7 @@ const featureReel: Feature[] = [
     eyebrow: "Form",
     description:
       "Beresin form rutin lebih cepat, cocok buat urusan yang repetitif tapi tetap harus kelar.",
-    video: "/video/Vid-Pbm.mp4",
+    video: landingAsset("video/Vid-Pbm.mp4"),
     icon: ClipboardCheck,
     accent: "sun",
   },
@@ -68,7 +72,7 @@ const featureReel: Feature[] = [
     eyebrow: "Kampus",
     description:
       "Helper kecil buat flow pendaftaran yang sering rebutan waktu dan butuh gerak cepat.",
-    video: "/video/vid-foodtruk.mp4",
+    video: landingAsset("video/vid-foodtruk.mp4"),
     icon: TimerReset,
     accent: "coral",
   },
@@ -77,7 +81,7 @@ const featureReel: Feature[] = [
     eyebrow: "Nyaman",
     description:
       "Dark mode, tema, blur data pribadi, dan helper browser lain buat sesi kuliah panjang.",
-    video: "/video/Vid-Theme.mp4",
+    video: landingAsset("video/Vid-Theme.mp4"),
     icon: EyeOff,
     accent: "ink",
   },
@@ -112,19 +116,19 @@ const storeLinks = [
     name: "Chrome Web Store",
     href: "https://chromewebstore.google.com/detail/siap-dips-your-campus-com/inpmbpkngacgeljphlapgdgdjmoffild",
     label: "Install Chrome",
-    icon: "/images/chrome-store.png",
+    icon: landingAsset("images/chrome-store.png"),
   },
   {
     name: "Firefox Add-ons",
     href: "https://addons.mozilla.org/en-US/firefox/addon/siap-dips/",
     label: "Install Firefox",
-    icon: "/images/firefox-addons.jpg",
+    icon: landingAsset("images/firefox-addons.jpg"),
   },
   {
     name: "Microsoft Edge Add-ons",
     href: "https://microsoftedge.microsoft.com/addons/detail/siap-dips-your-campus-co/hlmmkdnclolciolbhaacjmphkmbceopl",
     label: "Install Edge",
-    icon: "/images/edge.png",
+    icon: landingAsset("images/edge.png"),
   },
 ];
 
@@ -184,7 +188,8 @@ function HeroVideo() {
       <div className="browser-video-wrap">
         <video
           className="hero-video"
-          src="/video/vid-jadwal.mp4"
+          src={landingAsset("video/vid-jadwal.mp4")}
+          preload="metadata"
           autoPlay
           muted
           loop
@@ -212,8 +217,8 @@ function FeatureCard({ feature }: { feature: Feature }) {
     <article className="feature-card">
       <div className={`feature-video accent-${feature.accent}`}>
         <video
-          src={feature.video}
-          autoPlay
+          data-src={feature.video}
+          preload="none"
           muted
           loop
           playsInline
