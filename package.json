@@ -30,6 +30,8 @@
     "test:oracle-matching": "node --test --experimental-strip-types tests/oracle-academy-matching.test.mjs",
     "test:oracle-chatgpt": "node --test --experimental-strip-types tests/oracle-academy-chatgpt.test.mjs",
     "test:moodle-chatgpt": "node --test --experimental-strip-types tests/moodle-chatgpt.test.mjs",
+    "test:moodle-answer": "node --test --experimental-strip-types tests/moodle-answer.test.mjs",
+    "test:moodle-question": "node --test --experimental-strip-types tests/moodle-question.test.mjs",
     "watch:chrome": "vite build --mode chrome --watch",
     "watch:firefox": "vite build --mode firefox --watch",
     "watch:edge": "vite build --mode edge --watch",
