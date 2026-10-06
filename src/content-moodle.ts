@@ -355,13 +355,33 @@ function createAiButton(
   return button;
 }
 
+// Alt+A has to survive focus landing on a radio or checkbox, which happens as
+// soon as you click an answer option. Only real text entry should swallow it.
+const NON_TYPING_INPUT_TYPES = new Set([
+  "button",
+  "checkbox",
+  "color",
+  "file",
+  "hidden",
+  "image",
+  "radio",
+  "range",
+  "reset",
+  "submit",
+]);
+
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+
   const tagName = target.tagName.toLowerCase();
-  return (
-    tagName === "input" ||
-    tagName === "textarea" ||
-    target.isContentEditable
+  if (tagName === "textarea") return true;
+  if (tagName !== "input") return false;
+
+  // An input with no type, or one the browser does not recognise, reports
+  // "text", so anything missing from the set above still counts as typing.
+  return !NON_TYPING_INPUT_TYPES.has(
+    (target as HTMLInputElement).type.toLowerCase()
   );
 }
 
