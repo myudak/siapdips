@@ -67,25 +67,34 @@ document
     const buttonChatGpt = createChatGptButton(question);
     const buttonAskAi = createAiButton(questionPayload, question);
 
-    chrome.storage.local.get(["copySoal", "googleSoal", "askAi"], (result) => {
-      if (result.copySoal) {
-        buttonCopySoal.style.display = "inline-block";
-      } else {
-        buttonCopySoal.style.display = "none";
-      }
+    chrome.storage.local.get(
+      ["copySoal", "googleSoal", "askAi", "chatGptSoal"],
+      (result) => {
+        if (result.copySoal) {
+          buttonCopySoal.style.display = "inline-block";
+        } else {
+          buttonCopySoal.style.display = "none";
+        }
 
-      if (result.googleSoal) {
-        buttonGoogleSoal.style.display = "inline-block";
-      } else {
-        buttonGoogleSoal.style.display = "none";
-      }
+        if (result.googleSoal) {
+          buttonGoogleSoal.style.display = "inline-block";
+        } else {
+          buttonGoogleSoal.style.display = "none";
+        }
 
-      // `askAi` only decides whether the button is shown; Alt+A stays
-      // available either way. It follows the documented default of true, so
-      // only an explicit false hides the button.
-      buttonAskAi.style.display =
-        result.askAi !== false ? "inline-block" : "none";
-    });
+        // `askAi` only decides whether the button is shown; Alt+A stays
+        // available either way. It follows the documented default of true, so
+        // only an explicit false hides the button.
+        buttonAskAi.style.display =
+          result.askAi !== false ? "inline-block" : "none";
+
+        // `chatGptSoal` hides the "Answer ChatGPT" button. When unset it stays
+        // visible to preserve the previous behaviour. The button uses its own
+        // `inline-flex` layout, so it must not reuse the `inline-block` value.
+        buttonChatGpt.style.display =
+          result.chatGptSoal !== false ? "inline-flex" : "none";
+      }
+    );
     // Append buttons to the formulation element
 
     formulation.appendChild(buttonCopySoal);

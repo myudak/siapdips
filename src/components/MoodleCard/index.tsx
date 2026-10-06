@@ -25,17 +25,19 @@ export default function MoodleCard({
   const [stateGoogleSoal, setStateGoogleSoal] = useState(true);
   const [stateCopySoal, setStateCopySoal] = useState(true);
   const [stateTanyAI, setStateTanyAI] = useState(true);
+  const [stateAnswerChatGpt, setStateAnswerChatGpt] = useState(true);
   const [stateHelper, setStateHelper] = useState(false);
 
   useEffect(() => {
     // Load saved settings from local storage
     chrome.storage.local.get(
-      ["googleSoal", "copySoal", "askAi", "moodleHelper"],
+      ["googleSoal", "copySoal", "askAi", "chatGptSoal", "moodleHelper"],
       (result) => {
         if (
           result.googleSoal === undefined ||
           result.copySoal === undefined ||
           result.askAi === undefined ||
+          result.chatGptSoal === undefined ||
           result.moodleHelper === undefined
         ) {
           // If settings are not found, set default values
@@ -43,12 +45,14 @@ export default function MoodleCard({
             googleSoal: true,
             copySoal: true,
             askAi: true,
+            chatGptSoal: true,
             moodleHelper: false,
           });
         }
-        setStateGoogleSoal(result.googleSoal);
-        setStateCopySoal(result.copySoal);
-        setStateTanyAI(result.askAi);
+        setStateGoogleSoal(result.googleSoal !== false);
+        setStateCopySoal(result.copySoal !== false);
+        setStateTanyAI(result.askAi !== false);
+        setStateAnswerChatGpt(result.chatGptSoal !== false);
         setStateHelper(result.moodleHelper);
       }
     );
@@ -150,6 +154,39 @@ export default function MoodleCard({
                 className="inline mr-2 w-4 h-4"
               />
               Tany AI
+            </Label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help ml-2" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  berlaku di https://sso.undip.ac.id/pages/dashboard
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex items-center m-4 p-0">
+            <Switch
+              checked={stateAnswerChatGpt}
+              onCheckedChange={() => {
+                setStateAnswerChatGpt(!stateAnswerChatGpt);
+                chrome.storage.local.set({
+                  chatGptSoal: !stateAnswerChatGpt,
+                });
+              }}
+              id="toggle-answer-chatgpt"
+            />
+            <Label
+              htmlFor="toggle-answer-chatgpt"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ml-2"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/1/13/ChatGPT-Logo.png"
+                alt="ChatGPT Icon"
+                className="inline mr-2 w-4 h-4"
+              />
+              Answer ChatGPT
             </Label>
             <TooltipProvider>
               <Tooltip>
