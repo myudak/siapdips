@@ -65,27 +65,40 @@ document
     );
     const buttonGoogleSoal = createGoogleButton(questionPayload.questionText);
     const buttonChatGpt = createChatGptButton(question);
+    // The ChatGPT button is off by default, so start hidden and let the
+    // storage callback below reveal it. Setting it here avoids the button
+    // flashing on screen before that callback runs.
+    buttonChatGpt.style.display = "none";
     const buttonAskAi = createAiButton(questionPayload, question);
 
-    chrome.storage.local.get(["copySoal", "googleSoal", "askAi"], (result) => {
-      if (result.copySoal) {
-        buttonCopySoal.style.display = "inline-block";
-      } else {
-        buttonCopySoal.style.display = "none";
-      }
+    chrome.storage.local.get(
+      ["copySoal", "googleSoal", "askAi", "answerChatGpt"],
+      (result) => {
+        if (result.copySoal) {
+          buttonCopySoal.style.display = "inline-block";
+        } else {
+          buttonCopySoal.style.display = "none";
+        }
 
-      if (result.googleSoal) {
-        buttonGoogleSoal.style.display = "inline-block";
-      } else {
-        buttonGoogleSoal.style.display = "none";
-      }
+        if (result.googleSoal) {
+          buttonGoogleSoal.style.display = "inline-block";
+        } else {
+          buttonGoogleSoal.style.display = "none";
+        }
 
-      // `askAi` only decides whether the button is shown; Alt+A stays
-      // available either way. It follows the documented default of true, so
-      // only an explicit false hides the button.
-      buttonAskAi.style.display =
-        result.askAi !== false ? "inline-block" : "none";
-    });
+        // `askAi` only decides whether the button is shown; Alt+A stays
+        // available either way. It follows the documented default of true, so
+        // only an explicit false hides the button.
+        buttonAskAi.style.display =
+          result.askAi !== false ? "inline-block" : "none";
+
+        // `answerChatGpt` is opt-in, so anything other than an explicit true
+        // leaves the button hidden. Its own style is inline-flex, not
+        // inline-block.
+        buttonChatGpt.style.display =
+          result.answerChatGpt === true ? "inline-flex" : "none";
+      }
+    );
     // Append buttons to the formulation element
 
     formulation.appendChild(buttonCopySoal);
