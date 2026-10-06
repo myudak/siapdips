@@ -5,6 +5,7 @@ import {
 	bindAnswerEntriesToFields,
 	buildMoodleAutoAnswerUserPrompt,
 	formatMoodleAnswerForDisplay,
+	hasDistinguishableOptions,
 	parseMoodleAnswerFromText,
 	parseMoodleAnswerPayload,
 	resolveMoodleAnswers,
@@ -190,6 +191,51 @@ test("splitAnswerValues separates checkbox lists", () => {
 	assert.deepEqual(splitAnswerValues("A, C"), ["A", "C"]);
 	assert.deepEqual(splitAnswerValues("A dan C"), ["A", "C"]);
 	assert.deepEqual(splitAnswerValues("B"), ["B"]);
+});
+
+test("hasDistinguishableOptions rejects labels the AI cannot tell apart", () => {
+	// The live ddimageortext question labels ten image items "Part of river".
+	assert.equal(
+		hasDistinguishableOptions([
+			{ key: "a", text: "Part of river" },
+			{ key: "b", text: "Part of river" },
+		]),
+		false
+	);
+	assert.equal(
+		hasDistinguishableOptions([
+			{ key: "a", text: "Item 1" },
+			{ key: "b", text: "Item 2" },
+		]),
+		false
+	);
+	assert.equal(
+		hasDistinguishableOptions([
+			{ key: "a", text: "Belfast" },
+			{ key: "b", text: "Derry" },
+		]),
+		true
+	);
+	assert.equal(hasDistinguishableOptions([{ key: "a", text: "Only" }]), true);
+	assert.equal(hasDistinguishableOptions(undefined), true);
+});
+
+test("buildMoodleAutoAnswerUserPrompt carries page context for unfillable types", () => {
+	const prompt = buildMoodleAutoAnswerUserPrompt({
+		questionLabel: "Question 5",
+		questionText: "Drag the words to the correct notepad.",
+		questionType: "ddmarker",
+		fields: [],
+		notes: [
+			"Marker yang harus dipasang: Rivers, Volcanoes",
+			"Posisi drop zone tidak ada di halaman.",
+		],
+	});
+
+	assert.match(prompt, /Question Type: ddmarker/);
+	assert.match(prompt, /Konteks dari halaman:/);
+	assert.match(prompt, /Marker yang harus dipasang: Rivers, Volcanoes/);
+	assert.match(prompt, /pasangan item → tempatnya/);
 });
 
 test("bindAnswerEntriesToFields points legacy answers at the first choice field", () => {

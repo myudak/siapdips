@@ -46,6 +46,27 @@ export function splitAnswerValues(value: string): string[] {
     .filter(Boolean);
 }
 
+const FALLBACK_OPTION_LABEL = /^item \d+$/;
+
+/**
+ * Options the AI cannot tell apart are a coin flip: image drag items that all
+ * read "Part of river", or labels that fell back to "Item 1". Such a field is
+ * left to the user instead of being filled with a guess.
+ */
+export function hasDistinguishableOptions(
+  options: Array<{ key: string; text: string }> | undefined
+): boolean {
+  if (!options || options.length < 2) return true;
+
+  const labels = new Set(
+    options
+      .map((option) => compareKey(option.text))
+      .filter((label) => label && !FALLBACK_OPTION_LABEL.test(label))
+  );
+
+  return labels.size > 1;
+}
+
 function resolveChoiceOption(
   field: MoodleAnswerField,
   value: string
@@ -362,13 +383,20 @@ export function buildMoodleAutoAnswerUserPrompt(
     question.questionText,
   ];
 
+  const notes = question.notes ?? [];
+  const noteBlock = notes.length
+    ? ["", "Konteks dari halaman:", ...notes.map((note) => `- ${note}`)]
+    : [];
+
   // Essay and image drag-and-drop have no fillable control: the answer stays in
   // the helper panel as text.
   if (question.fields.length === 0) {
     return [
       ...header,
+      ...noteBlock,
       "",
       "Soal ini tidak bisa diisi otomatis, jadi tulis jawaban lengkapnya.",
+      "Kalau soalnya drag & drop, sebutkan pasangan item → tempatnya supaya bisa dipindah manual.",
       'Balas HANYA dengan JSON: {"answers":[],"answer_text":"<jawaban lengkap>","reasoning_brief":"..."}',
     ].join("\n");
   }
@@ -393,6 +421,7 @@ export function buildMoodleAutoAnswerUserPrompt(
 
   return [
     ...header,
+    ...noteBlock,
     "",
     "Answer fields:",
     fieldBlocks.join("\n\n"),

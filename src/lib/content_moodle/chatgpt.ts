@@ -11,6 +11,8 @@ export interface MoodleChatGptPromptPayload {
   questionText: string;
   /** Empty for question types without a fillable control. */
   fields: MoodleChatGptField[];
+  /** Extra page context for question types that cannot be filled in. */
+  notes?: string[];
 }
 
 export const MOODLE_CHATGPT_HOME_URL = "https://chatgpt.com/";
@@ -64,17 +66,23 @@ export function buildMoodleChatGptPrompt({
   questionLabel,
   questionText,
   fields,
+  notes,
 }: MoodleChatGptPromptPayload): string {
+  const noteBlock = notes?.length
+    ? ["", "KONTEKS DARI HALAMAN:", ...notes.map((note) => `- ${note}`)]
+    : [];
+
   return [
     "Kamu adalah tutor yang membantu menjawab soal kuis Moodle.",
     "Analisis soal berdasarkan konsep yang relevan dan gunakan pilihan jawaban yang tersedia.",
     "",
     `SOAL (${normalizeMoodlePromptText(questionLabel)}):`,
     normalizeMoodlePromptText(questionText),
+    ...noteBlock,
     "",
     "JAWABAN YANG DIMINTA:",
     fields.map(formatField).join("\n\n") ||
-      "Soal ini tidak punya kolom jawaban otomatis. Tulis jawaban lengkapnya.",
+      "Soal ini tidak punya kolom jawaban otomatis. Tulis jawaban lengkapnya, dan untuk soal drag & drop sebutkan pasangan item → tempatnya.",
     "",
     "Tutup jawaban dengan format ini:",
     ...fields.map(formatExpectedAnswerLine),

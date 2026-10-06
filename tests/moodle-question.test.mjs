@@ -58,9 +58,11 @@ test("classifyMoodleQuestionType marks drag-and-drop types correctly", () => {
 		classifyMoodleQuestionType(wrapper("ddimageortext"), { hasCheckbox: false }),
 		"ddimageortext"
 	);
+	// ddmarker is detected so the panel can list its markers, but it is never
+	// filled in: the drop zone geometry does not reach the DOM.
 	assert.equal(
 		classifyMoodleQuestionType(wrapper("ddmarker"), { hasCheckbox: false }),
-		"unsupported"
+		"ddmarker"
 	);
 	assert.equal(
 		classifyMoodleQuestionType(wrapper("essay"), { hasCheckbox: false }),

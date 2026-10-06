@@ -5,6 +5,7 @@
 // Explicit extension: tests import this module with node's type stripping,
 // which needs the real file name. tsc allows it (allowImportingTsExtensions).
 import { normalizeMoodlePromptText } from "./chatgpt.ts";
+import { hasDistinguishableOptions } from "./answer.ts";
 
 export type MoodleQuestionType =
   | "multichoice_single"
@@ -16,6 +17,7 @@ export type MoodleQuestionType =
   | "gapselect"
   | "ddwtos"
   | "ddimageortext"
+  | "ddmarker"
   | "cloze"
   | "unsupported"
   | "unknown";
@@ -40,13 +42,20 @@ export interface MoodleQuestionPayload {
   questionLabel: string;
   questionText: string;
   questionType: MoodleQuestionType;
-  /** Empty for question types that cannot be filled in (essay, image drag). */
+  /** Empty for question types that cannot be filled in (essay, ddmarker). */
   fields: MoodleAnswerField[];
+  /**
+   * Extra context read from the page when nothing can be filled in, e.g. the
+   * ddmarker marker texts, so the panel answer is still useful.
+   */
+  notes?: string[];
 }
 
 export interface MoodleAnswerApplication {
   applied: number;
   failedFields: string[];
+  /** Fields written into hidden inputs (ddwtos / ddimageortext drop zones). */
+  hiddenFields: number;
 }
 
 /** Minimal shape of a resolved answer; see ResolvedMoodleAnswer in ./answer.ts. */
@@ -90,15 +99,16 @@ const QTYPE_TO_QUESTION_TYPE: Record<string, MoodleQuestionType> = {
   gapselect: "gapselect",
   ddwtos: "ddwtos",
   ddimageortext: "ddimageortext",
+  // Detected so the panel can list the markers, but never filled in: the drop
+  // zone geometry does not reach the DOM.
+  ddmarker: "ddmarker",
   multianswer: "cloze",
 };
 
 // Rendered, but no control we can fill in programmatically: essay textareas are
-// overwritten by the editor at submit time, and ddmarker answers are drop-zone
-// coordinates that never reach the DOM.
+// overwritten by the editor at submit time.
 const UNFILLABLE_QTYPES = new Set([
   "essay",
-  "ddmarker",
   "description",
   "random",
   "randomshortanswer",
@@ -312,14 +322,28 @@ function getClassNumber(element: Element, prefix: string): string | null {
   return null;
 }
 
-function describeDragHome(element: HTMLElement, index: number): string {
-  const text =
+/** Readable label of a drag home; empty when the page gives us nothing. */
+function readDragHomeLabel(element: HTMLElement): string {
+  return (
     getVisibleText(element) ||
     element.getAttribute("alt") ||
     element.getAttribute("title") ||
     element.getAttribute("aria-label") ||
-    "";
-  return text.trim() || `Item ${index + 1}`;
+    ""
+  ).trim();
+}
+
+// Moodle clones every drag home as a `.dragplaceholder` to keep the layout,
+// which would otherwise duplicate every option.
+const DRAG_HOME_SELECTOR = ".draghome:not(.dragplaceholder)";
+
+function collectDragHomes(
+  root: HTMLElement,
+  group: string | null
+): HTMLElement[] {
+  return Array.from(root.querySelectorAll<HTMLElement>(DRAG_HOME_SELECTOR)).filter(
+    (home) => group === null || getClassNumber(home, "group") === group
+  );
 }
 
 /**
@@ -333,24 +357,31 @@ function collectPlaceField(
   index: number
 ): CollectedField | null {
   const group = getClassNumber(input, "group");
-  const homes = Array.from(root.querySelectorAll<HTMLElement>(".draghome")).filter(
-    (home) => group === null || getClassNumber(home, "group") === group
-  );
-
   const options: MoodleAnswerOption[] = [];
   const optionValues: string[] = [];
 
-  for (const home of homes) {
+  for (const home of collectDragHomes(root, group)) {
     const choice = getClassNumber(home, "choice");
     if (choice === null) continue;
+    const label = readDragHomeLabel(home);
     options.push({
       key: letterKey(options.length),
-      text: describeDragHome(home, options.length),
+      text: label || `Item ${options.length + 1}`,
     });
     optionValues.push(choice);
   }
 
   if (options.length === 0) return null;
+
+  // Image drag items carry the same generic label ("Part of river", "blank"),
+  // so any pick would be a coin flip. Leave the question to the user instead.
+  if (!hasDistinguishableOptions(options)) {
+    console.warn(
+      "Moodle drag items cannot be told apart, skipping field:",
+      input.name || input.id
+    );
+    return null;
+  }
 
   const place = getClassNumber(input, "place") ?? String(index + 1);
 
@@ -365,6 +396,65 @@ function collectPlaceField(
       options,
     },
   };
+}
+
+function uniqueLabels(elements: ArrayLike<Element>): string[] {
+  const seen = new Set<string>();
+  const labels: string[] = [];
+
+  for (const element of Array.from(elements)) {
+    const label = getVisibleText(element);
+    if (!label || seen.has(label)) continue;
+    seen.add(label);
+    labels.push(label);
+  }
+
+  return labels;
+}
+
+/**
+ * Context for the question types that cannot be answered from the page alone.
+ * ddmarker drop zones never reach the DOM, so the AI can only tell the user
+ * which marker belongs where.
+ */
+function collectQuestionNotes(
+  root: HTMLElement,
+  questionType: MoodleQuestionType
+): string[] {
+  const notes: string[] = [];
+
+  if (questionType === "ddmarker") {
+    const markers = uniqueLabels(root.querySelectorAll(".marker .markertext"));
+    if (markers.length) {
+      notes.push(`Marker yang harus dipasang: ${markers.join(", ")}`);
+    }
+    notes.push(
+      "Posisi drop zone tidak ada di halaman, jadi jawaban cuma bisa dipandu manual."
+    );
+    return notes;
+  }
+
+  if (questionType === "ddimageortext") {
+    const groups = new Map<string, string[]>();
+    for (const home of collectDragHomes(root, null)) {
+      const group = getClassNumber(home, "group") ?? "1";
+      const label = readDragHomeLabel(home);
+      if (!label) continue;
+      const labels = groups.get(group) ?? [];
+      if (!labels.includes(label)) labels.push(label);
+      groups.set(group, labels);
+    }
+
+    for (const [group, labels] of groups) {
+      notes.push(`Item drag grup ${group}: ${labels.join(", ")}`);
+    }
+
+    notes.push(
+      "Item drag dan drop zone di soal ini tidak punya label pembeda, jadi jawabannya tidak bisa ditentukan dari halaman."
+    );
+  }
+
+  return notes;
 }
 
 function detectQuestionType(
@@ -504,16 +594,19 @@ export function extractMoodleQuestion(
     Boolean(root.querySelector('.answer input[type="checkbox"]'))
   );
   const collected = collectMoodleFields(root);
-  // Types without a fillable control (essay with its editor, ddmarker) keep
-  // their answer in the helper panel; nothing is written back to the page.
+  // Types without a fillable control (essay with its editor, ddmarker, and
+  // drag items we cannot tell apart) keep their answer in the helper panel;
+  // nothing is written back to the page.
   const fields =
     questionType === "unsupported" ? [] : collected.map((entry) => entry.field);
+  const notes = fields.length === 0 ? collectQuestionNotes(root, questionType) : [];
 
   return {
     questionLabel: nomorSoal.textContent?.trim() || "[No Nomor Soal]",
     questionText,
     questionType,
     fields,
+    notes: notes.length > 0 ? notes : undefined,
   };
 }
 
@@ -550,6 +643,7 @@ export function applyMoodleAnswers(
   const byId = new Map(collected.map((entry) => [entry.field.id, entry]));
   const failedFields: string[] = [];
   const appliedFields = new Set<string>();
+  let hiddenFields = 0;
 
   const grouped = new Map<string, MoodleAnswerTarget[]>();
   for (const answer of answers) {
@@ -620,6 +714,7 @@ export function applyMoodleAnswers(
       control.value = optionValue;
       dispatchInputEvents(control);
       appliedFields.add(fieldId);
+      if (collectedField.kind === "place") hiddenFields += 1;
       continue;
     }
 
@@ -634,5 +729,5 @@ export function applyMoodleAnswers(
     appliedFields.add(fieldId);
   }
 
-  return { applied: appliedFields.size, failedFields };
+  return { applied: appliedFields.size, failedFields, hiddenFields };
 }

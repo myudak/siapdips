@@ -123,6 +123,7 @@ function getMoodleChatGptPayload(question: HTMLElement) {
       multiple: field.multiple,
       options: field.options,
     })),
+    notes: payload.notes,
   };
 }
 
@@ -525,8 +526,14 @@ async function handleAiButtonClick(
           const failedNote = application.failedFields.length
             ? ` (${application.failedFields.length} field gagal)`
             : "";
+          // Drop-zone answers live in hidden inputs, so the drag UI on screen
+          // stays where it was even though the submitted answer did change.
+          const hiddenNote =
+            application.hiddenFields > 0
+              ? ` — ${application.hiddenFields} drop zone keisi, tampilan drag-nya ga ikut pindah`
+              : "";
           showToast(
-            `Done ngisi ${application.applied} jawaban${failedNote}`,
+            `Done ngisi ${application.applied} jawaban${failedNote}${hiddenNote}`,
             "success"
           );
         } else if (aiAnswer.freeText) {
