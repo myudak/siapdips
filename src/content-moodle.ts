@@ -80,11 +80,11 @@ document
         buttonGoogleSoal.style.display = "none";
       }
 
-      // `askAi` follows the documented default of true; only an explicit
-      // false turns the button off.
-      const askAiEnabled = result.askAi !== false;
-      buttonAskAi.style.display = askAiEnabled ? "inline-block" : "none";
-      buttonAskAi.dataset.myudakAskAiEnabled = String(askAiEnabled);
+      // `askAi` only decides whether the button is shown; Alt+A stays
+      // available either way. It follows the documented default of true, so
+      // only an explicit false hides the button.
+      buttonAskAi.style.display =
+        result.askAi !== false ? "inline-block" : "none";
     });
     // Append buttons to the formulation element
 
@@ -352,31 +352,32 @@ function isTypingTarget(target: EventTarget | null): boolean {
   );
 }
 
-// The "askAi" setting decides whether the button is usable; whether it is
-// currently painted does not. Moodle can keep a question in the DOM while its
-// container is not rendered, and the shortcut should still reach it.
-function isAskAiButtonEnabled(button: HTMLButtonElement): boolean {
-  if (button.disabled) return false;
-  return button.dataset.myudakAskAiEnabled !== "false";
+// The "askAi" setting only hides the button; it must not take the shortcut
+// away, so the only reason to skip a button here is an in-flight request.
+function isAskAiButtonAvailable(button: HTMLButtonElement): boolean {
+  return !button.disabled;
 }
 
-function isButtonRendered(button: HTMLButtonElement): boolean {
-  return button.offsetParent !== null;
+function getAskAiQuestionElement(button: HTMLButtonElement): HTMLElement {
+  return button.closest<HTMLElement>('[id^="question-"]') ?? button;
 }
 
 function nearestToViewportCenter(
   buttons: HTMLButtonElement[]
 ): HTMLButtonElement {
   const viewportCenter = window.innerHeight / 2;
-  return buttons.reduce((closest, candidate) => {
-    const closestDistance = Math.abs(
-      closest.getBoundingClientRect().top - viewportCenter
+  // Measure the question, not the button: with "askAi" off every button is
+  // display:none and all button rects collapse to zero.
+  const distanceFromCenter = (button: HTMLButtonElement) =>
+    Math.abs(
+      getAskAiQuestionElement(button).getBoundingClientRect().top - viewportCenter
     );
-    const candidateDistance = Math.abs(
-      candidate.getBoundingClientRect().top - viewportCenter
-    );
-    return candidateDistance < closestDistance ? candidate : closest;
-  });
+
+  return buttons.reduce((closest, candidate) =>
+    distanceFromCenter(candidate) < distanceFromCenter(closest)
+      ? candidate
+      : closest
+  );
 }
 
 function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
@@ -386,28 +387,19 @@ function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
     const focusedButton = focusedQuestion.querySelector<HTMLButtonElement>(
       ASK_AI_BUTTON_SELECTOR
     );
-    if (focusedButton && isAskAiButtonEnabled(focusedButton)) {
+    if (focusedButton && isAskAiButtonAvailable(focusedButton)) {
       return focusedButton;
     }
   }
 
-  const enabledButtons = Array.from(
+  const buttons = Array.from(
     document.querySelectorAll<HTMLButtonElement>(ASK_AI_BUTTON_SELECTOR)
-  ).filter(isAskAiButtonEnabled);
+  ).filter(isAskAiButtonAvailable);
 
-  if (enabledButtons.length === 0) return null;
-  if (enabledButtons.length === 1) return enabledButtons[0];
+  if (buttons.length === 0) return null;
+  if (buttons.length === 1) return buttons[0];
 
-  // Prefer a rendered button so the shortcut targets the question the user is
-  // looking at.
-  const renderedButtons = enabledButtons.filter(isButtonRendered);
-  if (renderedButtons.length === 0) {
-    // Every question sits in a hidden container: fall back to document order.
-    return enabledButtons[0];
-  }
-  if (renderedButtons.length === 1) return renderedButtons[0];
-
-  return nearestToViewportCenter(renderedButtons);
+  return nearestToViewportCenter(buttons);
 }
 
 function bindAskAiShortcut(): void {
