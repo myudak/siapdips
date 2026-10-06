@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { execOnPage } from "@/background/utils/execute-script";
 import {
   ExternalLink,
   GripHorizontal,
@@ -69,23 +70,19 @@ const DyandraLoketCard = ({
 
     await runOnDyandraTab(
       async (tabId) => {
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          func: (nextEnabled) => {
-            const api = window as unknown as {
-              showDyandraHelper?: () => void;
-              hideDyandraHelper?: () => void;
-              stopDyandraWatcher?: () => void;
-            };
-            if (nextEnabled) {
-              api.showDyandraHelper?.();
-            } else {
-              api.stopDyandraWatcher?.();
-              api.hideDyandraHelper?.();
-            }
-          },
-          args: [checked],
-        });
+        await execOnPage(tabId, (nextEnabled: unknown) => {
+          const api = window as unknown as {
+            showDyandraHelper?: () => void;
+            hideDyandraHelper?: () => void;
+            stopDyandraWatcher?: () => void;
+          };
+          if (nextEnabled) {
+            api.showDyandraHelper?.();
+          } else {
+            api.stopDyandraWatcher?.();
+            api.hideDyandraHelper?.();
+          }
+        }, [checked]);
       },
       () => {
         toast.message(
@@ -104,14 +101,11 @@ const DyandraLoketCard = ({
   const showHelperNow = async () => {
     await runOnDyandraTab(
       async (tabId) => {
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          func: () => {
-            const api = window as unknown as {
-              showDyandraHelper?: () => void;
-            };
-            api.showDyandraHelper?.();
-          },
+        await execOnPage(tabId, () => {
+          const api = window as unknown as {
+            showDyandraHelper?: () => void;
+          };
+          api.showDyandraHelper?.();
         });
       },
       () => {
@@ -123,14 +117,11 @@ const DyandraLoketCard = ({
   const checkNow = async () => {
     await runOnDyandraTab(
       async (tabId) => {
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          func: () => {
-            const api = window as unknown as {
-              scanDyandraLoketNow?: () => void;
-            };
-            api.scanDyandraLoketNow?.();
-          },
+        await execOnPage(tabId, () => {
+          const api = window as unknown as {
+            scanDyandraLoketNow?: () => void;
+          };
+          api.scanDyandraLoketNow?.();
         });
       },
       () => {
@@ -142,14 +133,11 @@ const DyandraLoketCard = ({
   const refreshNow = async () => {
     await runOnDyandraTab(
       async (tabId) => {
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          func: () => {
-            const api = window as unknown as {
-              refreshDyandraNow?: () => void;
-            };
-            api.refreshDyandraNow?.();
-          },
+        await execOnPage(tabId, () => {
+          const api = window as unknown as {
+            refreshDyandraNow?: () => void;
+          };
+          api.refreshDyandraNow?.();
         });
       },
       () => {
