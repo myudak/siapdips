@@ -30,9 +30,11 @@ chrome.storage.local.get(["moodleHelper"], (result) => {
     // If setting is not found, set default value
     chrome.storage.local.set({ moodleHelper: false });
   }
-  if (result.moodleHelper) {
-    createHelperDefault();
-  }
+  // The "Tany AI" button asks the helper for an answer through a document
+  // event, so the helper has to exist even when its panel is switched off.
+  // Build it detached in that case: the AI engine keeps answering, but nothing
+  // is rendered on the page.
+  createHelperDefault(undefined, { attach: Boolean(result.moodleHelper) });
 });
 
 document
@@ -68,11 +70,11 @@ document
         buttonGoogleSoal.style.display = "none";
       }
 
-      if (result.askAi) {
-        buttonAskAi.style.display = "inline-block";
-      } else {
-        buttonAskAi.style.display = "none";
-      }
+      // `askAi` follows the documented default of true; only an explicit
+      // false turns the button off.
+      const askAiEnabled = result.askAi !== false;
+      buttonAskAi.style.display = askAiEnabled ? "inline-block" : "none";
+      buttonAskAi.dataset.myudakAskAiEnabled = String(askAiEnabled);
     });
     // Append buttons to the formulation element
 
@@ -120,10 +122,31 @@ function isTypingTarget(target: EventTarget | null): boolean {
   );
 }
 
-function isButtonVisibleAndEnabled(button: HTMLButtonElement): boolean {
+// The "askAi" setting decides whether the button is usable; whether it is
+// currently painted does not. Moodle can keep a question in the DOM while its
+// container is not rendered, and the shortcut should still reach it.
+function isAskAiButtonEnabled(button: HTMLButtonElement): boolean {
   if (button.disabled) return false;
-  if (button.style.display === "none") return false;
+  return button.dataset.myudakAskAiEnabled !== "false";
+}
+
+function isButtonRendered(button: HTMLButtonElement): boolean {
   return button.offsetParent !== null;
+}
+
+function nearestToViewportCenter(
+  buttons: HTMLButtonElement[]
+): HTMLButtonElement {
+  const viewportCenter = window.innerHeight / 2;
+  return buttons.reduce((closest, candidate) => {
+    const closestDistance = Math.abs(
+      closest.getBoundingClientRect().top - viewportCenter
+    );
+    const candidateDistance = Math.abs(
+      candidate.getBoundingClientRect().top - viewportCenter
+    );
+    return candidateDistance < closestDistance ? candidate : closest;
+  });
 }
 
 function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
@@ -133,26 +156,28 @@ function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
     const focusedButton = focusedQuestion.querySelector<HTMLButtonElement>(
       ASK_AI_BUTTON_SELECTOR
     );
-    if (focusedButton && isButtonVisibleAndEnabled(focusedButton)) {
+    if (focusedButton && isAskAiButtonEnabled(focusedButton)) {
       return focusedButton;
     }
   }
 
-  const buttons = Array.from(
+  const enabledButtons = Array.from(
     document.querySelectorAll<HTMLButtonElement>(ASK_AI_BUTTON_SELECTOR)
-  ).filter(isButtonVisibleAndEnabled);
+  ).filter(isAskAiButtonEnabled);
 
-  if (buttons.length === 0) return null;
-  if (buttons.length === 1) return buttons[0];
+  if (enabledButtons.length === 0) return null;
+  if (enabledButtons.length === 1) return enabledButtons[0];
 
-  const viewportCenter = window.innerHeight / 2;
-  buttons.sort((a, b) => {
-    const distanceA = Math.abs(a.getBoundingClientRect().top - viewportCenter);
-    const distanceB = Math.abs(b.getBoundingClientRect().top - viewportCenter);
-    return distanceA - distanceB;
-  });
+  // Prefer a rendered button so the shortcut targets the question the user is
+  // looking at.
+  const renderedButtons = enabledButtons.filter(isButtonRendered);
+  if (renderedButtons.length === 0) {
+    // Every question sits in a hidden container: fall back to document order.
+    return enabledButtons[0];
+  }
+  if (renderedButtons.length === 1) return renderedButtons[0];
 
-  return buttons[0];
+  return nearestToViewportCenter(renderedButtons);
 }
 
 function bindAskAiShortcut(): void {
