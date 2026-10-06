@@ -375,7 +375,7 @@ async function processExternalQuestion(
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-export function createHelper(): HTMLElement {
+export function createHelper(options: { attach?: boolean } = {}): HTMLElement {
   const helper = document.createElement("div");
   Object.assign(helper.style, {
     position: "fixed",
@@ -548,8 +548,12 @@ export function createHelper(): HTMLElement {
   // Enable dragging for the helper using the title container as the handle.
   new Draggable({ element: helper, handle: titleContainer });
 
-  // Append helper to the document body.
-  document.body.appendChild(helper);
+  // Append helper to the document body, unless the caller only wants the AI
+  // engine: the "myudak-ai-question" listener lives inside the chat interface,
+  // so the panel still has to be built, but it can stay detached.
+  if (options.attach !== false) {
+    document.body.appendChild(helper);
+  }
   return helper;
 }
 

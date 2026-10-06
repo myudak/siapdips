@@ -14,6 +14,7 @@ import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Button } from "../ui/button";
 import { getActiveTab } from "@/lib/utils";
 import HideButton from "../hideButton";
+import { execOnPage } from "@/background/utils/execute-script";
 
 const HidePopupcard = ({
   listeners,
@@ -62,18 +63,15 @@ const HidePopupcard = ({
       !tab.url?.includes("https://sso.undip.ac.id/pages/dashboard")
     )
       return;
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id! },
-      func: () => {
-        console.log("HIDE POPP UP");
-        const popupElement = document.querySelector(
-          ".swal2-container"
-        ) as HTMLElement;
-        if (popupElement) {
-          popupElement.style.display = "none";
-          document.body.style.overflow = "auto"; // Fix scrolling issue
-        }
-      },
+    execOnPage(tab.id!, () => {
+      console.log("HIDE POPP UP");
+      const popupElement = document.querySelector(
+        ".swal2-container"
+      ) as HTMLElement;
+      if (popupElement) {
+        popupElement.style.display = "none";
+        document.body.style.overflow = "auto"; // Fix scrolling issue
+      }
     });
   };
 
@@ -84,10 +82,7 @@ const HidePopupcard = ({
         active: true,
         currentWindow: true,
       });
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        func: enableCtrlC,
-      });
+      execOnPage(tab.id!, enableCtrlC);
     } else {
       // let [tab] = await chrome.tabs.query({
       //   active: true,
@@ -186,37 +181,31 @@ const HidePopupcard = ({
               (async () => {
                 if (!blurDosenWali) {
                   const tabId = await getActiveTab();
-                  chrome.scripting.executeScript({
-                    target: { tabId: tabId },
-                    func: () => {
-                      const blurElements = [
-                        "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
-                      ];
+                  execOnPage(tabId, () => {
+                    const blurElements = [
+                      "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
+                    ];
 
-                      blurElements.forEach((selector) => {
-                        const element = document.querySelector(selector);
-                        if (element) {
-                          (element as HTMLElement).style.filter = "blur(5px)";
-                        }
-                      });
-                    },
+                    blurElements.forEach((selector) => {
+                      const element = document.querySelector(selector);
+                      if (element) {
+                        (element as HTMLElement).style.filter = "blur(5px)";
+                      }
+                    });
                   });
                 } else {
                   const tabId = await getActiveTab();
-                  chrome.scripting.executeScript({
-                    target: { tabId: tabId },
-                    func: () => {
-                      const blurElements = [
-                        "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
-                      ];
+                  execOnPage(tabId, () => {
+                    const blurElements = [
+                      "#tabmhs_dashboard > div.row > div.col-md-8 > div > div.card-body.pt-0 > div.mb-2 > div",
+                    ];
 
-                      blurElements.forEach((selector) => {
-                        const element = document.querySelector(selector);
-                        if (element) {
-                          (element as HTMLElement).style.filter = "none";
-                        }
-                      });
-                    },
+                    blurElements.forEach((selector) => {
+                      const element = document.querySelector(selector);
+                      if (element) {
+                        (element as HTMLElement).style.filter = "none";
+                      }
+                    });
                   });
                 }
                 await chrome.storage.local.set({

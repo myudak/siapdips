@@ -146,6 +146,12 @@ const ipkHandler = new SiapHandler();
 
 // Message handler
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // Do NOT respond to bridge-exec messages -- those are for content-bridge.ts
+  if (request?.type === "bridge-exec") return;
+
+  // Do NOT respond to checkFormDirty messages -- those are for content-form-watcher
+  if (request?.action === "checkFormDirty") return;
+
   try {
     switch (request.action) {
       case "blurIpkElement":

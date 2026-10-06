@@ -42,6 +42,20 @@
   "content_scripts": [
     {
       "matches": [
+        "*://*.undip.ac.id/*",
+        "https://undip.learnsocial.online/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-bridge.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
         "https://siap.undip.ac.id/pages/mhs/dashboard/*"
       ],
       "js": [

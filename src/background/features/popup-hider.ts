@@ -2,13 +2,12 @@
  * Hide popup functionality for SSO dashboard
  */
 
+import { execOnPage } from "../utils/execute-script";
+
 export function hidePopupIfEnabled(tabId: number): void {
   chrome.storage.local.get("hidePopup", (data: { hidePopup?: boolean }) => {
     if (data.hidePopup) {
-      chrome.scripting.executeScript({
-        target: { tabId },
-        func: hidePopupScript,
-      });
+      execOnPage(tabId, hidePopupScript);
     }
   });
 }

@@ -15,7 +15,7 @@
   "object" == typeof module && module.exports
     ? (module.exports = o())
     : (t.Toastify = o());
-})(this, function (t) {
+})(typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : this, function (t) {
   var o = function (t) {
     return new o.lib.init(t);
   };

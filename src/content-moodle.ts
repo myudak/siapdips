@@ -39,9 +39,11 @@ chrome.storage.local.get(["moodleHelper"], (result) => {
     // If setting is not found, set default value
     chrome.storage.local.set({ moodleHelper: false });
   }
-  if (result.moodleHelper) {
-    createHelperDefault();
-  }
+  // The "Tany AI" button asks the helper for an answer through a document
+  // event, so the helper has to exist even when its panel is switched off.
+  // Build it detached in that case: the AI engine keeps answering, but nothing
+  // is rendered on the page.
+  createHelperDefault(undefined, { attach: Boolean(result.moodleHelper) });
 });
 
 document
@@ -78,11 +80,11 @@ document
         buttonGoogleSoal.style.display = "none";
       }
 
-      if (result.askAi) {
-        buttonAskAi.style.display = "inline-block";
-      } else {
-        buttonAskAi.style.display = "none";
-      }
+      // `askAi` only decides whether the button is shown; Alt+A stays
+      // available either way. It follows the documented default of true, so
+      // only an explicit false hides the button.
+      buttonAskAi.style.display =
+        result.askAi !== false ? "inline-block" : "none";
     });
     // Append buttons to the formulation element
 
@@ -350,10 +352,32 @@ function isTypingTarget(target: EventTarget | null): boolean {
   );
 }
 
-function isButtonVisibleAndEnabled(button: HTMLButtonElement): boolean {
-  if (button.disabled) return false;
-  if (button.style.display === "none") return false;
-  return button.offsetParent !== null;
+// The "askAi" setting only hides the button; it must not take the shortcut
+// away, so the only reason to skip a button here is an in-flight request.
+function isAskAiButtonAvailable(button: HTMLButtonElement): boolean {
+  return !button.disabled;
+}
+
+function getAskAiQuestionElement(button: HTMLButtonElement): HTMLElement {
+  return button.closest<HTMLElement>('[id^="question-"]') ?? button;
+}
+
+function nearestToViewportCenter(
+  buttons: HTMLButtonElement[]
+): HTMLButtonElement {
+  const viewportCenter = window.innerHeight / 2;
+  // Measure the question, not the button: with "askAi" off every button is
+  // display:none and all button rects collapse to zero.
+  const distanceFromCenter = (button: HTMLButtonElement) =>
+    Math.abs(
+      getAskAiQuestionElement(button).getBoundingClientRect().top - viewportCenter
+    );
+
+  return buttons.reduce((closest, candidate) =>
+    distanceFromCenter(candidate) < distanceFromCenter(closest)
+      ? candidate
+      : closest
+  );
 }
 
 function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
@@ -363,26 +387,19 @@ function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
     const focusedButton = focusedQuestion.querySelector<HTMLButtonElement>(
       ASK_AI_BUTTON_SELECTOR
     );
-    if (focusedButton && isButtonVisibleAndEnabled(focusedButton)) {
+    if (focusedButton && isAskAiButtonAvailable(focusedButton)) {
       return focusedButton;
     }
   }
 
   const buttons = Array.from(
     document.querySelectorAll<HTMLButtonElement>(ASK_AI_BUTTON_SELECTOR)
-  ).filter(isButtonVisibleAndEnabled);
+  ).filter(isAskAiButtonAvailable);
 
   if (buttons.length === 0) return null;
   if (buttons.length === 1) return buttons[0];
 
-  const viewportCenter = window.innerHeight / 2;
-  buttons.sort((a, b) => {
-    const distanceA = Math.abs(a.getBoundingClientRect().top - viewportCenter);
-    const distanceB = Math.abs(b.getBoundingClientRect().top - viewportCenter);
-    return distanceA - distanceB;
-  });
-
-  return buttons[0];
+  return nearestToViewportCenter(buttons);
 }
 
 function bindAskAiShortcut(): void {

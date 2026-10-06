@@ -5,6 +5,7 @@
 
 import { DARK_MODE_ALLOWED_URLS } from "../config/constants";
 import { injectToastify } from "../features/toastify-injector";
+import { resetBlockedCache } from "../utils/execute-script";
 import { applyProgressBarFix, applyCustomTheme } from "../features/dark-mode";
 import { enableCtrlC } from "../features/ctrl-c-enabler";
 import { applyPrivacyBlur } from "../features/privacy-blur";
@@ -32,6 +33,12 @@ function handleTabUpdate(
 ): void {
   const currentUrl = changeInfo.url ?? tab.url;
   if (!currentUrl) return;
+
+  // Reset bridge cache on new page navigation so execOnPage/execFileOnPage
+  // re-evaluates whether executeScript works or needs the bridge fallback.
+  if (changeInfo.status === "loading") {
+    resetBlockedCache(tabId);
+  }
 
   // HACKERRANK - Copy question button on contest challenge pages
   if (changeInfo.status === "complete" || Boolean(changeInfo.url)) {
