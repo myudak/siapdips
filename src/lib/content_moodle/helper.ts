@@ -1,6 +1,16 @@
 // src/helper.ts
 // import { BUTTONS } from "./config";
 import { Draggable } from "./draggable";
+import {
+  bindAnswerEntriesToFields,
+  buildMoodleAutoAnswerUserPrompt,
+  formatMoodleAnswerForDisplay,
+  parseMoodleAnswerFromText,
+  parseMoodleAnswerPayload,
+  resolveMoodleAnswers,
+  type MoodleAnswerResult,
+} from "./answer";
+import type { MoodleQuestionPayload } from "./question";
 
 interface ChatMessage {
   role: "user" | "model";
@@ -10,26 +20,6 @@ interface ChatMessage {
 interface CliProxyMessage {
   role: "system" | "user" | "assistant";
   content: string;
-}
-
-interface MoodleQuestionOption {
-  key: string;
-  text: string;
-  index: number;
-}
-
-interface MoodleQuestionPayload {
-  questionLabel: string;
-  questionText: string;
-  options: MoodleQuestionOption[];
-  questionType: "multiple_choice_single" | "unknown";
-}
-
-interface ToolAnswerResult {
-  answer_letter: string;
-  answer_text?: string;
-  confidence?: number;
-  reasoning_brief?: string;
 }
 
 type MoodleAiProvider = "cliproxy" | "gemini" | "openai_compatible";
@@ -309,10 +299,20 @@ async function processExternalQuestion(
     // Remove loading indicator
     messagesContainer.removeChild(loadingElement);
 
-    if (structuredAnswer) {
+    const boundAnswer = structuredAnswer
+      ? bindAnswerEntriesToFields(structuredAnswer, question)
+      : null;
+    const resolvedAnswers = resolveMoodleAnswers(boundAnswer, question);
+    const freeText = boundAnswer?.freeText;
+
+    if (resolvedAnswers.length > 0 || freeText) {
       // Add AI response to UI
       const aiMessageElement = createMessageElement(
-        formatStructuredAnswerForDisplay(structuredAnswer),
+        formatMoodleAnswerForDisplay(
+          resolvedAnswers,
+          boundAnswer?.reasoning_brief,
+          freeText
+        ),
         "model"
       );
       messagesContainer.appendChild(aiMessageElement);
@@ -323,7 +323,15 @@ async function processExternalQuestion(
           detail: {
             questionId,
             success: true,
-            response: JSON.stringify(structuredAnswer),
+            response: JSON.stringify({
+              answers: resolvedAnswers.map((answer) => ({
+                field: answer.fieldId,
+                optionIndex: answer.optionIndex,
+                text: answer.text,
+              })),
+              freeText: freeText || undefined,
+              reasoning_brief: boundAnswer?.reasoning_brief,
+            }),
           },
         })
       );
@@ -674,7 +682,7 @@ function createChatInterface(): HTMLElement {
       "model"
     );
     const welcome2Message = createMessageElement(
-      "`{BETA masih ad bbrp bug, auto answer only accurate for pilgan}`",
+      "`{BETA masih ad bbrp bug, auto answer udah support pilgan, checkbox, isian, dropdown, dan matching}`",
       "model"
     );
     messagesContainer.appendChild(welcomeMessage);
@@ -1031,21 +1039,23 @@ REMEMBER THAT IS JUST AN EXAMPLE, U CAN USE ANYTHING, ANSWER ACCORDING TO USER D
 `;
 
 const MOODLE_AUTO_ANSWER_SYSTEM_PROMPT = `
-You are DIPS, a Moodle multiple-choice quiz solving assistant.
+You are DIPS, a Moodle quiz solving assistant.
 
 Rules:
-- You will receive one question and the exact answer options shown on screen.
-- Choose exactly one answer from the provided options.
-- Never invent an option.
-- Never use a letter that is not present in the provided options.
-- Base your answer on the exact provided option texts.
+- You receive one question plus the exact answer fields rendered on screen.
+- Every field is listed as \`[field_id] label\`, followed by its options when it has any.
+- Answer with one entry per field, formatted as \`<field_id>=<value>\`.
+- For fields with options, answer with the option letter (a, b, c, ...). When a field allows more than one answer, list every correct letter separated by commas.
+- For text fields, answer with the exact final answer text and nothing else.
+- Never invent a field id. Never use an option letter that is not listed.
+- When the question has no fillable field, put the full answer in \`answer_text\`.
 
 When tools are available:
 - Call the tool \`select_moodle_answer\`.
 
 If tools are unavailable:
 - Return JSON only:
-{"answer_letter":"b","answer_text":"...","confidence":0.88,"reasoning_brief":"..."}
+{"answers":["<field_id>=<value>"],"answer_text":"","confidence":0.88,"reasoning_brief":"..."}
 
 Do not use markdown fences.
 `.trim();
@@ -1054,16 +1064,23 @@ const MOODLE_ANSWER_TOOL = {
   type: "function",
   function: {
     name: "select_moodle_answer",
-    description: "Select the best answer from the provided Moodle choices.",
+    description:
+      "Submit the answer for every rendered field of the Moodle question.",
     parameters: {
       type: "object",
       properties: {
-        answer_letter: {
-          type: "string",
-          enum: ["a", "b", "c", "d", "e", "f"],
+        answers: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+          description:
+            'One entry per field as "<field_id>=<value>", for example "q44:2_answer=B", "q44:2_answer=A,C" for a multiple-answer field, or "q44:2_answer=Jakarta" for a text field.',
         },
         answer_text: {
           type: "string",
+          description:
+            "Full answer text when the question has no fillable field (essay, image drag and drop).",
         },
         confidence: {
           type: "number",
@@ -1072,7 +1089,7 @@ const MOODLE_ANSWER_TOOL = {
           type: "string",
         },
       },
-      required: ["answer_letter", "answer_text"],
+      required: ["answers"],
     },
   },
 } as const;
@@ -1137,81 +1154,24 @@ function convertChatHistoryToCliProxyMessages(
 function formatQuestionPayloadForDisplay(
   question: MoodleQuestionPayload
 ): string {
-  const optionsText = question.options
-    .map((option) => `${option.key.toUpperCase()}. ${option.text}`)
-    .join("\n");
+  const fieldsText = question.fields
+    .map((field) => {
+      if (field.kind === "text") return `[${field.id}] ${field.label}`;
+      const options = (field.options ?? [])
+        .map((option) => `${option.key.toUpperCase()}. ${option.text}`)
+        .join("\n");
+      return `[${field.id}] ${field.label}\n${options}`;
+    })
+    .join("\n\n");
 
-  return `${question.questionLabel}\n\n${question.questionText}\n\n${optionsText}`;
+  return [question.questionLabel, question.questionText, fieldsText]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
-function formatStructuredAnswerForDisplay(answer: ToolAnswerResult): string {
-  const lines = [
-    answer.reasoning_brief || "Udah gw pilih opsi paling masuk akal.",
-    `XX_CODE_FINAL_ANSWER_XX: ${answer.answer_letter}. ${answer.answer_text || ""}`.trim(),
-  ];
-  return lines.join("\n\n");
-}
-
-function extractJsonObject(text: string): string | null {
-  const match = text.match(/\{[\s\S]*\}/);
-  return match?.[0] || null;
-}
-
-function parseToolAnswerResult(value: unknown): ToolAnswerResult | null {
-  if (!value || typeof value !== "object") return null;
-
-  const candidate = value as {
-    answer_letter?: unknown;
-    answer_text?: unknown;
-    confidence?: unknown;
-    reasoning_brief?: unknown;
-  };
-
-  if (typeof candidate.answer_letter !== "string") return null;
-
-  return {
-    answer_letter: candidate.answer_letter.toLowerCase(),
-    answer_text:
-      typeof candidate.answer_text === "string"
-        ? candidate.answer_text
-        : undefined,
-    confidence:
-      typeof candidate.confidence === "number"
-        ? candidate.confidence
-        : undefined,
-    reasoning_brief:
-      typeof candidate.reasoning_brief === "string"
-        ? candidate.reasoning_brief
-        : undefined,
-  };
-}
-
-function extractToolAnswerFromText(content: string): ToolAnswerResult | null {
-  if (!content) return null;
-
-  const jsonText = extractJsonObject(content);
-  if (jsonText) {
-    try {
-      return parseToolAnswerResult(JSON.parse(jsonText));
-    } catch (error) {
-      console.warn("Failed to parse JSON answer content:", error);
-    }
-  }
-
-  const markerMatch = content.match(
-    /XX_CODE_FINAL_ANSWER_XX:\s*([a-zA-Z])\.\s*(.*)/
-  );
-  if (!markerMatch) return null;
-
-  return {
-    answer_letter: markerMatch[1].toLowerCase(),
-    answer_text: markerMatch[2]?.trim() || undefined,
-  };
-}
-
-function extractToolAnswerFromCliProxyResponse(
+function extractToolAnswerFromChatResponse(
   result: CliProxyResponse
-): ToolAnswerResult | null {
+): MoodleAnswerResult | null {
   const choice = result.choices?.[0];
   const toolCalls = choice?.message?.tool_calls || [];
 
@@ -1220,35 +1180,15 @@ function extractToolAnswerFromCliProxyResponse(
     if (fn?.name !== "select_moodle_answer" || !fn.arguments) continue;
 
     try {
-      return parseToolAnswerResult(JSON.parse(fn.arguments));
+      const parsed = parseMoodleAnswerPayload(JSON.parse(fn.arguments));
+      if (parsed) return parsed;
     } catch (error) {
       console.warn("Failed to parse tool call arguments:", error);
     }
   }
 
   const content = choice?.message?.content;
-  return content ? extractToolAnswerFromText(content) : null;
-}
-
-function buildMoodleAutoAnswerUserPrompt(
-  question: MoodleQuestionPayload
-): string {
-  const optionsText = question.options
-    .map((option) => `${option.key}. ${option.text}`)
-    .join("\n");
-
-  return [
-    `Question Label: ${question.questionLabel}`,
-    `Question Type: ${question.questionType}`,
-    "",
-    "Question:",
-    question.questionText,
-    "",
-    "Options:",
-    optionsText,
-    "",
-    "Choose exactly one option from the provided list.",
-  ].join("\n");
+  return content ? parseMoodleAnswerFromText(content) : null;
 }
 
 function convertChatHistoryToGeminiContents(
@@ -1276,24 +1216,23 @@ function convertChatHistoryToGeminiContents(
   }>;
 }
 
-function normalizeStructuredAnswerForQuestion(
-  parsed: ToolAnswerResult | null,
-  question: MoodleQuestionPayload
-): ToolAnswerResult | null {
-  if (!parsed) return null;
+/**
+ * Keeps a provider answer only when it carries something actionable. Field and
+ * option validity is checked field-by-field when the answer is resolved.
+ */
+function hasUsableAnswer(
+  answer: MoodleAnswerResult | null
+): MoodleAnswerResult | null {
+  if (!answer) return null;
+  if (answer.answers.length > 0 || answer.freeText) return answer;
 
-  const validOptionKeys = new Set(question.options.map((option) => option.key));
-  if (!validOptionKeys.has(parsed.answer_letter)) {
-    console.warn("Provider returned invalid option key:", parsed.answer_letter);
-    return null;
-  }
-
-  return parsed;
+  console.warn("Provider returned an answer without any field content.");
+  return null;
 }
 
 async function answerMoodleQuestion(
   question: MoodleQuestionPayload
-): Promise<ToolAnswerResult | null> {
+): Promise<MoodleAnswerResult | null> {
   const config = await getMoodleAiConfig();
 
   if (config.provider === "gemini") {
@@ -1324,7 +1263,7 @@ async function chatWithConfiguredProvider(
 async function answerMoodleQuestionWithCliProxy(
   question: MoodleQuestionPayload,
   config: MoodleAiConfig
-): Promise<ToolAnswerResult | null> {
+): Promise<MoodleAnswerResult | null> {
   const controller = new AbortController();
   const timeoutMs = config.cliProxyTimeoutMs;
   const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
@@ -1365,10 +1304,7 @@ async function answerMoodleQuestionWithCliProxy(
     }
 
     const result = (await response.json()) as CliProxyResponse;
-    return normalizeStructuredAnswerForQuestion(
-      extractToolAnswerFromCliProxyResponse(result),
-      question
-    );
+    return hasUsableAnswer(extractToolAnswerFromChatResponse(result));
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error(
@@ -1384,7 +1320,7 @@ async function answerMoodleQuestionWithCliProxy(
 async function answerMoodleQuestionWithGemini(
   question: MoodleQuestionPayload,
   config: MoodleAiConfig
-): Promise<ToolAnswerResult | null> {
+): Promise<MoodleAnswerResult | null> {
   if (!config.geminiApiKey) {
     throw new Error("Gemini API key belum diisi. Cek setting Moodle AI.");
   }
@@ -1449,10 +1385,7 @@ async function answerMoodleQuestionWithGemini(
         .join("\n")
         .trim() || "";
 
-    return normalizeStructuredAnswerForQuestion(
-      extractToolAnswerFromText(text),
-      question
-    );
+    return hasUsableAnswer(parseMoodleAnswerFromText(text));
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error(
@@ -1468,7 +1401,7 @@ async function answerMoodleQuestionWithGemini(
 async function answerMoodleQuestionWithOpenAiCompatible(
   question: MoodleQuestionPayload,
   config: MoodleAiConfig
-): Promise<ToolAnswerResult | null> {
+): Promise<MoodleAnswerResult | null> {
   if (!config.openAiCompatApiUrl) {
     throw new Error(
       "OpenAI-compatible API URL belum diisi. Cek setting Moodle AI."
@@ -1523,10 +1456,7 @@ async function answerMoodleQuestionWithOpenAiCompatible(
     }
 
     const result = (await response.json()) as CliProxyResponse;
-    return normalizeStructuredAnswerForQuestion(
-      extractToolAnswerFromCliProxyResponse(result),
-      question
-    );
+    return hasUsableAnswer(extractToolAnswerFromChatResponse(result));
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error(

@@ -5,34 +5,24 @@ import {
   MOODLE_CHATGPT_HOME_URL,
   buildMoodleChatGptPrompt,
   buildMoodleChatGptSearchUrl,
-  normalizeMoodlePromptText,
   shouldUseMoodleChatGptClipboardFallback,
-  type MoodleChatGptChoiceMode,
 } from "./lib/content_moodle/chatgpt";
-
-interface MoodleQuestionOption {
-  key: string;
-  text: string;
-  index: number;
-}
-
-interface MoodleQuestionPayload {
-  questionLabel: string;
-  questionText: string;
-  options: MoodleQuestionOption[];
-  questionType: "multiple_choice_single" | "unknown";
-}
-
-interface MoodleStructuredAnswer {
-  answerLetter: string;
-  answerText?: string;
-}
+import {
+  applyMoodleAnswers,
+  extractMoodleQuestion,
+  type MoodleAnswerTarget,
+  type MoodleQuestionPayload,
+} from "./lib/content_moodle/question";
 
 const ASK_AI_SHORTCUT_KEY = "a";
 const ASK_AI_SHORTCUT_LABEL = "Alt+A";
 const ASK_AI_SHORTCUT_BOUND_KEY = "__siapDipsMoodleAskAiShortcutBound";
 const ASK_AI_BUTTON_SELECTOR = 'button[data-myudak-action="ask-ai"]';
 const CHATGPT_BUTTON_ACTION = "answer-chatgpt";
+
+// Mirrors the `moodleHelper` setting so the toasts can tell the user where an
+// answer that cannot be filled in automatically is displayed.
+let helperPanelAttached = false;
 
 chrome.storage.local.get(["moodleHelper"], (result) => {
   if (result.moodleHelper === undefined) {
@@ -43,7 +33,8 @@ chrome.storage.local.get(["moodleHelper"], (result) => {
   // event, so the helper has to exist even when its panel is switched off.
   // Build it detached in that case: the AI engine keeps answering, but nothing
   // is rendered on the page.
-  createHelperDefault(undefined, { attach: Boolean(result.moodleHelper) });
+  helperPanelAttached = Boolean(result.moodleHelper);
+  createHelperDefault(undefined, { attach: helperPanelAttached });
 });
 
 document
@@ -56,7 +47,7 @@ document
 
     if (!formulation || !nomorSoal) return;
 
-    const questionPayload = extractQuestionPayload(question);
+    const questionPayload = extractMoodleQuestion(question);
     if (!questionPayload) return;
 
     const buttonCopySoal = createCopyButton(
@@ -65,27 +56,40 @@ document
     );
     const buttonGoogleSoal = createGoogleButton(questionPayload.questionText);
     const buttonChatGpt = createChatGptButton(question);
+    // The ChatGPT button is off by default, so start hidden and let the
+    // storage callback below reveal it. Setting it here avoids the button
+    // flashing on screen before that callback runs.
+    buttonChatGpt.style.display = "none";
     const buttonAskAi = createAiButton(questionPayload, question);
 
-    chrome.storage.local.get(["copySoal", "googleSoal", "askAi"], (result) => {
-      if (result.copySoal) {
-        buttonCopySoal.style.display = "inline-block";
-      } else {
-        buttonCopySoal.style.display = "none";
-      }
+    chrome.storage.local.get(
+      ["copySoal", "googleSoal", "askAi", "answerChatGpt"],
+      (result) => {
+        if (result.copySoal) {
+          buttonCopySoal.style.display = "inline-block";
+        } else {
+          buttonCopySoal.style.display = "none";
+        }
 
-      if (result.googleSoal) {
-        buttonGoogleSoal.style.display = "inline-block";
-      } else {
-        buttonGoogleSoal.style.display = "none";
-      }
+        if (result.googleSoal) {
+          buttonGoogleSoal.style.display = "inline-block";
+        } else {
+          buttonGoogleSoal.style.display = "none";
+        }
 
-      // `askAi` only decides whether the button is shown; Alt+A stays
-      // available either way. It follows the documented default of true, so
-      // only an explicit false hides the button.
-      buttonAskAi.style.display =
-        result.askAi !== false ? "inline-block" : "none";
-    });
+        // `askAi` only decides whether the button is shown; Alt+A stays
+        // available either way. It follows the documented default of true, so
+        // only an explicit false hides the button.
+        buttonAskAi.style.display =
+          result.askAi !== false ? "inline-block" : "none";
+
+        // `answerChatGpt` is opt-in, so anything other than an explicit true
+        // leaves the button hidden. Its own style is inline-flex, not
+        // inline-block.
+        buttonChatGpt.style.display =
+          result.answerChatGpt === true ? "inline-flex" : "none";
+      }
+    );
     // Append buttons to the formulation element
 
     formulation.appendChild(buttonCopySoal);
@@ -105,72 +109,21 @@ function createBaseButton(text: string): HTMLButtonElement {
   return button;
 }
 
-function getMoodleChatGptChoiceMode(
-  question: HTMLElement
-): MoodleChatGptChoiceMode {
-  if (question.querySelector('.answer input[type="checkbox"]')) {
-    return "multiple";
-  }
-  if (question.querySelector('.answer input[type="radio"]')) {
-    return "single";
-  }
-  return "unknown";
-}
-
 function getMoodleChatGptPayload(question: HTMLElement) {
-  const questionTextElement = question.querySelector<HTMLElement>(".qtext");
-  const questionLabel =
-    question.querySelector<HTMLElement>("div.info > h3")?.textContent?.trim() ||
-    "Moodle Question";
-  const questionText = normalizeMoodlePromptText(
-    questionTextElement?.innerText ||
-      questionTextElement?.textContent ||
-      ""
-  );
-
-  const optionInputs = Array.from(
-    question.querySelectorAll<HTMLInputElement>(
-      '.answer input[type="radio"], .answer input[type="checkbox"]'
-    )
-  ).filter(
-    (input) =>
-      input.value !== "-1" &&
-      !input.classList.contains("visually-hidden") &&
-      input.getAttribute("aria-hidden") !== "true"
-  );
-
-  const options = optionInputs
-    .map((input, index) => {
-      const labelId = input.getAttribute("aria-labelledby");
-      const labelElement = labelId
-        ? question.querySelector<HTMLElement>(`#${CSS.escape(labelId)}`)
-        : input.closest<HTMLElement>(".r0, .r1")?.querySelector<HTMLElement>(
-            '[data-region="answer-label"]'
-          );
-      if (!labelElement) return null;
-
-      const labelClone = labelElement.cloneNode(true) as HTMLElement;
-      const answerNumber = labelClone.querySelector<HTMLElement>(".answernumber");
-      const key =
-        answerNumber?.textContent?.replace(/[^a-z0-9]/gi, "").toLowerCase() ||
-        String.fromCharCode(97 + index);
-      answerNumber?.remove();
-
-      const text = normalizeMoodlePromptText(
-        labelClone.innerText || labelClone.textContent || ""
-      ).replace(/\s*\n\s*/g, " ");
-
-      return text ? { key, text } : null;
-    })
-    .filter((option): option is { key: string; text: string } => Boolean(option));
-
-  if (!questionText || !options.length) return null;
+  const payload = extractMoodleQuestion(question);
+  if (!payload) return null;
 
   return {
-    questionLabel,
-    questionText,
-    options,
-    mode: getMoodleChatGptChoiceMode(question),
+    questionLabel: payload.questionLabel,
+    questionText: payload.questionText,
+    fields: payload.fields.map((field) => ({
+      id: field.id,
+      label: field.label,
+      kind: field.kind,
+      multiple: field.multiple,
+      options: field.options,
+    })),
+    notes: payload.notes,
   };
 }
 
@@ -342,13 +295,33 @@ function createAiButton(
   return button;
 }
 
+// Alt+A has to survive focus landing on a radio or checkbox, which happens as
+// soon as you click an answer option. Only real text entry should swallow it.
+const NON_TYPING_INPUT_TYPES = new Set([
+  "button",
+  "checkbox",
+  "color",
+  "file",
+  "hidden",
+  "image",
+  "radio",
+  "range",
+  "reset",
+  "submit",
+]);
+
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+
   const tagName = target.tagName.toLowerCase();
-  return (
-    tagName === "input" ||
-    tagName === "textarea" ||
-    target.isContentEditable
+  if (tagName === "textarea") return true;
+  if (tagName !== "input") return false;
+
+  // An input with no type, or one the browser does not recognise, reports
+  // "text", so anything missing from the set above still counts as typing.
+  return !NON_TYPING_INPUT_TYPES.has(
+    (target as HTMLInputElement).type.toLowerCase()
   );
 }
 
@@ -380,7 +353,38 @@ function nearestToViewportCenter(
   );
 }
 
+// Returns the question wrapping the current text selection, if the user has
+// one. Selecting text is the most explicit way to say which question you mean,
+// so it beats both focus and scroll position.
+function getQuestionWithSelectedText(): HTMLElement | null {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+    return null;
+  }
+
+  // anchorNode is where the selection started. When a drag runs across two
+  // questions, that is the one the user began on.
+  const anchor = selection.anchorNode;
+  const anchorElement =
+    anchor instanceof Element ? anchor : (anchor?.parentElement ?? null);
+
+  return anchorElement?.closest<HTMLElement>('[id^="question-"]') ?? null;
+}
+
 function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
+  const selectedQuestion = getQuestionWithSelectedText();
+  if (selectedQuestion) {
+    const selectedButton = selectedQuestion.querySelector<HTMLButtonElement>(
+      ASK_AI_BUTTON_SELECTOR
+    );
+    // The selection already named the question, so do not fall through to
+    // another one: a stale selection must not answer a neighbouring question,
+    // and answering nothing is better than answering the wrong one.
+    return selectedButton && isAskAiButtonAvailable(selectedButton)
+      ? selectedButton
+      : null;
+  }
+
   const activeElement = document.activeElement as HTMLElement | null;
   const focusedQuestion = activeElement?.closest<HTMLElement>('[id^="question-"]');
   if (focusedQuestion) {
@@ -509,60 +513,38 @@ async function handleAiButtonClick(
       if (success && response) {
         console.log("AI Response for question:", questionId, response);
 
-        const structuredAnswer =
-          extractStructuredAnswer(response) ??
-          (extractAnswerFromResponse(response)
-            ? { answerLetter: extractAnswerFromResponse(response) as string }
-            : null);
-
-        if (!structuredAnswer) {
+        const aiAnswer = parseAiAnswerResponse(response);
+        if (!aiAnswer) {
           showToast("AI tidak memberikan jawaban yang valid", "error");
           setButtonLoadingState(button, false);
           return;
         }
 
-        const isValidLetter = questionPayload.options.some(
-          (option) => option.key === structuredAnswer.answerLetter
-        );
+        const application = applyMoodleAnswers(question, aiAnswer.answers);
 
-        if (!isValidLetter) {
-          showToast("AI kasih pilihan yang ga ada di opsi", "error");
-          setButtonLoadingState(button, false);
-          return;
-        }
-
-        const selectSuccess = selectAnswerOption(
-          question,
-          structuredAnswer.answerLetter
-        );
-        if (selectSuccess) {
-          const selectedOption = questionPayload.options.find(
-            (option) => option.key === structuredAnswer.answerLetter
-          );
-
-          if (
-            selectedOption &&
-            structuredAnswer.answerText &&
-            !normalizeForCompare(selectedOption.text).includes(
-              normalizeForCompare(structuredAnswer.answerText)
-            ) &&
-            !normalizeForCompare(structuredAnswer.answerText).includes(
-              normalizeForCompare(selectedOption.text)
-            )
-          ) {
-            console.warn(
-              "AI answer text mismatch:",
-              structuredAnswer.answerText,
-              selectedOption.text
-            );
-          }
-
+        if (application.applied > 0) {
+          const failedNote = application.failedFields.length
+            ? ` (${application.failedFields.length} field gagal)`
+            : "";
+          // Drop-zone answers live in hidden inputs, so the drag UI on screen
+          // stays where it was even though the submitted answer did change.
+          const hiddenNote =
+            application.hiddenFields > 0
+              ? ` — ${application.hiddenFields} drop zone keisi, tampilan drag-nya ga ikut pindah`
+              : "";
           showToast(
-            `Done jawaban: ${structuredAnswer.answerLetter.toUpperCase()}`,
+            `Done ngisi ${application.applied} jawaban${failedNote}${hiddenNote}`,
             "success"
           );
+        } else if (aiAnswer.freeText) {
+          showToast(
+            helperPanelAttached
+              ? "Tipe soal ini belum bisa auto-isi. Jawabannya ada di panel Siap Dips."
+              : "Tipe soal ini belum bisa auto-isi. Nyalain panel helper buat lihat jawabannya.",
+            "info"
+          );
         } else {
-          showToast("Gagal memilih jawaban", "error");
+          showToast("Gagal ngisi jawaban ke soalnya", "error");
         }
       } else {
         console.error("AI Error for question:", questionId, error);
@@ -620,107 +602,60 @@ function setButtonLoadingState(
   }
 }
 
-// Helper function to extract answer letter from AI response
-function extractAnswerFromResponse(response: string): string | null {
-  const match = response.match(/XX_CODE_FINAL_ANSWER_XX:\s*([a-zA-Z])\./);
-  return match?.[1]?.toLowerCase() || null;
+interface MoodleAiAnswerResponse {
+  answers: MoodleAnswerTarget[];
+  freeText?: string;
 }
 
-function extractStructuredAnswer(
-  response: string
-): MoodleStructuredAnswer | null {
+// The helper answers with the DOM-ready payload built by resolveMoodleAnswers:
+// field id plus either an option index or the text to write into the control.
+function parseAiAnswerResponse(response: string): MoodleAiAnswerResponse | null {
   const jsonMatch = response.match(/\{[\s\S]*\}/);
   if (!jsonMatch) return null;
 
   try {
     const parsed = JSON.parse(jsonMatch[0]) as {
-      answer_letter?: string;
-      answer_text?: string;
+      answers?: Array<{
+        field?: unknown;
+        optionIndex?: unknown;
+        text?: unknown;
+      }>;
+      freeText?: unknown;
     };
 
-    if (!parsed.answer_letter) return null;
+    const answers: MoodleAnswerTarget[] = (
+      Array.isArray(parsed.answers) ? parsed.answers : []
+    )
+      .map((answer) => ({
+        fieldId: typeof answer.field === "string" ? answer.field : "",
+        optionIndex:
+          typeof answer.optionIndex === "number" ? answer.optionIndex : undefined,
+        text: typeof answer.text === "string" ? answer.text : undefined,
+      }))
+      .filter((answer) => answer.fieldId);
 
-    return {
-      answerLetter: parsed.answer_letter.toLowerCase(),
-      answerText: parsed.answer_text,
-    };
+    const freeText =
+      typeof parsed.freeText === "string" && parsed.freeText.trim()
+        ? parsed.freeText
+        : undefined;
+
+    if (answers.length === 0 && !freeText) return null;
+
+    return { answers, freeText };
   } catch (error) {
     console.warn("Failed to parse structured Moodle answer:", error);
     return null;
   }
 }
 
-// Helper function to select answer option based on letter
-function selectAnswerOption(
-  question: HTMLElement,
-  answerLetter: string
-): boolean {
-  const answerContainer = question.querySelector<HTMLElement>(".answer");
-  if (!answerContainer) {
-    console.warn("Answer container not found");
-    return false;
-  }
-
-  const answerIndex = getAnswerIndex(answerLetter);
-  if (answerIndex === -1) {
-    console.warn(`Invalid answer letter: ${answerLetter}`);
-    return false;
-  }
-
-  const answerOption = answerContainer.children[answerIndex] as HTMLElement;
-  if (!answerOption) {
-    console.warn(`Answer option ${answerLetter} not found`);
-    return false;
-  }
-
-  // Highlight the selected answer
-  highlightAnswerOption(answerOption);
-
-  // Click the input to select it
-  const input = answerOption.querySelector<HTMLInputElement>("input");
-  if (input) {
-    input.click();
-    return true;
-  }
-
-  console.warn(`Input element not found for answer ${answerLetter}`);
-  return false;
-}
-
-// Helper function to convert answer letter to index
-function getAnswerIndex(answerLetter: string): number {
-  const letterToIndex: Record<string, number> = {
-    a: 0,
-    b: 1,
-    c: 2,
-    d: 3,
-    e: 4,
-    f: 5,
-  };
-
-  return letterToIndex[answerLetter.toLowerCase()] ?? -1;
-}
-
-// Helper function to highlight selected answer option
-function highlightAnswerOption(answerOption: HTMLElement): void {
-  // Remove previous highlights
-  const allOptions = answerOption.parentElement?.children;
-  if (allOptions) {
-    Array.from(allOptions).forEach((option) => {
-      (option as HTMLElement).style.border = "";
-    });
-  }
-
-  // Add highlight to selected option
-  answerOption.style.border = "2px solid #4CAF50";
-  answerOption.style.borderRadius = "4px";
-}
-
 // Helper function to show toast notifications
 function showToast(
   message: string,
-  type: "success" | "error" = "success"
+  type: "success" | "error" | "info" = "success"
 ): void {
+  const background =
+    type === "success" ? "#4CAF50" : type === "info" ? "#2196F3" : "#f44336";
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   Toastify({
@@ -729,7 +664,7 @@ function showToast(
     close: true,
     position: "left",
     style: {
-      background: type === "success" ? "#4CAF50" : "#f44336",
+      background,
     },
   }).showToast();
 }
@@ -769,51 +704,6 @@ function createCopyButton(
   return button;
 }
 
-function extractQuestionPayload(
-  question: HTMLElement
-): MoodleQuestionPayload | null {
-  const formulation = question.querySelector<HTMLElement>(".content .formulation");
-  const nomorSoal = question.querySelector<HTMLElement>("div.info > h3");
-  const answerContainer = question.querySelector<HTMLElement>(".answer");
-
-  if (!formulation || !nomorSoal || !answerContainer) return null;
-
-  const questionLabel = nomorSoal.textContent?.trim() || "[No Nomor Soal]";
-  const questionText = getVisibleTextContent(formulation);
-  const optionElements = Array.from(
-    answerContainer.children
-  ) as HTMLElement[];
-
-  const options = optionElements
-    .map((optionElement, index) => {
-      const key = String.fromCharCode("a".charCodeAt(0) + index);
-      const text = normalizeQuestionText(getVisibleTextContent(optionElement));
-      return {
-        key,
-        text,
-        index,
-      };
-    })
-    .filter((option) => option.text.length > 0);
-
-  if (!questionText || options.length === 0) return null;
-
-  return {
-    questionLabel,
-    questionText,
-    options,
-    questionType: "multiple_choice_single",
-  };
-}
-
-function normalizeQuestionText(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
-}
-
-function normalizeForCompare(text: string): string {
-  return text.toLowerCase().replace(/\s+/g, " ").trim();
-}
-
 function createGoogleButton(soalText: string): HTMLButtonElement {
   const button = createBaseButton("Google Soal");
   button.style.marginRight = "0.5rem";
@@ -833,49 +723,6 @@ function createGoogleButton(soalText: string): HTMLButtonElement {
   });
 
   return button;
-}
-
-/*
-   HELPER ======?
-  >>
-    // In programming, a helper (or helper function, helper method, or utility function) is a small function 
-    // designed to perform a specific, often repetitive task that supports a larger function or system. 
-    // It’s not the main logic itself but is used to simplify, organize, or reuse parts of your code.
-*/
-function getVisibleTextContent(el: Element): string {
-  const HIDDEN_CLASSES = new Set([
-    "visually-hidden",
-    "accesshide",
-    "sr-only",
-    "hidden",
-  ]);
-
-  function isHidden(node: Element): boolean {
-    return [...HIDDEN_CLASSES].some((cls) => node.classList.contains(cls));
-  }
-
-  function extractTextRecursively(node: Node): string {
-    if (node.nodeType === Node.TEXT_NODE) {
-      return node.textContent || "";
-    }
-
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const element = node as Element;
-
-      if (isHidden(element)) {
-        return "";
-      } // ⛔ Skip this entire branch
-
-      // Recurse into all child nodes
-      return Array.from(element.childNodes)
-        .map(extractTextRecursively)
-        .join("");
-    }
-
-    return "";
-  }
-
-  return extractTextRecursively(el).trim();
 }
 
 function createLogoSiapDips(): SVGSVGElement {
