@@ -79,6 +79,7 @@ The marketing site is built with Astro.
 pnpm dev:landing    # Start local preview
 pnpm build:landing  # Compile static site
 ```
+Tutorials, the feature directory, and the FAQ are plain data in `src/pages/landing/data/` (`tutorials.ts`, `features.ts`, `faq.ts`). Adding a tutorial there creates its page at `/siapdips/tutorial/<slug>/` and adds it to `sitemap.xml`. The changelog is shared with the options page via `src/constants/changelog.ts`. Set `PUBLIC_GOOGLE_SITE_VERIFICATION` at build time to emit a Search Console verification tag.
 
 ---
 
