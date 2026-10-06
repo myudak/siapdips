@@ -1,0 +1,26 @@
+---
+import Base from "../../layouts/Base.astro";
+import { TutorialPage } from "../../../pages/landing/TutorialPages";
+import { tutorialJsonLd } from "../../../pages/landing/data/structuredData";
+import { tutorials, type Tutorial } from "../../../pages/landing/data/tutorials";
+
+export function getStaticPaths() {
+  return tutorials.map((tutorial) => ({
+    params: { slug: tutorial.slug },
+    props: { tutorial },
+  }));
+}
+
+const { tutorial } = Astro.props as { tutorial: Tutorial };
+const path = `tutorial/${tutorial.slug}/`;
+---
+
+<Base
+  title={`${tutorial.seoTitle} | Siap Dips`}
+  description={tutorial.description}
+  path={path}
+  type="article"
+  jsonLd={tutorialJsonLd(tutorial, path)}
+>
+  <TutorialPage tutorial={tutorial} />
+</Base>

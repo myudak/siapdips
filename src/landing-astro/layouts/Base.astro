@@ -1,0 +1,127 @@
+---
+import "../../pages/landing/index.css";
+import { SITE_NAME, absoluteUrl, landingPath } from "../../pages/landing/data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path under the site base, with a trailing slash ("" for the home page). */
+  path: string;
+  type?: "website" | "article";
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const { title, description, path, type = "website", jsonLd = [], noindex = false } = Astro.props;
+const canonicalUrl = absoluteUrl(path);
+const ogImageUrl = absoluteUrl("og-image.png");
+const siteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? "noindex,follow" : "index,follow,max-image-preview:large"} />
+    <meta name="theme-color" content="#f7f8fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#090c13" media="(prefers-color-scheme: dark)" />
+    {!noindex && <link rel="canonical" href={canonicalUrl} />}
+    <link rel="alternate" hreflang="id" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href={landingPath("sitemap.xml")} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Siap Dips, extension gratis buat mahasiswa Undip" />
+    <meta property="og:locale" content="id_ID" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    {siteVerification && <meta name="google-site-verification" content={siteVerification} />}
+    <link rel="icon" href={landingPath("icons/icon48.png")} />
+    <link rel="apple-touch-icon" href={landingPath("icons/icon128.png")} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap"
+    />
+    <script is:inline>
+      try {
+        var stored = localStorage.getItem("siapdips-theme");
+        if (stored === "light" || stored === "dark") {
+          document.documentElement.setAttribute("data-theme", stored);
+        }
+      } catch (e) {}
+    </script>
+    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#konten">Langsung ke konten</a>
+    <slot />
+    <script>
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme-toggle");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      toggle?.addEventListener("click", () => {
+        const current = root.getAttribute("data-theme") ?? (prefersDark.matches ? "dark" : "light");
+        const next = current === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        try {
+          localStorage.setItem("siapdips-theme", next);
+        } catch {
+          // Storage can be blocked; the toggle still works for this visit.
+        }
+      });
+
+      // Feature directory filter. Without JS every feature simply stays visible.
+      const filterGroup = document.querySelector<HTMLElement>("[data-filter-group]");
+      const filterList = document.querySelector<HTMLElement>("[data-filter-list]");
+      if (filterGroup && filterList) {
+        const buttons = filterGroup.querySelectorAll<HTMLButtonElement>("[data-filter]");
+        const items = filterList.querySelectorAll<HTMLElement>("[data-category]");
+        buttons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const filter = button.dataset.filter;
+            buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+            items.forEach((item) => {
+              item.hidden = filter !== "all" && item.dataset.category !== filter;
+            });
+          });
+        });
+      }
+
+      // Feature reel clips load and play only while visible.
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reelVideos = document.querySelectorAll<HTMLVideoElement>("video[data-src]");
+      if (!prefersReducedMotion && "IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const video = entry.target as HTMLVideoElement;
+              if (entry.isIntersecting) {
+                if (!video.src && video.dataset.src) {
+                  video.src = video.dataset.src;
+                }
+                void video.play().catch(() => undefined);
+              } else {
+                video.pause();
+              }
+            }
+          },
+          { rootMargin: "200px 0px", threshold: 0.15 },
+        );
+        reelVideos.forEach((video) => observer.observe(video));
+      }
+    </script>
+  </body>
+</html>
