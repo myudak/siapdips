@@ -33,6 +33,19 @@ const ASK_AI_SHORTCUT_LABEL = "Alt+A";
 const ASK_AI_SHORTCUT_BOUND_KEY = "__siapDipsMoodleAskAiShortcutBound";
 const ASK_AI_BUTTON_SELECTOR = 'button[data-myudak-action="ask-ai"]';
 const CHATGPT_BUTTON_ACTION = "answer-chatgpt";
+const QUESTION_SELECTOR = '[id^="question-"]';
+const NON_TYPING_INPUT_TYPES = new Set([
+  "radio",
+  "checkbox",
+  "button",
+  "submit",
+  "reset",
+]);
+
+// Remembers the last question the user clicked so the Alt+A shortcut targets
+// that question instead of whichever one happens to sit near the viewport
+// center. Cleared when the user clicks outside any question.
+let lastClickedQuestion: HTMLElement | null = null;
 
 chrome.storage.local.get(["moodleHelper"], (result) => {
   if (result.moodleHelper === undefined) {
@@ -47,7 +60,7 @@ chrome.storage.local.get(["moodleHelper"], (result) => {
 });
 
 document
-  .querySelectorAll<HTMLElement>('[id^="question-"]')
+  .querySelectorAll<HTMLElement>(QUESTION_SELECTOR)
   .forEach((question) => {
     const formulation = question.querySelector<HTMLElement>(
       ".content .formulation"
@@ -353,12 +366,18 @@ function createAiButton(
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+
   const tagName = target.tagName.toLowerCase();
-  return (
-    tagName === "input" ||
-    tagName === "textarea" ||
-    target.isContentEditable
-  );
+  if (tagName === "textarea") return true;
+  // Radio/checkbox/button inputs do not accept typed text, so they must not
+  // block the Alt+A shortcut when a question option is focused.
+  if (tagName === "input") {
+    const inputType = (target as HTMLInputElement).type?.toLowerCase() ?? "text";
+    return !NON_TYPING_INPUT_TYPES.has(inputType);
+  }
+
+  return false;
 }
 
 // The "askAi" setting only hides the button; it must not take the shortcut
@@ -368,7 +387,7 @@ function isAskAiButtonAvailable(button: HTMLButtonElement): boolean {
 }
 
 function getAskAiQuestionElement(button: HTMLButtonElement): HTMLElement {
-  return button.closest<HTMLElement>('[id^="question-"]') ?? button;
+  return button.closest<HTMLElement>(QUESTION_SELECTOR) ?? button;
 }
 
 function nearestToViewportCenter(
@@ -391,13 +410,27 @@ function nearestToViewportCenter(
 
 function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
   const activeElement = document.activeElement as HTMLElement | null;
-  const focusedQuestion = activeElement?.closest<HTMLElement>('[id^="question-"]');
+  const focusedQuestion = activeElement?.closest<HTMLElement>(QUESTION_SELECTOR);
   if (focusedQuestion) {
     const focusedButton = focusedQuestion.querySelector<HTMLButtonElement>(
       ASK_AI_BUTTON_SELECTOR
     );
     if (focusedButton && isAskAiButtonAvailable(focusedButton)) {
       return focusedButton;
+    }
+  }
+
+  // Prefer the question the user last clicked, so clicking a question and then
+  // pressing Alt+A answers that question regardless of scroll position.
+  if (lastClickedQuestion && !lastClickedQuestion.isConnected) {
+    lastClickedQuestion = null;
+  }
+  if (lastClickedQuestion) {
+    const clickedButton = lastClickedQuestion.querySelector<HTMLButtonElement>(
+      ASK_AI_BUTTON_SELECTOR
+    );
+    if (clickedButton && isAskAiButtonAvailable(clickedButton)) {
+      return clickedButton;
     }
   }
 
@@ -420,6 +453,20 @@ function bindAskAiShortcut(): void {
   if (shortcutWindow[ASK_AI_SHORTCUT_BOUND_KEY]) return;
 
   shortcutWindow[ASK_AI_SHORTCUT_BOUND_KEY] = true;
+
+  // Track the question the user clicks so Alt+A can target it. Capture phase
+  // keeps this reliable even if page scripts stop propagation.
+  document.addEventListener(
+    "pointerdown",
+    (event: PointerEvent) => {
+      const target = event.target;
+      lastClickedQuestion =
+        target instanceof Element
+          ? target.closest<HTMLElement>(QUESTION_SELECTOR)
+          : null;
+    },
+    true
+  );
 
   document.addEventListener("keydown", (event: KeyboardEvent) => {
     if (event.defaultPrevented) return;
