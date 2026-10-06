@@ -2,6 +2,8 @@
  * Enable Ctrl+C functionality on restricted pages
  */
 
+import { execOnPage } from "../utils/execute-script";
+
 export function enableCtrlC(tabId: number, url: string): void {
   // Skip for certain URLs
   if (
@@ -15,17 +17,11 @@ export function enableCtrlC(tabId: number, url: string): void {
     "disableCtrlC",
     (data: { disableCtrlC?: boolean }) => {
       if (data.disableCtrlC === true) {
-        chrome.scripting.executeScript({
-          target: { tabId },
-          func: disableCtrlCScript,
-        });
+        execOnPage(tabId, disableCtrlCScript);
       }
       if (data.disableCtrlC === undefined) {
         chrome.storage.local.set({ disableCtrlC: true });
-        chrome.scripting.executeScript({
-          target: { tabId },
-          func: disableCtrlCScript,
-        });
+        execOnPage(tabId, disableCtrlCScript);
       }
     }
   );

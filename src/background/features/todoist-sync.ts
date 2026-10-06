@@ -9,6 +9,7 @@ import {
   fetchTodoistTasksForProject,
   updateTodoistTask,
 } from "./todoist-api";
+import { execOnPage } from "../utils/execute-script";
 import { scrapeKulonAssignmentsFromTab } from "./kulon-assignments";
 import type { KulonAssignment } from "@/lib/kulon/shared";
 import {
@@ -317,11 +318,7 @@ async function showSyncStatus(
   message: string
 ): Promise<void> {
   try {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      func: renderTodoistSyncToast,
-      args: [kind, message],
-    });
+    await execOnPage(tabId, renderTodoistSyncToast, [kind, message]);
   } catch (error) {
     console.warn("Unable to show Todoist sync status on page:", error);
   }

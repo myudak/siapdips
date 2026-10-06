@@ -12,6 +12,7 @@ import {
   STORAGE_KEY_TODOIST_TASK_LINKS,
   type TodoistTaskLinkMap,
 } from "@/lib/todoist/shared";
+import { execOnPage } from "../utils/execute-script";
 
 export async function isNewTabDashboardEnabled(): Promise<boolean> {
   const result = await chrome.storage.local.get(STORAGE_KEY_NEW_TAB_DASHBOARD_ENABLED);
@@ -57,17 +58,20 @@ export async function refreshKulonAssignmentsCacheFromTab(
 export async function scrapeKulonAssignmentsFromTab(
   tabId: number
 ): Promise<KulonAssignment[]> {
-  const results = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: scrapeAssignmentsFromPage,
-  });
+  try {
+    const scrapedAssignments = await execOnPage<KulonAssignment[] | undefined>(
+      tabId,
+      () => scrapeAssignmentsFromPage()
+    );
 
-  const scrapedAssignments = results[0]?.result;
-  if (!Array.isArray(scrapedAssignments)) {
+    if (!Array.isArray(scrapedAssignments)) {
+      return [];
+    }
+
+    return sortKulonAssignments(scrapedAssignments);
+  } catch {
     return [];
   }
-
-  return sortKulonAssignments(scrapedAssignments as KulonAssignment[]);
 }
 
 export async function getKulonDashboardData(): Promise<KulonDashboardDataResponse> {
