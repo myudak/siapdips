@@ -393,7 +393,38 @@ function nearestToViewportCenter(
   );
 }
 
+// Returns the question wrapping the current text selection, if the user has
+// one. Selecting text is the most explicit way to say which question you mean,
+// so it beats both focus and scroll position.
+function getQuestionWithSelectedText(): HTMLElement | null {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed || !selection.toString().trim()) {
+    return null;
+  }
+
+  // anchorNode is where the selection started. When a drag runs across two
+  // questions, that is the one the user began on.
+  const anchor = selection.anchorNode;
+  const anchorElement =
+    anchor instanceof Element ? anchor : (anchor?.parentElement ?? null);
+
+  return anchorElement?.closest<HTMLElement>('[id^="question-"]') ?? null;
+}
+
 function resolveAskAiButtonForShortcut(): HTMLButtonElement | null {
+  const selectedQuestion = getQuestionWithSelectedText();
+  if (selectedQuestion) {
+    const selectedButton = selectedQuestion.querySelector<HTMLButtonElement>(
+      ASK_AI_BUTTON_SELECTOR
+    );
+    // The selection already named the question, so do not fall through to
+    // another one: a stale selection must not answer a neighbouring question,
+    // and answering nothing is better than answering the wrong one.
+    return selectedButton && isAskAiButtonAvailable(selectedButton)
+      ? selectedButton
+      : null;
+  }
+
   const activeElement = document.activeElement as HTMLElement | null;
   const focusedQuestion = activeElement?.closest<HTMLElement>('[id^="question-"]');
   if (focusedQuestion) {
