@@ -20,6 +20,7 @@
   "host_permissions": [
     "*://*.undip.ac.id/*",
     "https://undip.learnsocial.online/*",
+    "https://undip.edulangua.com/*",
     "https://api.todoist.com/*",
     "https://generativelanguage.googleapis.com/*",
     "https://api.openai.com/*",
@@ -66,6 +67,18 @@
       "js": [
         "libs/toastify.js",
         "./content-undiplearn.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
+    },
+    {
+      "matches": [
+        "https://undip.edulangua.com/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-edulangua.js"
       ],
       "css": [
         "libs/toastify.css"

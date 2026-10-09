@@ -6,6 +6,8 @@ import Themecard from "@/components/Themecard";
 import TodoList from "@/components/Todocard";
 import AutopbmCard from "../AutopbmCard";
 import { AutoLearnSocial } from "../AutoLearnSocial";
+import { AutoEduLangua } from "../AutoEduLangua";
+import NoteCard from "../NoteCard";
 import JadwalCard from "../Jadwalcard";
 import {
   Navigation,
@@ -28,6 +30,8 @@ import {
   MessageSquare,
   ShieldCheck,
   Radar,
+  Globe,
+  NotebookPen,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
@@ -49,6 +53,8 @@ export const cardComponents = {
   QuoteCard,
   AutopbmCard,
   AutoLearnSocial,
+  AutoEduLangua,
+  NoteCard,
   AutoFoodTruk,
   HidePopupcard,
   QrReader,
@@ -74,6 +80,8 @@ export const cardComponentsOption: {
   QuoteCard: ["Quotes", Quote],
   AutopbmCard: ["PBM Auto", Calendar],
   AutoLearnSocial: ["Auto Learn Social {Helper}", LeafyGreen],
+  AutoEduLangua: ["Siedu by Siap Dips", Globe],
+  NoteCard: ["Notes", NotebookPen],
   AutoFoodTruk: ["Food Truk {Helper}", SaladIcon],
   HidePopupcard: ["Lainnya", MoreHorizontal],
   QrReader: ["QR Code Reader", QrCodeIcon],

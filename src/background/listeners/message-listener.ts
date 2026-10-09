@@ -56,6 +56,7 @@ type RuntimeMessage =
   | { type: "suspendAllTabsNow" }
   | { type: "closeAllTabsNow" }
   | { type: "hackerrankSetEditorCode"; tabId?: number; code?: string }
+  | { type: "autoVoiceEduLangua" }
   | SebRuntimeMessage
   | TodoistRuntimeMessage
   | KulonRuntimeMessage;
@@ -173,6 +174,22 @@ function handleMessage(
         sendResponse({ ok: false, via: "none" } satisfies EditorInsertResult);
       });
 
+    return true;
+  }
+
+  if (message.type === "autoVoiceEduLangua") {
+    // sender.tab.id adalah tab yang mengirim pesan (content script EduLangua)
+    const tabId = _sender.tab?.id;
+    if (!tabId) {
+      sendResponse({ ok: false, handled: 0 });
+      return;
+    }
+    runAutoVoiceInMainWorld(tabId)
+      .then((handled) => sendResponse({ ok: true, handled }))
+      .catch((err) => {
+        console.warn("[SiapDips][AutoVoice] MAIN world exec failed:", err);
+        sendResponse({ ok: false, handled: 0 });
+      });
     return true;
   }
 }
@@ -444,6 +461,133 @@ function mapTodoistError(
     error: error instanceof Error ? error.message : "Unknown Todoist error.",
     code: "api_error",
   };
+}
+
+/**
+ * Jalankan Auto Voice di main world tab EduLangua.
+ * Background menggunakan executeScript world:MAIN sehingga bypass CSP halaman.
+ * Logika override getUserMedia harus berjalan di main world agar terlihat platform.
+ */
+async function runAutoVoiceInMainWorld(tabId: number): Promise<number> {
+  // Inject toastify ke main world dulu
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    files: ["libs/toastify.js"],
+  }).catch(() => { /* toastify mungkin sudah terinjek */ });
+
+  const results = await chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    func: autoVoiceMainWorldFunc,
+  });
+
+  return (results[0]?.result as number | undefined) ?? 0;
+}
+
+/**
+ * Fungsi ini dieksekusi di MAIN WORLD tab EduLangua oleh background.
+ * PENTING: Fungsi ini tidak boleh menggunakan closure/import dari luar —
+ * ia di-serialize ke string dan dijalankan di konteks halaman.
+ */
+async function autoVoiceMainWorldFunc(): Promise<number> {
+  function sleep(ms: number) { return new Promise<void>(r => setTimeout(r, ms)); }
+  function showToast(text: string, duration = 3000) {
+    const T = (window as unknown as { Toastify?: (o: object) => { showToast: () => void } }).Toastify;
+    if (T) T({ text, duration, close: true, position: "left" }).showToast();
+    else console.log("[AutoVoice]", text);
+  }
+
+  const racDivs = Array.from(
+    document.querySelectorAll<HTMLElement>(".record-and-compare")
+  ).filter(el => !el.classList.contains("page-answer-actions"));
+
+  if (racDivs.length === 0) {
+    showToast("⚠️ Tidak ada soal voice ditemukan");
+    return 0;
+  }
+
+  showToast(`🎙️ Auto Voice dimulai... (${racDivs.length} soal)`, 2000);
+  const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+  let handled = 0;
+
+  for (const racDiv of racDivs) {
+    const audioEl = racDiv.querySelector<HTMLAudioElement>("audio");
+    const audioUrl = audioEl?.src || audioEl?.currentSrc || "";
+    if (!audioUrl || audioUrl === window.location.href) continue;
+
+    console.log(`[AutoVoice] #${handled + 1} →`, audioUrl);
+
+    try {
+      const res = await fetch(audioUrl);
+      if (!res.ok) throw new Error(`Fetch gagal: ${res.status}`);
+      const buf = await res.arrayBuffer();
+
+      const audioCtx = new AudioContext();
+      // Resume AudioContext — bisa suspended jika tidak ada user gesture langsung
+      await audioCtx.resume();
+      const audioBuffer = await audioCtx.decodeAudioData(buf);
+      const duration = audioBuffer.duration;
+
+      const destination = audioCtx.createMediaStreamDestination();
+
+      // Override getUserMedia di MAIN WORLD agar platform merekam audio soal
+      navigator.mediaDevices.getUserMedia = async (_c?: MediaStreamConstraints) => {
+        const src = audioCtx.createBufferSource();
+        src.buffer = audioBuffer;
+        src.connect(destination);
+        // Pre-roll: mulai audio 200ms sebelum return stream,
+        // agar MediaRecorder tidak memotong awal kata
+        src.start(audioCtx.currentTime + 0.2);
+        // Tunggu 200ms agar stream sudah mengalir sebelum MediaRecorder attach
+        await new Promise<void>(r => setTimeout(r, 200));
+        return destination.stream;
+      };
+
+      const recordBtn = racDiv.querySelector<HTMLButtonElement>(".rac-btn--danger");
+      if (!recordBtn) {
+        console.warn("[AutoVoice] Tombol ● tidak ditemukan");
+        await audioCtx.close();
+        navigator.mediaDevices.getUserMedia = originalGetUserMedia;
+        continue;
+      }
+
+      recordBtn.click();
+      console.log(`[AutoVoice] Merekam... ${duration.toFixed(1)}s`);
+
+      await sleep(Math.ceil(duration * 1000) + 500);
+
+      racDiv.querySelector<HTMLButtonElement>(".rac-btn--danger")?.click();
+      console.log("[AutoVoice] Stop");
+
+      await sleep(800);
+      await audioCtx.close();
+      handled++;
+    } catch (err) {
+      console.error("[AutoVoice] Error:", err);
+      showToast(`❌ Error: ${(err as Error).message}`, 2000);
+    } finally {
+      navigator.mediaDevices.getUserMedia = originalGetUserMedia;
+    }
+    await sleep(300);
+  }
+
+  if (handled > 0) {
+    await sleep(600);
+    const submitBtn = document.querySelector<HTMLButtonElement>(
+      ".page-answer-actions .answer-actions__btn--primary"
+    );
+    if (submitBtn && !submitBtn.disabled) {
+      submitBtn.click();
+      showToast(`✅ Auto Voice selesai! ${handled} soal dikerjakan`);
+    } else {
+      showToast(`✅ ${handled} soal direkam — klik Submit manual`, 4000);
+    }
+  } else {
+    showToast("⚠️ Tidak ada soal voice yang berhasil diproses");
+  }
+
+  return handled;
 }
 
 async function insertCodeInMainWorld(
