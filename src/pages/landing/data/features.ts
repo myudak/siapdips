@@ -18,6 +18,7 @@ import {
   TimerReset,
   UserRound,
   Utensils,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import type { TutorialCategory } from "./tutorials";
@@ -41,6 +42,13 @@ export type DirectoryFeature = {
 };
 
 export const directoryFeatures: DirectoryFeature[] = [
+  {
+    name: "Tools etc",
+    description: "Speed video, screenshot dengan editor lokal, FontWhat, dan volume booster Chrome/Edge.",
+    category: "produktivitas",
+    icon: Wrench,
+    where: "Tab aktif",
+  },
   {
     name: "Jadwal Dips",
     description: "Matkul hari ini, kemarin, dan besok di popup, plus link MS Teams.",

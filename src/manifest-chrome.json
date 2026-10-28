@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
+  "minimum_chrome_version": "116",
   "name": "Siap Dips: Your Campus Companion",
-  "version": "1.4.1059",
+  "version": "1.5.0",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": [
     "activeTab",
@@ -11,6 +12,14 @@
     "alarms",
     "tabs",
     "contextMenus"
+  ],
+  "optional_permissions": [
+    "tabCapture",
+    "offscreen"
+  ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
   ],
   "homepage_url": "https://myudak.com",
   "options_ui": {

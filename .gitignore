@@ -13,6 +13,9 @@ dist
 dist-landing
 dist-ssr
 release
+scratch/tools-native-*/
+scratch/tools-native-tone.wav
+scratch/tools-card-*.png
 *.local
 
 # Editor directories and files

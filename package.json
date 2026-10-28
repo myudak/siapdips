@@ -1,7 +1,7 @@
 {
   "name": "siapdipss",
   "private": true,
-  "version": "1.4.1059",
+  "version": "1.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -32,6 +32,7 @@
     "test:moodle-chatgpt": "node --test --experimental-strip-types tests/moodle-chatgpt.test.mjs",
     "test:moodle-answer": "node --test --experimental-strip-types tests/moodle-answer.test.mjs",
     "test:moodle-question": "node --test --experimental-strip-types tests/moodle-question.test.mjs",
+    "test:tools": "node --test --experimental-strip-types tests/tools.test.mjs tests/tools-audio.test.mjs",
     "watch:chrome": "vite build --mode chrome --watch",
     "watch:firefox": "vite build --mode firefox --watch",
     "watch:edge": "vite build --mode edge --watch",

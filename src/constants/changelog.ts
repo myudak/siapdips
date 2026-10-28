@@ -8,6 +8,17 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.5.0",
+    date: "October 29, 2026",
+    type: "feature",
+    changes: [
+      "Tools etc: speed control, volume booster Chrome/Edge, PiP, dan A–B loop",
+      "Screenshot full page/area dengan editor crop dan blur lokal",
+      "FontWhat, warna elemen, blur privasi, reading ruler, dan salin link bersih",
+      "Izin situs opsional untuk mengingat speed; urutan kartu lama tetap tersimpan",
+    ],
+  },
+  {
     version: "v1.4.1059",
     date: "October 29, 2026",
     type: "feature",
