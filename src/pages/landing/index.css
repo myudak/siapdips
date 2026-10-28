@@ -369,15 +369,13 @@ strong {
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: var(--brand-chip);
-  color: var(--brand-chip-fg);
   flex: none;
 }
 
-.brand-mark svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
+.brand-mark img {
+  display: block;
+  width: 30px;
+  height: 30px;
 }
 
 .header-nav {

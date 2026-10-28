@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/icons/icon128.png" alt="Siap Dips Logo" width="128" />
+  <img src="public/icons/icon512.png" alt="Siap Dips Logo" width="128" height="128" />
 
   <h1>Siap Dips</h1>
 

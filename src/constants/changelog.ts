@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.5.1",
+    date: "October 29, 2026",
+    type: "patch",
+    changes: [
+      "Logo hitam–ungu baru untuk ikon browser, popup, options, dan helper halaman",
+      "Branding landing page, favicon, dan README disamakan dengan ikon baru",
+    ],
+  },
+  {
     version: "v1.5.0",
     date: "October 29, 2026",
     type: "feature",
