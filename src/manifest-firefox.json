@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Siap Dips",
-  "version": "1.4.1058",
+  "version": "1.4.1059",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": [
     "activeTab",
@@ -19,6 +19,7 @@
   "host_permissions": [
     "*://*.undip.ac.id/*",
     "https://undip.learnsocial.online/*",
+    "https://undip.edulangua.com/*",
     "https://generativelanguage.googleapis.com/*",
     "https://api.openai.com/*",
     "https://openrouter.ai/*",
@@ -69,6 +70,18 @@
       "js": [
         "libs/toastify.js",
         "./content-undiplearn.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ]
+    },
+    {
+      "matches": [
+        "https://undip.edulangua.com/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-edulangua.js"
       ],
       "css": [
         "libs/toastify.css"

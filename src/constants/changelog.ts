@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.4.1059",
+    date: "October 29, 2026",
+    type: "feature",
+    changes: [
+      "Siedu: helper EduLangua dengan Auto Voice dan catatan",
+      "Kartu Notes untuk menyimpan dan mengatur catatan",
+    ],
+  },
+  {
     version: "v1.4.1058",
     date: "June 9, 2026",
     type: "feature",

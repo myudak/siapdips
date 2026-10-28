@@ -15,6 +15,7 @@ const ENTRY_FILE_BY_NAME = {
   "content-undiplearn": "content-undiplearn.js",
   "content-absen": "content-absen.js",
   "content-job": "content-job.js",
+  "content-edulangua": "content-edulangua.js",
   "content-bridge": "content-bridge.js",
   background: "background.js",
 } as const;
@@ -196,6 +197,10 @@ export default defineConfig(({ mode }) => {
           ),
           "content-absen": path.resolve(__dirname, "src/content-absen.ts"),
           "content-job": path.resolve(__dirname, "src/content-job.ts"),
+          "content-edulangua": path.resolve(
+            __dirname,
+            "src/content-edulangua.ts"
+          ),
           "content-bridge": path.resolve(__dirname, "src/content-bridge.ts"),
         },
         output: {
