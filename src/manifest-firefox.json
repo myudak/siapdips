@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Siap Dips",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": [
     "activeTab",
@@ -39,10 +39,12 @@
     "default_title": "SiAP DiPS",
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "16": "icons/toolbar16.png",
+      "20": "icons/toolbar20.png",
+      "24": "icons/toolbar24.png",
+      "32": "icons/toolbar32.png",
+      "48": "icons/toolbar48.png",
+      "128": "icons/toolbar128.png"
     }
   },
   "icons": {

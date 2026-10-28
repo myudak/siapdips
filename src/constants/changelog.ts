@@ -8,6 +8,14 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.5.2",
+    date: "October 29, 2026",
+    type: "patch",
+    changes: [
+      "Ikon toolbar lebih besar dengan simbol ungu transparan yang memenuhi area ikon",
+    ],
+  },
+  {
     version: "v1.5.1",
     date: "October 29, 2026",
     type: "patch",
