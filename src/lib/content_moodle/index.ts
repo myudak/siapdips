@@ -1,6 +1,9 @@
 import { createHelper, injectGlobalStyles } from "./helper";
 
-export function createHelperDefault(message?: string) {
+export function createHelperDefault(
+  message?: string,
+  options?: { attach?: boolean }
+) {
   if (message) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -11,6 +14,11 @@ export function createHelperDefault(message?: string) {
       position: "left",
     }).showToast();
   }
-  injectGlobalStyles();
-  createHelper();
+  // These styles exist to render the chat bubbles, and they use generic names
+  // (@keyframes spin/pulse, .dragging) that could collide with the page's own
+  // CSS. Skip them when the panel is built detached.
+  if (options?.attach !== false) {
+    injectGlobalStyles();
+  }
+  createHelper(options);
 }

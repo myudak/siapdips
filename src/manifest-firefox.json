@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Siap Dips",
-  "version": "1.4.1058",
+  "version": "1.4.1059",
   "description": "Extension for better SIAP Undip experience. \nCreated by myudakk.",
   "permissions": [
     "activeTab",
@@ -41,6 +41,20 @@
     "128": "icons/icon128.png"
   },
   "content_scripts": [
+    {
+      "matches": [
+        "*://*.undip.ac.id/*",
+        "https://undip.learnsocial.online/*"
+      ],
+      "js": [
+        "libs/toastify.js",
+        "./content-bridge.js"
+      ],
+      "css": [
+        "libs/toastify.css"
+      ],
+      "run_at": "document_start"
+    },
     {
       "matches": [
         "https://siap.undip.ac.id/pages/mhs/dashboard/*"

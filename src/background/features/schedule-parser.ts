@@ -2,6 +2,8 @@
  * Schedule parsing functionality
  */
 
+import { execOnPage } from "../utils/execute-script";
+
 interface Course {
   mataKuliah: string;
   ruang: string;
@@ -16,10 +18,7 @@ interface DayObject {
 }
 
 export function parseSchedule(tabId: number): void {
-  chrome.scripting.executeScript({
-    target: { tabId },
-    func: parseTableToJsonAndSave,
-  });
+  execOnPage(tabId, parseTableToJsonAndSave);
 }
 
 function parseTableToJsonAndSave(): DayObject | null {

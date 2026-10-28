@@ -532,7 +532,7 @@ async function autoVoiceMainWorldFunc(): Promise<number> {
       const destination = audioCtx.createMediaStreamDestination();
 
       // Override getUserMedia di MAIN WORLD agar platform merekam audio soal
-      navigator.mediaDevices.getUserMedia = async (_c?: MediaStreamConstraints) => {
+      navigator.mediaDevices.getUserMedia = async () => {
         const src = audioCtx.createBufferSource();
         src.buffer = audioBuffer;
         src.connect(destination);

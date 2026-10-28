@@ -11,14 +11,20 @@ import {
 
 const payload = {
   questionLabel: "Question 1",
-  questionText:
-    "1 Zn + 1 Au(NO2)2 \u00a0\u2192 1 Zn(NO2)2 + 1 Au",
-  options: [
-    { key: "a", text: "Single replacement" },
-    { key: "b", text: "Double replacement" },
-    { key: "c", text: "Synthesis" },
+  questionText: "1 Zn + 1 Au(NO2)2 \u00a0\u2192 1 Zn(NO2)2 + 1 Au",
+  fields: [
+    {
+      id: "q1:1_answer",
+      label: "Pilihan ganda (satu jawaban)",
+      kind: "choice",
+      multiple: false,
+      options: [
+        { key: "a", text: "Single replacement" },
+        { key: "b", text: "Double replacement" },
+        { key: "c", text: "Synthesis" },
+      ],
+    },
   ],
-  mode: "single",
 };
 
 test("Moodle prompt includes question and ordered choices", () => {
@@ -29,16 +35,54 @@ test("Moodle prompt includes question and ordered choices", () => {
   assert.match(prompt, /A\. Single replacement/);
   assert.match(prompt, /C\. Synthesis/);
   assert.match(prompt, /Pilih tepat satu jawaban/);
+  assert.match(prompt, /- q1:1_answer: \[huruf pilihan\]/);
 });
 
 test("Moodle multiple choice prompt requests all correct answers", () => {
   const prompt = buildMoodleChatGptPrompt({
     ...payload,
-    mode: "multiple",
+    fields: [
+      {
+        ...payload.fields[0],
+        label: "Checkbox (boleh lebih dari satu jawaban)",
+        multiple: true,
+      },
+    ],
   });
 
   assert.match(prompt, /lebih dari satu jawaban benar/);
   assert.match(prompt, /Pilih semua jawaban yang benar/);
+});
+
+test("Moodle prompt asks for text on text fields", () => {
+  const prompt = buildMoodleChatGptPrompt({
+    ...payload,
+    fields: [
+      { id: "q2:1_answer", label: "Isian 1", kind: "text" },
+      {
+        id: "q2:1_sub1",
+        label: "Dropdown 1",
+        kind: "select",
+        options: [
+          { key: "a", text: "HTML" },
+          { key: "b", text: "CSS" },
+        ],
+      },
+    ],
+  });
+
+  assert.match(prompt, /\[q2:1_answer\] Isian 1/);
+  assert.match(prompt, /teks jawaban final/);
+  assert.match(prompt, /\[q2:1_sub1\] Dropdown 1/);
+  assert.match(prompt, /Pilih satu opsi untuk setiap dropdown/);
+  assert.match(prompt, /- q2:1_sub1: \[huruf pilihan\]/);
+  assert.match(prompt, /- q2:1_answer: \[teks jawaban\]/);
+});
+
+test("Moodle prompt still explains unfillable question types", () => {
+  const prompt = buildMoodleChatGptPrompt({ ...payload, fields: [] });
+
+  assert.match(prompt, /tidak punya kolom jawaban otomatis/);
 });
 
 test("Moodle ChatGPT URL encodes and restores the prompt", () => {

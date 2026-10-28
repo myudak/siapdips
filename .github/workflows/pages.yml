@@ -14,6 +14,7 @@ on:
       - "public/video/**"
       - "src/landing-astro/**"
       - "src/pages/landing/**"
+      - "src/constants/changelog.ts"
   workflow_dispatch:
 
 permissions:

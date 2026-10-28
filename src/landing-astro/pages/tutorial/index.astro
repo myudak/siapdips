@@ -1,0 +1,39 @@
+---
+import Base from "../../layouts/Base.astro";
+import { TutorialHub } from "../../../pages/landing/TutorialPages";
+import { breadcrumbJsonLd } from "../../../pages/landing/data/structuredData";
+import { absoluteUrl } from "../../../pages/landing/data/site";
+import { tutorials } from "../../../pages/landing/data/tutorials";
+
+const title = "Tutorial Siap Dips: Panduan Fitur buat Mahasiswa Undip";
+const description =
+  "Kumpulan tutorial Siap Dips: cara install, jadwal SIAP, Auto PBM, dark mode, absen QR, Todoist, Moodle helper Kulon, dan fitur lainnya.";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: title,
+    description,
+    url: absoluteUrl("tutorial/"),
+    inLanguage: "id",
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: tutorials.map((tutorial, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: tutorial.title,
+        url: absoluteUrl(`tutorial/${tutorial.slug}/`),
+      })),
+    },
+  },
+  breadcrumbJsonLd([
+    { name: "Beranda", path: "" },
+    { name: "Tutorial", path: "tutorial/" },
+  ]),
+];
+---
+
+<Base title={title} description={description} path="tutorial/" jsonLd={jsonLd}>
+  <TutorialHub />
+</Base>

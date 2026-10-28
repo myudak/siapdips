@@ -19,4 +19,3 @@ export function createHelperDefault(message?: string) {
   injectGlobalStyles();
   createHelper();
 }
-

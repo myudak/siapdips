@@ -17,6 +17,7 @@ import {
 } from "../ui/tooltip";
 import HideButton from "../hideButton";
 import { resolveContentScriptPath } from "@/lib/extension/content-script-path";
+import { execOnPage, execFileOnPage, execCSSOnPage } from "@/background/utils/execute-script";
 
 const AutoLearnSocial = ({
   listeners,
@@ -77,36 +78,21 @@ const AutoLearnSocial = ({
             });
             if (!tab?.id) return;
             if (!tab.url?.includes("https://undip.learnsocial.online")) {
-              await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ["libs/toastify.js"],
-              });
-              await chrome.scripting.insertCSS({
-                target: { tabId: tab.id },
-                files: ["libs/toastify.css"],
-              });
-              await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: () => {
-                  // @ts-ignore
-                  Toastify({
-                    text: "Siap DIps ~~> BUKAN LEARNSOCIAL `(*>﹏<*)′",
-                    duration: 3000,
-                    close: true,
-                    position: "left",
-                  }).showToast();
-                },
+              await execFileOnPage(tab.id!, "libs/toastify.js");
+              await execCSSOnPage(tab.id!, "libs/toastify.css");
+              await execOnPage(tab.id!, () => {
+                // @ts-ignore
+                Toastify({
+                  text: "Siap DIps ~~> BUKAN LEARNSOCIAL `(*>﹏<*)′",
+                  duration: 3000,
+                  close: true,
+                  position: "left",
+                }).showToast();
               });
               return;
             }
 
-            await chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              files: [
-                resolveContentScriptPath("content-undiplearn") ??
-                  "content-undiplearn.js",
-              ],
-            });
+            await execFileOnPage(tab.id!, resolveContentScriptPath("content-undiplearn") ?? "content-undiplearn.js");
           }}
         >
           <BotMessageSquare className="w-4 h-4 mr-2" />

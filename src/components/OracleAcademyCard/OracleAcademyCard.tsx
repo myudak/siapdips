@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { execOnPage } from "@/background/utils/execute-script";
 import { GraduationCap, GripHorizontal, Sparkles, PlayIcon } from "lucide-react";
 
 import { Button } from "../ui/button";
@@ -54,68 +55,55 @@ export default function OracleAcademyCard({ listeners, attributes, id }: Props) 
 
   const triggerAnswerAndSubmit = async () => {
     await runOnOracleTab(async (tabId) => {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        func: () => {
-          const fn = (window as unknown as { answerOracleAcademyQuiz?: () => void })
-            .answerOracleAcademyQuiz;
-          if (fn) {
-            fn();
-          } else {
-            console.warn("[Oracle Academy Card] answerOracleAcademyQuiz not found on page.");
-          }
-        },
+      await execOnPage(tabId, () => {
+        const fn = (window as unknown as { answerOracleAcademyQuiz?: () => void })
+          .answerOracleAcademyQuiz;
+        if (fn) {
+          fn();
+        } else {
+          console.warn("[Oracle Academy Card] answerOracleAcademyQuiz not found on page.");
+        }
       });
     });
   };
 
   const triggerShowHelper = async () => {
     await runOnOracleTab(async (tabId) => {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        func: () => {
-          const fn = (window as unknown as { showOracleAcademyHelper?: () => void })
-            .showOracleAcademyHelper;
-          if (fn) {
-            fn();
-          } else {
-            console.warn("[Oracle Academy Card] showOracleAcademyHelper not found on page.");
-          }
-        },
+      await execOnPage(tabId, () => {
+        const fn = (window as unknown as { showOracleAcademyHelper?: () => void })
+          .showOracleAcademyHelper;
+        if (fn) {
+          fn();
+        } else {
+          console.warn("[Oracle Academy Card] showOracleAcademyHelper not found on page.");
+        }
       });
     });
   };
 
   const triggerClickNextOnce = async () => {
     await runOnOracleTab(async (tabId) => {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        func: () => {
-          const fn = (window as unknown as { clickOracleNext?: () => void })
-            .clickOracleNext;
-          if (fn) fn();
-        },
+      await execOnPage(tabId, () => {
+        const fn = (window as unknown as { clickOracleNext?: () => void })
+          .clickOracleNext;
+        if (fn) fn();
       });
     });
   };
 
   const triggerAutoNext = async (enabled: boolean) => {
     await runOnOracleTab(async (tabId) => {
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        func: (on) => {
-          const api = window as unknown as {
-            startOracleAutoNext?: () => void;
-            stopOracleAutoNext?: () => void;
-          };
-          if (on) {
-            api.startOracleAutoNext?.();
-          } else {
-            api.stopOracleAutoNext?.();
-          }
-        },
-        args: [enabled],
-      });
+      await execOnPage(tabId, (on: unknown) => {
+        const api = window as unknown as {
+          startOracleAutoNext?: () => void;
+          stopOracleAutoNext?: () => void;
+        };
+        if (on) {
+          api.startOracleAutoNext?.();
+        } else {
+          api.stopOracleAutoNext?.();
+        }
+      }, [enabled]);
     });
   };
 

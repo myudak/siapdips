@@ -4,17 +4,12 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { execOnPage } from "../utils/execute-script";
+
 declare const Toastify: any;
 
-/**
- * Configuration constants for the SiapDips extension
- */
-
 export function initPBMAutomation(tabId: number): void {
-  chrome.scripting.executeScript({
-    target: { tabId },
-    func: PBM,
-  });
+  execOnPage(tabId, PBM);
 }
 
 function PBM() {

@@ -18,6 +18,7 @@ import {
 } from "../ui/tooltip";
 import { useEffect, useState } from "react";
 import HideButton from "../hideButton";
+import { execOnPage } from "@/background/utils/execute-script";
 
 const AutopbmCard = ({
   listeners,
@@ -45,11 +46,7 @@ const AutopbmCard = ({
 
   const handleClickAutoThis = async () => {
     const tabId = await getActiveTab();
-    await chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      args: [settingsPBM],
-      func: automateTableResponses,
-    });
+    await execOnPage(tabId, automateTableResponses, [settingsPBM]);
   };
 
   return (

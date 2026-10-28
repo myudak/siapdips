@@ -1,87 +1,13 @@
 ---
+import Base from "../layouts/Base.astro";
 import LandingApp from "../../pages/landing/App";
-import "../../pages/landing/index.css";
+import { homeJsonLd } from "../../pages/landing/data/structuredData";
 
-const title = "Siap Dips - Campus Companion buat Mahasiswa Undip";
+const title = "Siap Dips: Extension Gratis buat Mahasiswa Undip";
 const description =
-  "Siap Dips bantu mahasiswa Undip rapihin SIAP, Kulon, Todoist, jadwal, IPK, form rutin, dan helper kampus lain langsung dari browser.";
-const chromeUrl =
-  "https://chromewebstore.google.com/detail/siap-dips-your-campus-com/inpmbpkngacgeljphlapgdgdjmoffild";
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-const assetBase = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/`;
-const socialImageUrl = new URL(`${assetBase}icons/icon128.png`, Astro.site);
-const icon48Url = `${assetBase}icons/icon48.png`;
-const icon128Url = `${assetBase}icons/icon128.png`;
+  "Extension browser gratis buat mahasiswa Undip: jadwal SIAP di popup, dark mode, Auto PBM, absen QR, Todoist, dan helper Kulon. Lengkap dengan tutorial.";
 ---
 
-<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="robots" content="index,follow" />
-    <meta name="theme-color" content="#ffcf57" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:image" content={socialImageUrl} />
-    <meta property="og:locale" content="id_ID" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={socialImageUrl} />
-    <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" href={icon48Url} />
-    <link rel="apple-touch-icon" href={icon128Url} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: "Siap Dips",
-      applicationCategory: "BrowserApplication",
-      operatingSystem: "Chrome, Firefox, Microsoft Edge",
-      description,
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "IDR",
-      },
-      url: chromeUrl,
-    })} />
-  </head>
-  <body>
-    <LandingApp />
-    <script>
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-      const featureVideos =
-        document.querySelectorAll<HTMLVideoElement>("video[data-src]");
-
-      if (!prefersReducedMotion && "IntersectionObserver" in window) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              const video = entry.target as HTMLVideoElement;
-              if (entry.isIntersecting) {
-                if (!video.src && video.dataset.src) {
-                  video.src = video.dataset.src;
-                }
-                void video.play().catch(() => undefined);
-              } else {
-                video.pause();
-              }
-            }
-          },
-          { rootMargin: "200px 0px", threshold: 0.15 },
-        );
-
-        featureVideos.forEach((video) => observer.observe(video));
-      }
-    </script>
-  </body>
-</html>
+<Base title={title} description={description} path="" jsonLd={homeJsonLd(description)}>
+  <LandingApp />
+</Base>

@@ -18,6 +18,7 @@ import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import HideButton from "../hideButton";
 import { resolveContentScriptPath } from "@/lib/extension/content-script-path";
+import { execOnPage, execFileOnPage, execCSSOnPage } from "@/background/utils/execute-script";
 
 const AutoFoodTruk = ({
   listeners,
@@ -100,34 +101,21 @@ const AutoFoodTruk = ({
             });
             if (!tab?.id) return;
             if (!tab.url?.includes("https://form.undip.ac.id/makanansehat")) {
-              await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                files: ["libs/toastify.js"],
-              });
-              await chrome.scripting.insertCSS({
-                target: { tabId: tab.id },
-                files: ["libs/toastify.css"],
-              });
-              await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                func: () => {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  Toastify({
-                    text: "Siap DIps ~~> BUKAN FOOD TRUK `(*>﹏<*)′",
-                    duration: 3000,
-                    close: true,
-                    position: "left",
-                  }).showToast();
-                },
+              await execFileOnPage(tab.id!, "libs/toastify.js");
+              await execCSSOnPage(tab.id!, "libs/toastify.css");
+              await execOnPage(tab.id!, () => {
+                // @ts-ignore
+                Toastify({
+                  text: "Siap DIps ~~> BUKAN FOOD TRUK `(*>﹏<*)′",
+                  duration: 3000,
+                  close: true,
+                  position: "left",
+                }).showToast();
               });
               return;
             }
 
-            await chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              files: [resolveContentScriptPath("content-ft") ?? "content-ft.js"],
-            });
+            await execFileOnPage(tab.id!, resolveContentScriptPath("content-ft") ?? "content-ft.js");
           }}
         >
           <BotMessageSquare className="w-4 h-4 mr-2" />

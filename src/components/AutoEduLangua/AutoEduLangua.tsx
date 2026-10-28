@@ -28,7 +28,6 @@ const SIEDU_NOTE_KEY = "siedu_note";
 // ── Note Panel Component ─────────────────────────────────────────────────────
 function SieduNotePanel({ onClose }: { onClose: () => void }) {
   const editorRef = useRef<HTMLDivElement>(null);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [charCount, setCharCount] = useState(0);
   const [saved, setSaved] = useState(true);
 
@@ -37,7 +36,7 @@ function SieduNotePanel({ onClose }: { onClose: () => void }) {
     chrome.storage.local.get(SIEDU_NOTE_KEY, (result) => {
       const content: string = result[SIEDU_NOTE_KEY] ?? "";
       if (editorRef.current) {
-        editorRef.current.innerHTML = content;
+        editorRef.current.textContent = content;
         setCharCount(editorRef.current.innerText.length);
       }
     });
@@ -49,12 +48,9 @@ function SieduNotePanel({ onClose }: { onClose: () => void }) {
     setCharCount(text.length);
     setSaved(false);
 
-    // Debounce save 600ms
-    if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      chrome.storage.local.set({ [SIEDU_NOTE_KEY]: editorRef.current?.innerHTML ?? "" });
-      setSaved(true);
-    }, 600);
+    chrome.storage.local.set({ [SIEDU_NOTE_KEY]: text }, () => {
+      setSaved(!chrome.runtime.lastError);
+    });
   };
 
   const handleClear = () => {
@@ -192,7 +188,7 @@ const AutoEduLangua = ({
                 await chrome.scripting.executeScript({
                   target: { tabId: tab.id },
                   func: () => {
-                    // @ts-ignore
+                    // @ts-expect-error Toastify is injected into the page.
                     Toastify({
                       text: "Siedu ~> Bukan EduLangua `(*>﹏<*)′",
                       duration: 3000,
@@ -240,7 +236,7 @@ const AutoEduLangua = ({
                 await chrome.scripting.executeScript({
                   target: { tabId: tab.id },
                   func: () => {
-                    // @ts-ignore
+                    // @ts-expect-error Toastify is injected into the page.
                     Toastify({
                       text: "Siedu ~> Bukan EduLangua `(*>﹏<*)′",
                       duration: 3000,
@@ -256,7 +252,6 @@ const AutoEduLangua = ({
               await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 files: ["libs/toastify.js"],
-                // @ts-ignore — world: MAIN tersedia di Chrome MV3
                 world: "MAIN",
               });
               await chrome.scripting.insertCSS({
@@ -265,14 +260,13 @@ const AutoEduLangua = ({
               });
               await chrome.scripting.executeScript({
                 target: { tabId: tab.id },
-                // @ts-ignore
                 world: "MAIN",
                 func: async () => {
                   function sleep(ms: number) {
                     return new Promise((r) => setTimeout(r, ms));
                   }
                   function showToast(text: string, duration = 3000) {
-                    // @ts-ignore
+                    // @ts-expect-error Toastify is injected into the page.
                     Toastify({ text, duration, close: true, position: "left" }).showToast();
                   }
 
@@ -313,7 +307,7 @@ const AutoEduLangua = ({
                       const destination = audioCtx.createMediaStreamDestination();
                       const fakeStream = destination.stream;
 
-                      navigator.mediaDevices.getUserMedia = async (_constraints?: MediaStreamConstraints) => {
+                      navigator.mediaDevices.getUserMedia = async () => {
                         const source = audioCtx.createBufferSource();
                         source.buffer = audioBuffer;
                         source.connect(destination);

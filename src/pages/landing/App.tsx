@@ -1,417 +1,384 @@
 import {
   ArrowRight,
-  BellRing,
-  BookOpenCheck,
-  CalendarDays,
+  BookOpen,
   CheckCircle2,
-  ClipboardCheck,
-  EyeOff,
-  GraduationCap,
-  ListChecks,
-  Play,
+  History,
+  LockKeyhole,
   Rocket,
   ShieldCheck,
-  Sparkles,
-  TimerReset,
   WandSparkles,
-  type LucideIcon,
 } from "lucide-react";
+import { changelogEntries } from "../../constants/changelog";
+import {
+  AutoplayVideo,
+  ScreenImage,
+  TutorialCard,
+} from "./components/Cards";
+import {
+  SiteFooter,
+  SiteHeader,
+  StoreButtons,
+} from "./components/SiteChrome";
+import { faqItems } from "./data/faq";
+import { directoryFeatures, directoryFilters } from "./data/features";
+import {
+  chromeStore,
+  landingPath,
+  screens,
+  storeLinks,
+  tutorialPath,
+} from "./data/site";
+import {
+  featuredTutorials,
+  getTutorial,
+  tutorials,
+} from "./data/tutorials";
 
-type Feature = {
-  title: string;
-  eyebrow: string;
-  description: string;
-  video: string;
-  icon: LucideIcon;
-  accent: "mint" | "sky" | "sun" | "coral" | "ink" | "lime";
-};
-
-const landingBase = `${import.meta.env.BASE_URL.replace(/\/+$/, "")}/`;
-const landingAsset = (path: string) =>
-  `${landingBase}${path.replace(/^\/+/, "")}`;
-
-const featureReel: Feature[] = [
-  {
-    title: "Jadwal kuliah yang kebaca",
-    eyebrow: "SIAP",
-    description:
-      "Ambil jadwal dari portal kampus, tampilkan rapi, dan bantu kamu ingat ritme minggu ini.",
-    video: landingAsset("video/vid-jadwal-2.mp4"),
-    icon: CalendarDays,
-    accent: "sky",
-  },
-  {
-    title: "IPK dan progres akademik",
-    eyebrow: "Akademik",
-    description:
-      "Pantau performa tanpa perlu bolak-balik buka halaman yang sama tiap semester.",
-    video: landingAsset("video/vid-ipk.mp4"),
-    icon: GraduationCap,
-    accent: "mint",
-  },
-  {
-    title: "LearnSocial jadi lebih enak",
-    eyebrow: "Belajar",
-    description:
-      "Bikin platform belajar terasa lebih ringan dipakai buat tugas dan materi harian.",
-    video: landingAsset("video/vid-learnsocial.mp4"),
-    icon: BookOpenCheck,
-    accent: "lime",
-  },
-  {
-    title: "PBM auto-fill biar nggak capek",
-    eyebrow: "Form",
-    description:
-      "Beresin form rutin lebih cepat, cocok buat urusan yang repetitif tapi tetap harus kelar.",
-    video: landingAsset("video/Vid-Pbm.mp4"),
-    icon: ClipboardCheck,
-    accent: "sun",
-  },
-  {
-    title: "Food Truck helper",
-    eyebrow: "Kampus",
-    description:
-      "Helper kecil buat flow pendaftaran yang sering rebutan waktu dan butuh gerak cepat.",
-    video: landingAsset("video/vid-foodtruk.mp4"),
-    icon: TimerReset,
-    accent: "coral",
-  },
-  {
-    title: "Theme dan privacy tools",
-    eyebrow: "Nyaman",
-    description:
-      "Dark mode, tema, blur data pribadi, dan helper browser lain buat sesi kuliah panjang.",
-    video: landingAsset("video/Vid-Theme.mp4"),
-    icon: EyeOff,
-    accent: "ink",
-  },
+const reelSlugs = [
+  "jadwal",
+  "tema-dark-mode",
+  "auto-pbm",
+  "ipk",
+  "klik-kanan",
+  "foodtruk",
 ];
 
-const painPoints = [
-  "Jadwal, IPK, tugas, form, dan portal kampus sering kepencar.",
-  "Banyak klik kecil yang rasanya receh, tapi numpuk tiap minggu.",
-  "Butuh helper yang ngerti konteks mahasiswa Undip, bukan dashboard kantor.",
-];
+const reel = reelSlugs
+  .map((slug) => getTutorial(slug))
+  .filter((tutorial) => tutorial?.video)
+  .map((tutorial) => tutorial!);
 
-const workflow = [
+const flow = [
   {
-    title: "Pasang extension",
-    description: "Build atau install, lalu pin Siap Dips di browser kamu.",
+    title: "Install sekali",
+    description:
+      "Pilih toko sesuai browser kamu, install, lalu pin ikonnya di toolbar.",
     icon: Rocket,
+    href: tutorialPath("install"),
+    cta: "Panduan install",
   },
   {
     title: "Atur yang kamu butuh",
-    description: "Nyalain fitur kampus, Todoist, AI, atau helper otomatis seperlunya.",
+    description:
+      "Urutkan kartu popup, sembunyikan yang nggak kepake, isi token kalau mau pakai Todoist atau AI.",
     icon: WandSparkles,
+    href: tutorialPath("atur-popup"),
+    cta: "Atur kartu popup",
   },
   {
     title: "Buka portal seperti biasa",
-    description: "Siap Dips kerja di halaman yang didukung tanpa bikin flow kamu ribet.",
+    description:
+      "Helper muncul sendiri di SIAP, SSO, dan Kulon. Nggak ada aplikasi baru yang harus dibuka.",
     icon: CheckCircle2,
+    href: landingPath("tutorial/"),
+    cta: "Lihat semua tutorial",
   },
 ];
 
-const storeLinks = [
-  {
-    name: "Chrome Web Store",
-    href: "https://chromewebstore.google.com/detail/siap-dips-your-campus-com/inpmbpkngacgeljphlapgdgdjmoffild",
-    label: "Install Chrome",
-    icon: landingAsset("images/chrome-store.png"),
-  },
-  {
-    name: "Firefox Add-ons",
-    href: "https://addons.mozilla.org/en-US/firefox/addon/siap-dips/",
-    label: "Install Firefox",
-    icon: landingAsset("images/firefox-addons.jpg"),
-  },
-  {
-    name: "Microsoft Edge Add-ons",
-    href: "https://microsoftedge.microsoft.com/addons/detail/siap-dips-your-campus-co/hlmmkdnclolciolbhaacjmphkmbceopl",
-    label: "Install Edge",
-    icon: landingAsset("images/edge.png"),
-  },
-];
+const latestChangelog = changelogEntries.slice(0, 3);
+const olderChangelog = changelogEntries.slice(3);
 
-function LogoSiapDips(props: React.SVGProps<SVGSVGElement>) {
+function ChangelogEntryView({ entry }: { entry: (typeof changelogEntries)[number] }) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 283.46 283.46"
-      aria-hidden="true"
-      {...props}
-    >
-      <path
-        d="m94.86,34.25l1.76,30.39c-8.19-.18-14.5-.15-18.92.09-14.12.82-21.15,6.09-21.11,15.79.05,9.27,7.4,13.87,22.06,13.8,7.22-.04,14.6-1.8,22.13-5.28,4.84-2.29,11.88-6.91,21.12-13.85l22.56-15.31c12.25-8.25,22.41-14.18,30.48-17.78,11.08-4.9,21.96-7.38,32.63-7.43,14.01-.07,25.24,3.65,33.69,11.16,9.42,8.25,14.16,19.55,14.23,33.89.07,14.66-5.16,25.68-15.69,33.06-8.17,5.86-19.04,8.93-32.62,9.21-1.08,0-4.8.02-11.16.05l-3.22-30.22c9.59-.05,16.33-.35,20.21-.91,9.26-1.34,13.88-5.62,13.84-12.84-.04-8.63-6.96-12.9-20.76-12.83-7.76.04-14.92,1.85-21.48,5.44-3.98,2.18-12.52,7.66-25.63,16.46l-22.73,15.63c-21.49,14.87-42.21,22.36-62.15,22.46-11.86.06-21.57-2.43-29.14-7.46-11.25-7.38-16.91-19.75-17-37.11-.08-16.39,5.47-28.7,16.64-36.95,5.91-4.45,12.2-7.28,18.88-8.5,5.38-.89,11.96-1.35,19.72-1.39,3.56-.02,7.44.13,11.65.43Z"
-        style={{ strokeMiterlimit: 10, strokeWidth: "14px" }}
-      />
-      <path
-        d="m252.41,161.34l.16,32.99c1.47,35.68-15.37,53.92-50.51,54.74l-119.17.58c-35.15-.48-52.16-18.56-51.04-54.25l-.16-32.99,220.72-1.07Zm-191.95,31.82l.02,3.88c.04,9.06,2.07,15.14,6.07,18.24,3.03,2.25,8.42,3.41,16.19,3.48l119.17-.58c8.84-.15,14.81-2.01,17.92-5.58,2.68-3.25,4.05-8.7,4.13-16.35l-.02-3.88-163.48.79Z"
-        style={{ strokeMiterlimit: 10, strokeWidth: "14px" }}
-      />
-    </svg>
-  );
-}
-
-function LogoMyudak(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 595.28 595.28"
-      aria-hidden="true"
-      {...props}
-    >
-      <polygon points="206.43 406.96 297.66 564.99 297.65 565.01 115 565.01 206.32 406.83 206.34 406.8 206.43 406.96" />
-      <polygon points="571.62 90.47 480.3 248.65 388.99 406.8 297.75 248.78 297.66 248.63 388.97 90.47 571.62 90.47" />
-      <polygon points="297.65 248.65 115 248.65 23.67 90.47 206.32 90.47 297.65 248.65" />
-    </svg>
-  );
-}
-
-function LogoMark() {
-  return (
-    <span className="landing-logo" aria-hidden="true">
-      <LogoSiapDips className="landing-logo-sd" />
-      <LogoMyudak className="landing-logo-my" />
-    </span>
-  );
-}
-
-function HeroVideo() {
-  return (
-    <div className="browser-stage reveal reveal-delay-2">
-      <div className="browser-toolbar">
-        <span />
-        <span />
-        <span />
-        <p>siap-dips.local/dashboard</p>
+    <li className="changelog-entry">
+      <div className="changelog-head">
+        <strong>{entry.version}</strong>
+        <span className={`tag tag-${entry.type}`}>{entry.type}</span>
+        <span className="muted">{entry.date}</span>
       </div>
-      <div className="browser-video-wrap">
-        <video
-          className="hero-video"
-          src={landingAsset("video/vid-jadwal.mp4")}
-          preload="metadata"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-label="Preview fitur jadwal Siap Dips"
-        />
-        <div className="video-fallback">Preview fitur Siap Dips</div>
-      </div>
-      <div className="floating-note note-one">
-        <BellRing size={16} />
-        Tugas Kulon kebaca
-      </div>
-      <div className="floating-note note-two">
-        <ListChecks size={16} />
-        Todo lokal tetap rapi
-      </div>
-    </div>
-  );
-}
-
-function FeatureCard({ feature }: { feature: Feature }) {
-  const Icon = feature.icon;
-
-  return (
-    <article className="feature-card">
-      <div className={`feature-video accent-${feature.accent}`}>
-        <video
-          data-src={feature.video}
-          preload="none"
-          muted
-          loop
-          playsInline
-          aria-label={`Video fitur ${feature.title}`}
-        />
-        <div className="video-fallback">{feature.title}</div>
-      </div>
-      <div className="feature-copy">
-        <span className="feature-badge">
-          <Icon size={14} />
-          {feature.eyebrow}
-        </span>
-        <h3>{feature.title}</h3>
-        <p>{feature.description}</p>
-      </div>
-    </article>
+      <ul>
+        {entry.changes.map((change) => (
+          <li key={change}>{change}</li>
+        ))}
+      </ul>
+    </li>
   );
 }
 
 function App() {
   return (
-    <main className="landing-page">
-      <nav className="landing-nav reveal">
-        <a className="brand-lockup" href="#top" aria-label="Siap Dips">
-          <LogoMark />
-          <span>Siap Dips</span>
-        </a>
-        <div className="nav-links" aria-label="Navigasi halaman">
-          <a href="#fitur">Fitur</a>
-          <a href="#workflow">Flow</a>
-          <a href="#privasi">Privasi</a>
-        </div>
-        <a href="#mulai" className="nav-cta">
-          Mulai lihat
-          <ArrowRight size={16} />
-        </a>
-      </nav>
-
-      <section className="hero-section" id="top">
-        <div className="hero-copy reveal reveal-delay-1">
-          <span className="hero-badge">
-            <Sparkles size={16} />
-            Campus companion buat mahasiswa Undip
-          </span>
-          <h1>Browser kamu, tapi lebih ngerti ritme kuliah.</h1>
-          <p>
-            Siap Dips bantu rapihin SIAP, Kulon, Todoist, jadwal, IPK, form
-            rutin, dan helper kampus lain dalam satu extension yang nggak sok
-            korporat.
+    <>
+      <SiteHeader />
+      <main id="konten">
+        <section className="hero container" aria-labelledby="hero-title">
+          <a className="pill" href={tutorialPath("moodle-helper")}>
+            <b>Tips</b>
+            Panggil Tany AI di quiz Kulon pakai Alt+A
+            <ArrowRight size={14} aria-hidden="true" />
+          </a>
+          <h1 id="hero-title">Browser kamu, tapi lebih ngerti ritme kuliah.</h1>
+          <p className="lead">
+            Siap Dips adalah extension gratis buat mahasiswa Undip. Jadwal,
+            IPK, Kulon, PBM, sampai absen QR dirapihin langsung dari browser,
+            lengkap dengan tutorial langkah demi langkah.
           </p>
-          <div className="hero-actions">
-            <a href={storeLinks[0].href} target="_blank" rel="noreferrer" className="btn-primary">
-              <Rocket size={20} />
-              Install Chrome
+          <div className="actions">
+            <a className="btn btn-primary btn-lg" href={chromeStore.href} target="_blank" rel="noopener">
+              <img src={chromeStore.icon} alt="" width="20" height="20" className="store-logo" />
+              Install di Chrome
             </a>
-            <a href="#fitur" className="btn-secondary">
-              <Play size={20} />
-              Lihat promonya
+            <a className="btn btn-secondary btn-lg" href={landingPath("tutorial/")}>
+              <BookOpen size={18} aria-hidden="true" />
+              Lihat tutorial
             </a>
           </div>
-          <div className="store-strip" aria-label="Link instalasi browser">
-            {storeLinks.map((store) => (
-              <a
-                href={store.href}
-                target="_blank"
-                rel="noreferrer"
-                key={store.name}
-              >
-                <img src={store.icon} alt={store.name} className="store-icon" />
-                {store.name}
-                <ArrowRight size={14} />
-              </a>
+          <p className="store-note">
+            Juga ada di{" "}
+            {storeLinks.slice(1).map((store, index) => (
+              <span key={store.id}>
+                {index > 0 && " dan "}
+                <a href={store.href} target="_blank" rel="noopener">
+                  {store.name}
+                </a>
+              </span>
             ))}
+            . Gratis, tanpa akun.
+          </p>
+          <div className="hero-shot">
+            <ScreenImage screen={screens.popupDashboard} priority caption={false} />
           </div>
-          <div className="hero-metrics" aria-label="Ringkasan fitur">
-            <span>10+ helper kampus</span>
-            <span>Local-first settings</span>
-            <span>React + Vite extension</span>
-          </div>
-        </div>
-        <HeroVideo />
-      </section>
+          <dl className="stats">
+            <div>
+              <dt>Kartu di popup</dt>
+              <dd>19</dd>
+            </div>
+            <div>
+              <dt>Tutorial lengkap</dt>
+              <dd>{tutorials.length}</dd>
+            </div>
+            <div>
+              <dt>Browser</dt>
+              <dd>3</dd>
+            </div>
+            <div>
+              <dt>Server Siap Dips</dt>
+              <dd>0</dd>
+            </div>
+          </dl>
+        </section>
 
-      <section className="problem-section" aria-labelledby="problem-title">
-        <div className="section-kicker reveal">Kenapa ada Siap Dips?</div>
-        <div className="problem-grid">
-          <div className="problem-heading reveal">
-            <h2 id="problem-title">Karena urusan kampus kecil-kecil itu sering makan fokus.</h2>
+        <section className="section container" id="fitur" aria-labelledby="fitur-title">
+          <div className="section-head">
+            <span className="kicker">Fitur</span>
+            <h2 id="fitur-title">Fitur kecil yang sering nyelametin waktu.</h2>
             <p>
-              Siap Dips bukan pengganti portal kampus. Dia layer kecil di atas
-              browser yang bantu hal repetitif terasa lebih manusiawi.
+              Semua video di bawah direkam dari extension aslinya. Klik kartunya
+              buat tutorial lengkap.
             </p>
           </div>
-          <div className="pain-list reveal reveal-delay-1">
-            {painPoints.map((point) => (
-              <div className="pain-item" key={point}>
-                <CheckCircle2 size={24} />
-                <span>{point}</span>
-              </div>
+          <div className="reel-grid">
+            {reel.map((tutorial) => {
+              const Icon = tutorial.icon;
+              return (
+                <a className="card reel-card" href={tutorialPath(tutorial.slug)} key={tutorial.slug}>
+                  <div className="reel-media">
+                    <AutoplayVideo video={tutorial.video!} />
+                  </div>
+                  <div className="reel-copy">
+                    <span className="card-icon">
+                      <Icon size={18} aria-hidden="true" />
+                    </span>
+                    <h3>{tutorial.name}</h3>
+                    <p>{tutorial.description}</p>
+                    <span className="text-link">
+                      Baca tutorial <ArrowRight size={14} aria-hidden="true" />
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="section container" id="semua-fitur" aria-labelledby="direktori-title">
+          <div className="section-head">
+            <span className="kicker">Semua fitur</span>
+            <h2 id="direktori-title">Satu extension, banyak helper.</h2>
+            <p>
+              Pilih kategori buat menyaring. Fitur yang punya tutorial bisa
+              diklik.
+            </p>
+          </div>
+          <div className="filters" role="group" aria-label="Saring fitur per kategori" data-filter-group>
+            <button type="button" className="chip" data-filter="all" aria-pressed="true">
+              Semua <span className="chip-count">{directoryFeatures.length}</span>
+            </button>
+            {directoryFilters.map((filter) => (
+              <button type="button" className="chip" data-filter={filter.id} aria-pressed="false" key={filter.id}>
+                {filter.label}{" "}
+                <span className="chip-count">
+                  {directoryFeatures.filter((f) => f.category === filter.id).length}
+                </span>
+              </button>
             ))}
           </div>
-        </div>
-      </section>
+          <ul className="directory" data-filter-list>
+            {directoryFeatures.map((feature) => {
+              const Icon = feature.icon;
+              const body = (
+                <>
+                  <span className="card-icon">
+                    <Icon size={18} aria-hidden="true" />
+                  </span>
+                  <span className="directory-text">
+                    <strong>{feature.name}</strong>
+                    <span>{feature.description}</span>
+                    <small>{feature.where}</small>
+                  </span>
+                </>
+              );
+              return (
+                <li key={feature.name} data-category={feature.category}>
+                  {feature.tutorial ? (
+                    <a className="directory-item is-link" href={tutorialPath(feature.tutorial)}>
+                      {body}
+                      <ArrowRight className="card-arrow" size={16} aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <div className="directory-item">{body}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
 
-      <section className="feature-section" id="fitur" aria-labelledby="fitur-title">
-        <div className="section-heading reveal">
-          <span className="section-badge">Feature reel</span>
-          <h2 id="fitur-title">Fitur yang kelihatan kecil, tapi sering nyelametin waktu.</h2>
-          <p>
-            Video ini pakai footage fitur asli dari project, jadi yang kamu lihat
-            memang bagian dari extension-nya.
-          </p>
-        </div>
-        <div className="feature-grid">
-          {featureReel.map((feature) => (
-            <FeatureCard feature={feature} key={feature.title} />
-          ))}
-        </div>
-      </section>
+        <section className="section container" id="tutorial" aria-labelledby="tutorial-title">
+          <div className="section-head section-head-row">
+            <div>
+              <span className="kicker">Tutorial</span>
+              <h2 id="tutorial-title">Baru install? Mulai dari sini.</h2>
+              <p>
+                Tiap tutorial berisi langkah yang sama persis dengan tombol di
+                extension, plus video atau screenshot.
+              </p>
+            </div>
+            <a className="btn btn-secondary" href={landingPath("tutorial/")}>
+              Semua {tutorials.length} tutorial <ArrowRight size={16} aria-hidden="true" />
+            </a>
+          </div>
+          <div className="tutorial-grid">
+            {featuredTutorials.map((tutorial) => (
+              <TutorialCard tutorial={tutorial} key={tutorial.slug} />
+            ))}
+          </div>
+        </section>
 
-      <section className="workflow-section" id="workflow" aria-labelledby="workflow-title">
-        <div className="section-heading reveal">
-          <span className="section-badge">Flow harian</span>
-          <h2 id="workflow-title">Dipakai seperti browser biasa, cuma lebih sat-set.</h2>
-        </div>
-        <div className="workflow-grid">
-          {workflow.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <article className="workflow-card reveal" key={step.title}>
-                <span className="step-number">0{index + 1}</span>
-                <Icon />
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
-              </article>
-            );
-          })}
-        </div>
-      </section>
+        <section className="section container" id="cara-kerja" aria-labelledby="flow-title">
+          <div className="section-head">
+            <span className="kicker">Cara kerja</span>
+            <h2 id="flow-title">Dipakai seperti browser biasa, cuma lebih sat-set.</h2>
+          </div>
+          <ol className="flow">
+            {flow.map((step) => {
+              const Icon = step.icon;
+              return (
+                <li className="card flow-step" key={step.title}>
+                  <span className="card-icon">
+                    <Icon size={20} aria-hidden="true" />
+                  </span>
+                  <h3>{step.title}</h3>
+                  <p>{step.description}</p>
+                  <a className="text-link" href={step.href}>
+                    {step.cta} <ArrowRight size={14} aria-hidden="true" />
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
 
-      <section className="trust-section" id="privasi" aria-labelledby="trust-title">
-        <div className="trust-panel reveal">
-          <div>
-            <span className="section-badge">
-              <ShieldCheck size={16} />
-              Privasi dan kontrol
+        <section className="section container" id="privasi" aria-labelledby="privasi-title">
+          <div className="privacy">
+            <div>
+              <span className="kicker">
+                <ShieldCheck size={14} aria-hidden="true" /> Privasi
+              </span>
+              <h2 id="privasi-title">Data penting tetap kamu yang pegang.</h2>
+              <p>
+                Pengaturan, jadwal, cache tugas, dan token opsional disimpan di
+                storage extension di browser kamu. Siap Dips nggak punya server
+                yang menerima data kamu, dan nggak ada iklan atau analytics.
+              </p>
+            </div>
+            <ul className="privacy-points">
+              <li>
+                <LockKeyhole size={18} aria-hidden="true" />
+                <span>
+                  <strong>Tanpa akun</strong>
+                  Nggak perlu daftar atau login ke Siap Dips.
+                </span>
+              </li>
+              <li>
+                <LockKeyhole size={18} aria-hidden="true" />
+                <span>
+                  <strong>Token opsional</strong>
+                  Todoist dan AI jalan cuma kalau kamu isi token sendiri.
+                </span>
+              </li>
+              <li>
+                <LockKeyhole size={18} aria-hidden="true" />
+                <span>
+                  <strong>Kode terbuka</strong>
+                  Bisa dicek siapa saja di GitHub.
+                </span>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section className="section container narrow" id="faq" aria-labelledby="faq-title">
+          <div className="section-head">
+            <span className="kicker">FAQ</span>
+            <h2 id="faq-title">Pertanyaan yang sering muncul.</h2>
+          </div>
+          <div className="faq">
+            {faqItems.map((item, index) => (
+              <details key={item.question} open={index === 0}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="section container narrow" id="changelog" aria-labelledby="changelog-title">
+          <div className="section-head">
+            <span className="kicker">
+              <History size={14} aria-hidden="true" /> Changelog
             </span>
-            <h2 id="trust-title">Data penting tetap kamu yang pegang.</h2>
-            <p>
-              Pengaturan, cache, token opsional, dan konfigurasi helper disimpan
-              di storage extension. Integrasi eksternal seperti Todoist atau AI
-              hanya jalan ketika kamu sendiri yang mengaktifkan dan mengisi token.
-            </p>
+            <h2 id="changelog-title">Yang baru di Siap Dips.</h2>
           </div>
-          <div className="trust-points">
-            <span>Tanpa backend wajib</span>
-            <span>Token opsional</span>
-            <span>Helper per situs</span>
-          </div>
-        </div>
-      </section>
-
-      <section className="cta-section" id="mulai" aria-labelledby="cta-title">
-        <div className="cta-card reveal">
-          <span className="section-badge">Siap dicoba</span>
-          <h2 id="cta-title">Bikin browser kuliahmu lebih ngerti kerjaanmu.</h2>
-          <p>
-            Pilih browser yang kamu pakai, install extension-nya, lalu buka
-            portal kampus seperti biasa. Siap Dips tinggal ikut bantu dari sana.
-          </p>
-          <div className="cta-actions">
-            {storeLinks.map((store) => (
-              <a
-                className={store.name === "Chrome Web Store" ? "btn-primary" : "btn-secondary"}
-                href={store.href}
-                target="_blank"
-                rel="noreferrer"
-                key={store.name}
-              >
-                <img src={store.icon} alt={store.name} className="store-icon-large" />
-                {store.label}
-                <ArrowRight size={18} />
-              </a>
+          <ol className="changelog">
+            {latestChangelog.map((entry) => (
+              <ChangelogEntryView entry={entry} key={entry.version} />
             ))}
-          </div>
-        </div>
-      </section>
+          </ol>
+          {olderChangelog.length > 0 && (
+            <details className="changelog-more">
+              <summary>Lihat {olderChangelog.length} versi sebelumnya</summary>
+              <ol className="changelog">
+                {olderChangelog.map((entry) => (
+                  <ChangelogEntryView entry={entry} key={entry.version} />
+                ))}
+              </ol>
+            </details>
+          )}
+        </section>
 
-      <footer className="landing-footer">
-        <span>Siap Dips</span>
-        <span>Dibuat buat workflow mahasiswa yang real, bukan cuma rapih di screenshot.</span>
-      </footer>
-    </main>
+        <section className="section container" id="install" aria-labelledby="cta-title">
+          <div className="cta">
+            <h2 id="cta-title">Bikin browser kuliahmu lebih ngerti kerjaanmu.</h2>
+            <p>
+              Pilih browser yang kamu pakai, install, lalu buka portal kampus
+              seperti biasa.
+            </p>
+            <StoreButtons size="lg" />
+          </div>
+        </section>
+      </main>
+      <SiteFooter />
+    </>
   );
 }
 

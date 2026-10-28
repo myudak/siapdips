@@ -75,31 +75,30 @@ const NoteCard = ({
   id?: string;
 }) => {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [activeId, setActiveId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Load from storage ──────────────────────────────────────────────────────
   useEffect(() => {
     chrome.storage.local.get(STORAGE_KEY, (result) => {
+      if (chrome.runtime.lastError) return;
       const stored: Note[] = result[STORAGE_KEY] ?? [];
       setNotes(stored);
       if (stored.length > 0) {
         setActiveId(stored.find((n) => n.pinned)?.id ?? stored[0].id);
       }
+      setLoaded(true);
     });
   }, []);
 
-  // ── Persist to storage (debounced) ─────────────────────────────────────────
+  // Save after loading so the initial empty state cannot overwrite saved notes.
   useEffect(() => {
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      chrome.storage.local.set({ [STORAGE_KEY]: notes });
-    }, 500);
-  }, [notes]);
+    if (loaded) chrome.storage.local.set({ [STORAGE_KEY]: notes });
+  }, [notes, loaded]);
 
   // ── Sync editor content when active note changes ───────────────────────────
   const activeNote = notes.find((n) => n.id === activeId) ?? null;

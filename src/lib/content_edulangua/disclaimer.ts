@@ -47,7 +47,7 @@ export function saveDisclaimerAccepted(): Promise<void> {
     const now = Date.now();
     try {
       localStorage.setItem(DISCLAIMER_KEY, String(now));
-    } catch (_) {}
+    } catch { /* Extension storage remains available if localStorage is blocked. */ }
 
     try {
       if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
@@ -56,7 +56,7 @@ export function saveDisclaimerAccepted(): Promise<void> {
         });
         return;
       }
-    } catch (_) {}
+    } catch { /* The localStorage fallback above retains the acceptance. */ }
     resolve();
   });
 }
