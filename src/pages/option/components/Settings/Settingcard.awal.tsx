@@ -42,6 +42,7 @@ import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { CSS } from "@dnd-kit/utilities";
 import { cardComponentsOption } from "@/components/ListSort/ListSort.card";
+import { readCardOrder } from "@/lib/extension/card-order";
 import {
   LOCAL_STORAGE_SORTABLE_KEY,
   LOCAL_STORAGE_SORTABLE_HIDE_KEY,
@@ -50,24 +51,7 @@ import {
 const initialCards = Object.keys(cardComponentsOption);
 
 const readItemsFromStorage = () => {
-  const saved = localStorage.getItem(LOCAL_STORAGE_SORTABLE_KEY);
-  if (saved) {
-    try {
-      const savedArray = JSON.parse(saved);
-      const isSameArray =
-        Array.isArray(savedArray) &&
-        savedArray.length === initialCards.length &&
-        [...savedArray].sort().join() === [...initialCards].sort().join();
-
-      if (isSameArray) {
-        return savedArray;
-      }
-    } catch (error) {
-      console.error("Failed to parse stored cards order", error);
-    }
-  }
-
-  return initialCards;
+  return readCardOrder(localStorage.getItem(LOCAL_STORAGE_SORTABLE_KEY), initialCards);
 };
 
 const readItemsHideFromStorage = () => {

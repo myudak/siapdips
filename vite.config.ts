@@ -175,6 +175,10 @@ export default defineConfig(({ mode }) => {
             "src/pages/suspended/suspended.html"
           ),
           job: path.resolve(__dirname, "src/pages/job/job.html"),
+          "tools-capture": path.resolve(__dirname, "src/pages/tools/capture.html"),
+          ...(mode === "firefox" ? {} : {
+            "tools-audio": path.resolve(__dirname, "src/pages/tools/audio.html"),
+          }),
           content: path.resolve(__dirname, "src/content.js"),
           contentFt: path.resolve(__dirname, "src/content-ft.js"),
           "content-dyandra": path.resolve(

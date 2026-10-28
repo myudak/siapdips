@@ -8,6 +8,7 @@ import AutopbmCard from "../AutopbmCard";
 import { AutoLearnSocial } from "../AutoLearnSocial";
 import { AutoEduLangua } from "../AutoEduLangua";
 import NoteCard from "../NoteCard";
+import ToolsCard from "../ToolsCard";
 import JadwalCard from "../Jadwalcard";
 import {
   Navigation,
@@ -32,6 +33,7 @@ import {
   Radar,
   Globe,
   NotebookPen,
+  Wrench,
 } from "lucide-react";
 import AutoFoodTruk from "../AutoFoodTruck";
 import QrReader from "../QRCodeAbsen/QRCodeAbsen";
@@ -46,6 +48,7 @@ import DyandraLoketCard from "../DyandraLoketCard";
 
 export const cardComponents = {
   NavigationCard,
+  ToolsCard,
   JadwalCard,
   Ipkstatus,
   Themecard,
@@ -72,6 +75,7 @@ export const cardComponentsOption: {
   [key: string]: [string, LucideIcon];
 } = {
   NavigationCard: ["Navigation Card", Navigation],
+  ToolsCard: ["Tools etc", Wrench],
   OracleAcademyCard: ["Oracle Academy Helper", GraduationCap],
   JadwalCard: ["Jadwal Card", ScanHeart],
   Ipkstatus: ["IPK Status", BarChart],

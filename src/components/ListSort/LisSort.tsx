@@ -18,6 +18,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import { toast } from "sonner";
+import { readCardOrder } from "@/lib/extension/card-order";
 import { cardComponents, CardComponentsType } from "./ListSort.card";
 import {
   LOCAL_STORAGE_SORTABLE_KEY,
@@ -28,15 +29,7 @@ const initialCards = Object.keys(cardComponents);
 
 const LisSort = ({ setIsLocalStatus }: any) => {
   const [items, setItems] = useState<string[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_SORTABLE_KEY);
-    if (saved) {
-      const savedArray = JSON.parse(saved);
-      const isSameArray =
-        savedArray.length === initialCards.length &&
-        [...savedArray].sort().join() === [...initialCards].sort().join();
-      if (isSameArray) return savedArray;
-    }
-    return initialCards;
+    return readCardOrder(localStorage.getItem(LOCAL_STORAGE_SORTABLE_KEY), initialCards);
   });
 
   const [itemsHide, setItemsHide] = useState<string[]>(() => {

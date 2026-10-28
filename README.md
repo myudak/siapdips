@@ -42,6 +42,7 @@
 - **Course Overlays:** Dedicated helpers for LearnSocial and Oracle Academy to speed up interactions.
 
 **⚡ Productivity & Automation**
+- **Tools etc:** Per-tab speed controls, a 0–500% tab-audio booster on Chrome/Edge, full-page/area screenshots with a local editor, FontWhat, element colors, privacy blur, reading ruler, PiP, A–B loop, and clean links. See [Tools guide](docs/TOOLS.md) for permissions and browser limits.
 - **Custom New Tab Dashboard:** Replaces your new tab with cached Kulon assignments and quick local to-dos.
 - **Todoist Sync:** Optionally connects with your Todoist API token to keep your campus tasks synced.
 - **Form Helpers:** Auto-fills repetitive, high-friction forms (e.g., PBM, Food Truck, QR attendance).
