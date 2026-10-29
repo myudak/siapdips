@@ -1,3 +1,4 @@
+import { audioStatus, boost } from "./tools-audio";
 import { runPageTool } from "../../lib/tools/page-tools";
 import { capturePositions, normalizeSpeed, normalizeVolume, siteOrigin, TOOLS_SITES_KEY } from "../../lib/tools/shared";
 import type { PageToolRequest, PageToolResult, SiteToolSettingsMap, ToolReply, CaptureGeometry } from "../../lib/tools/shared";
@@ -14,11 +15,8 @@ interface ToolsMessage {
   mode?: "full" | "visible" | "area";
   captureId?: string;
 }
-interface AudioReply { ok: boolean; volume?: number; error?: string }
-let offscreenCreation: Promise<void> | undefined;
 let captureJob: { id: string; tabId: number; windowId: number; cancelled: boolean } | undefined;
 let lastCapture = 0;
-const audioQueues = new Map<number, Promise<unknown>>();
 
 async function currentWebTab(tabId: number | undefined): Promise<chrome.tabs.Tab & { id: number; url: string }> {
   if (!Number.isInteger(tabId)) throw new Error("Tab tidak valid.");
@@ -43,57 +41,6 @@ async function getPageStatus(tabId: number): Promise<PageToolResult> {
   try { results = await chrome.scripting.executeScript({ target: { tabId, allFrames: true }, func: runPageTool, args: [{ action: "status" }] }); }
   catch { results = [await page(tabId, { action: "status" })]; }
   return { frameOrigins: [...new Set(results.flatMap(result => result.result?.frameOrigins ?? []))], players: results.flatMap(result => (result.result?.players ?? []).map(player => ({ ...player, id: `${result.frameId}/${player.id}`, title: `${player.title}${result.frameId ? " · embedded" : ""}` }))) };
-}
-async function ensureOffscreen(): Promise<void> {
-  if (!chrome.offscreen) throw new Error("Booster tab tersedia di Chrome/Edge 116+. Firefox mendukung speed control tanpa booster.");
-  if (offscreenCreation) return offscreenCreation;
-  offscreenCreation = (async () => {
-    if (await chrome.offscreen.hasDocument()) return;
-    await chrome.offscreen.createDocument({
-      url: "src/pages/tools/audio.html",
-      reasons: [chrome.offscreen.Reason.USER_MEDIA],
-      justification: "Play user-selected tab audio through a local volume control while the extension popup is closed.",
-    });
-  })();
-  try { await offscreenCreation; } finally { offscreenCreation = undefined; }
-}
-async function audioMessage(message: Record<string, unknown>): Promise<AudioReply> {
-  return await chrome.runtime.sendMessage({ ...message, target: "tools-audio" });
-}
-async function audioStatus(tabId: number): Promise<number> {
-  if (!chrome.offscreen || !await chrome.permissions.contains({ permissions: ["offscreen"] })) return 100;
-  try {
-    if (!await chrome.offscreen.hasDocument()) return 100;
-    return (await audioMessage({ action: "status", tabId })).volume ?? 100;
-  } catch { return 100; }
-}
-async function stopAudio(tabId: number): Promise<void> {
-  // Messaging remains usable when the optional offscreen permission is revoked.
-  const result = await audioMessage({ action: "stop", tabId }).catch(() => undefined);
-  if (result && !result.ok) throw new Error(result.error ?? "Gagal menghentikan booster.");
-}
-async function boost(tabId: number, volume: number): Promise<ToolReply> {
-  const queued = audioQueues.get(tabId) ?? Promise.resolve();
-  const job = queued.catch(() => undefined).then(async () => {
-    if (volume === 100) { await stopAudio(tabId); return { ok: true, volume }; }
-    if (!await chrome.permissions.contains({ permissions: ["tabCapture", "offscreen"] })) throw new Error("Izin audio belum diberikan. Aktifkan booster dari Tools.");
-    await ensureOffscreen();
-    const existing = await audioMessage({ action: "status", tabId });
-    let streamId: string | undefined;
-    if (existing.volume === undefined) {
-      streamId = await new Promise<string>((resolve, reject) => {
-        chrome.tabCapture.getMediaStreamId({ targetTabId: tabId }, id => {
-          if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
-          else resolve(id);
-        });
-      });
-    }
-    const result = await audioMessage({ action: "volume", tabId, volume, streamId });
-    if (!result?.ok) throw new Error(result?.error ?? "Booster gagal diaktifkan.");
-    return { ok: true, volume };
-  });
-  audioQueues.set(tabId, job);
-  try { return await job; } finally { if (audioQueues.get(tabId) === job) audioQueues.delete(tabId); }
 }
 async function sites(): Promise<SiteToolSettingsMap> {
   return (await chrome.storage.local.get(TOOLS_SITES_KEY))[TOOLS_SITES_KEY] ?? {};

@@ -20,7 +20,10 @@ const adapter = {
       if (message.target === "tools-audio") {
         const tabId = message.tabId as number;
         if (message.action === "stop") audio.delete(tabId);
-        if (message.action === "volume") audio.set(tabId, message.volume as number);
+        if (message.action === "volume") {
+          if (!audio.has(tabId) && !message.streamId) return { ok: true, needsStream: true };
+          audio.set(tabId, message.volume as number);
+        }
         return { ok: true, volume: audio.get(tabId) };
       }
       return await new Promise(resolve => {

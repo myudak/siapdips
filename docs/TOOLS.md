@@ -26,6 +26,16 @@ dragged or hidden using the existing card settings.
 - **A–B loop:** enter start/end seconds within a seekable media file. Stop loop
   or reset to release it. Live and protected players may refuse these actions.
 
+If another volume booster or recording extension is capturing this tab, stop it
+before enabling Siap Dips. Chrome can reject the second capture with
+`Cannot capture a tab with an active stream.` If no other capture is active,
+choose **100%** and retry; if the conflict persists, close and reopen the tab
+and invoke Siap Dips again.
+
+Siap Dips reuses its own audio session instead of capturing again, serializes
+commands in the offscreen owner across worker restarts, and waits for Chrome to
+release a stopped capture. Failed audio initialization releases acquired tracks.
+
 Firefox has speed and the page tools, but does not expose the Chrome tab-capture
 booster path. The booster controls are disabled there. Browser/internal pages,
 extension stores, protected media, inaccessible frames, and closed shadow DOM
@@ -105,3 +115,12 @@ copies `dist/` into a disposable workspace test profile and pregrants capture
 permissions only in that copy. It verifies native speed and screenshot/editor
 behavior. Headless Chromium cannot substitute for the user's toolbar invocation,
 so it reports the native audio path as unverified when that grant is absent.
+
+For an automated native audio regression, build Chrome and run
+`python tests/tools-audio-native-check.py` (Python Playwright required). It runs
+a local tone page with real tab-capture streams in an isolated profile. Only its
+disposable extension copy pregrants optional permissions, and Chromium's
+`--allowlisted-extension-id` test switch substitutes for the toolbar grant.
+It verifies gain/mute/reuse, popup closure, rapid stop/restart, and cleanup after
+an injected AudioContext constructor failure. It does not test the real optional
+permission prompt, user toolbar invocation, or perceived output loudness.

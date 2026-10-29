@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.5.3",
+    date: "October 29, 2026",
+    type: "bugfix",
+    changes: [
+      "Volume booster memakai ulang sesi audio dan menunggu capture lama berhenti",
+      "Stream dibersihkan jika inisialisasi audio gagal; konflik capture menampilkan langkah pemulihan",
+    ],
+  },
+  {
     version: "v1.5.2",
     date: "October 29, 2026",
     type: "patch",
