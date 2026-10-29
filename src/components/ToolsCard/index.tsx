@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import HideButton from "../hideButton";
 import { cleanTrackingUrl, siteOrigin } from "@/lib/tools/shared";
-import type { MediaPlayerInfo, PageToolRequest, ToolReply } from "@/lib/tools/shared";
+import type { CaptureProgress, MediaPlayerInfo, PageToolRequest, ToolReply } from "@/lib/tools/shared";
 
 type Section = "media" | "capture" | "inspect";
 const sections: Array<{ id: Section; label: string }> = [{ id: "media", label: "Media" }, { id: "capture", label: "Capture" }, { id: "inspect", label: "Inspect" }];
@@ -31,6 +31,7 @@ export default function ToolsCard({ listeners, attributes, id = "ToolsCard" }: {
   const [loopA, setLoopA] = useState(0);
   const [loopB, setLoopB] = useState(10);
   const [captureId, setCaptureId] = useState<string>();
+  const [captureProgress, setCaptureProgress] = useState<CaptureProgress>();
   const background = chrome.runtime.getManifest().background;
   const boosterSupported = Boolean(background && "service_worker" in background);
   const origin = tab?.url ? siteOrigin(tab.url) : null;
@@ -52,6 +53,26 @@ export default function ToolsCard({ listeners, attributes, id = "ToolsCard" }: {
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Tools belum tersedia."); }
   }, []);
   useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    if (!captureId) { setCaptureProgress(undefined); return; }
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const result: ToolReply = await chrome.runtime.sendMessage({ type: "tools:captureStatus", captureId });
+        if (cancelled) return;
+        if (!result?.ok || !result.capture) throw new Error(result?.error || "Status screenshot tidak tersedia.");
+        setCaptureProgress(result.capture);
+        if (result.capture.status === "error") throw new Error(result.capture.error || "Screenshot gagal. Coba ambil ulang.");
+        if (result.capture.status === "ready") { setCaptureId(undefined); setMessage("Screenshot siap. Editor dibuka di tab baru."); return; }
+        timer = setTimeout(() => void poll(), 500);
+      } catch (cause) {
+        if (!cancelled) { setError(cause instanceof Error ? cause.message : "Screenshot gagal."); setCaptureId(undefined); }
+      }
+    };
+    void poll();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [captureId]);
 
   async function send(payload: Record<string, unknown>): Promise<ToolReply> {
     if (tab?.id === undefined) throw new Error("Tab tidak ditemukan.");
@@ -106,12 +127,12 @@ export default function ToolsCard({ listeners, attributes, id = "ToolsCard" }: {
   async function screenshot(mode: "full" | "visible" | "area") {
     await perform(async () => {
       const result = await send({ type: "tools:capture", mode });
+      setCaptureProgress(undefined);
       setCaptureId(result.captureId);
       setMessage("Screenshot berjalan di tab. Editor akan terbuka setelah selesai.");
-      if (/^(chrome|moz)-extension:$/.test(location.protocol)) window.close();
     });
   }
-  const unavailable = busy || !origin;
+  const unavailable = busy || !origin || Boolean(captureId);
   const toolButton = (label: string, detail: string, Icon: typeof Type, action: () => void) => (
     <button type="button" disabled={unavailable} onClick={action} className="flex w-full items-center gap-3 rounded-lg border border-border p-3 text-left transition-colors hover:bg-muted/60 disabled:opacity-50 disabled:cursor-not-allowed">
       <Icon className="h-4 w-4 shrink-0 text-blue-500" aria-hidden="true" />
@@ -166,7 +187,7 @@ export default function ToolsCard({ listeners, attributes, id = "ToolsCard" }: {
             {toolButton("Visible area", "Ambil area yang sedang terlihat", ScanLine, () => void screenshot("visible"))}
             {toolButton("Select area", "Tarik area yang ingin disimpan", MousePointer2, () => void screenshot("area"))}
             <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">Hasil diproses lokal. Editor menyediakan crop, blur, dan simpan PNG. Tunggu di tab yang sama sampai selesai; konten lazy-load atau halaman sangat panjang bisa terbatas.</p>
-            {captureId && <Button variant="outline" size="sm" className="w-full" onClick={() => void chrome.runtime.sendMessage({ type: "tools:cancelCapture", captureId }).then(() => { setCaptureId(undefined); setMessage("Pembatalan screenshot diminta."); })}>Batalkan screenshot</Button>}
+            {captureId && <div className="space-y-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3" role="status" aria-live="polite"><p className="flex items-center gap-2 text-sm font-medium"><Loader2 className="h-4 w-4 animate-spin text-blue-500" aria-hidden="true" />{captureProgress?.total ? `Mengambil ${captureProgress.progress}/${captureProgress.total} potongan…` : "Menyiapkan screenshot…"}</p><progress aria-label="Progres screenshot" className="h-2 w-full accent-blue-500" max={captureProgress?.total || 1} value={captureProgress?.total ? captureProgress.progress : undefined} /><p className="text-[11px] text-muted-foreground">Tetap di tab ini sampai selesai. Halaman panjang membutuhkan waktu lebih lama.</p><Button variant="outline" size="sm" className="w-full" onClick={() => void chrome.runtime.sendMessage({ type: "tools:cancelCapture", captureId }).then(() => { setCaptureId(undefined); setMessage("Pembatalan screenshot diminta."); })}>Batalkan screenshot</Button></div>}
           </div>}
           {section === "inspect" && <div className="space-y-2">
             {toolButton("FontWhat", "Hover teks → pin → salin detail font CSS", Type, () => void pageAction({ action: "font" }, true))}

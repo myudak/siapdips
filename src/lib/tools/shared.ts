@@ -29,7 +29,8 @@ export interface PageToolResult {
   x?: number;
   y?: number;
 }
-export interface ToolReply { ok: boolean; error?: string; data?: PageToolResult; volume?: number; captureId?: string; remembered?: boolean }
+export interface CaptureProgress { id: string; status: "capturing" | "ready" | "error"; progress: number; total: number; error?: string }
+export interface ToolReply { ok: boolean; error?: string; data?: PageToolResult; volume?: number; captureId?: string; capture?: CaptureProgress; remembered?: boolean }
 export interface SiteToolSettings { speed: number }
 export type SiteToolSettingsMap = Record<string, SiteToolSettings>;
 export const TOOLS_SITES_KEY = "toolsSites";
@@ -57,18 +58,24 @@ export function cleanTrackingUrl(url: string): string {
   }
   return parsed.href;
 }
-/** Scroll to actual viewport-sized tiles, including clamped final rows/columns. */
-export function capturePositions(geometry: CaptureGeometry): Array<{ x: number; y: number }> {
+export function captureTileCount(geometry: CaptureGeometry): number {
   const { width, height, viewportWidth, viewportHeight } = geometry;
   if (![width, height, viewportWidth, viewportHeight].every(n => Number.isFinite(n) && n > 0)) throw new Error("Ukuran halaman tidak valid.");
-  const positions: Array<{ x: number; y: number }> = [];
-  for (let y = 0; y < height; y += viewportHeight) {
-    for (let x = 0; x < width; x += viewportWidth) {
-      positions.push({ x: Math.min(x, Math.max(0, width - viewportWidth)), y: Math.min(y, Math.max(0, height - viewportHeight)) });
-      if (positions.length > 120) throw new Error("Halaman terlalu panjang. Gunakan screenshot area atau halaman yang lebih pendek.");
+  const count = Math.ceil(width / viewportWidth) * Math.ceil(height / viewportHeight);
+  if (!Number.isSafeInteger(count)) throw new Error("Ukuran halaman tidak valid.");
+  return count;
+}
+/** Generate positions lazily so long pages don't allocate an enormous plan. */
+export function capturePositions(geometry: CaptureGeometry): Iterable<{ x: number; y: number }> {
+  captureTileCount(geometry);
+  const { width, height, viewportWidth, viewportHeight } = geometry;
+  return (function* () {
+    for (let y = 0; y < height; y += viewportHeight) {
+      for (let x = 0; x < width; x += viewportWidth) {
+        yield { x: Math.min(x, Math.max(0, width - viewportWidth)), y: Math.min(y, Math.max(0, height - viewportHeight)) };
+      }
     }
-  }
-  return positions;
+  })();
 }
 
 export function captureScale(width: number, height: number, pixelRatio: number): number {

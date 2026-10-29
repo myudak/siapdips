@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { capturePositions, captureScale, cleanTrackingUrl, normalizeSpeed, normalizeVolume, siteOrigin } from "../src/lib/tools/shared.ts";
+import { capturePositions, captureTileCount, captureScale, cleanTrackingUrl, normalizeSpeed, normalizeVolume, siteOrigin } from "../src/lib/tools/shared.ts";
 import { readCardOrder, reconcileCardOrder } from "../src/lib/extension/card-order.ts";
 
 test("card migration preserves custom order, removes stale IDs and appends new cards", () => {
@@ -27,14 +27,27 @@ test("clean links preserve application parameters and fragments", () => {
   assert.equal(cleanTrackingUrl("https://example.org/a?ref=course&token=abc"), "https://example.org/a?ref=course&token=abc");
   assert.throws(() => cleanTrackingUrl("javascript:alert(1)"));
 });
-test("capture tiles cover clamped final rows and columns without exceeding limits", () => {
+test("capture tiles cover clamped final rows and columns", () => {
   const geometry = { width: 1100, height: 1700, viewportWidth: 800, viewportHeight: 600 };
-  assert.deepEqual(capturePositions(geometry), [
+  assert.deepEqual([...capturePositions(geometry)], [
     { x: 0, y: 0 }, { x: 300, y: 0 }, { x: 0, y: 600 }, { x: 300, y: 600 }, { x: 0, y: 1100 }, { x: 300, y: 1100 },
   ]);
-  assert.deepEqual(capturePositions({ width: 500, height: 300, viewportWidth: 800, viewportHeight: 600 }), [{ x: 0, y: 0 }]);
+  assert.deepEqual([...capturePositions({ width: 500, height: 300, viewportWidth: 800, viewportHeight: 600 })], [{ x: 0, y: 0 }]);
   assert.throws(() => capturePositions({ ...geometry, viewportHeight: 0 }));
-  assert.throws(() => capturePositions({ ...geometry, height: 100000 }));
+  assert.equal(captureTileCount(geometry), 6);
+});
+
+test("long-page plans exceed 120 tiles without rejection and are generated lazily", () => {
+  const geometry = { width: 800, height: 100000, viewportWidth: 800, viewportHeight: 600 };
+  const positions = [...capturePositions(geometry)];
+  assert.equal(positions.length, 167);
+  assert.equal(captureTileCount(geometry), positions.length);
+  assert.deepEqual(positions.at(-1), { x: 0, y: 99400 });
+  const huge = { ...geometry, height: 1e12 };
+  const lazy = capturePositions(huge)[Symbol.iterator]();
+  assert.deepEqual(lazy.next().value, { x: 0, y: 0 });
+  assert.deepEqual(lazy.next().value, { x: 0, y: 600 });
+  assert.throws(() => captureTileCount({ ...geometry, width: Infinity }));
 });
 test("capture output respects pixel and dimension budgets while preserving small images", () => {
   const scale = captureScale(1800, 30000, 2);

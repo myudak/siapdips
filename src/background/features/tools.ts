@@ -1,8 +1,9 @@
 import { audioStatus, boost } from "./tools-audio";
 import { runPageTool } from "../../lib/tools/page-tools";
-import { capturePositions, normalizeSpeed, normalizeVolume, siteOrigin, TOOLS_SITES_KEY } from "../../lib/tools/shared";
+import { capturePositions, captureTileCount, normalizeSpeed, normalizeVolume, siteOrigin, TOOLS_SITES_KEY } from "../../lib/tools/shared";
 import type { PageToolRequest, PageToolResult, SiteToolSettingsMap, ToolReply, CaptureGeometry } from "../../lib/tools/shared";
-import { pruneCaptures, saveCapture, saveCaptureTile } from "../../lib/tools/capture-db";
+import { loadCapture, pruneCaptures, saveCapture, saveCaptureTile } from "../../lib/tools/capture-db";
+import { scaleCaptureTile } from "../../lib/tools/capture-image";
 import type { CaptureRecord } from "../../lib/tools/capture-db";
 
 interface ToolsMessage {
@@ -15,7 +16,8 @@ interface ToolsMessage {
   mode?: "full" | "visible" | "area";
   captureId?: string;
 }
-let captureJob: { id: string; tabId: number; windowId: number; cancelled: boolean } | undefined;
+interface CaptureJob { id: string; tabId: number; windowId: number; cancelled: boolean }
+let captureJob: CaptureJob | undefined;
 let lastCapture = 0;
 
 async function currentWebTab(tabId: number | undefined): Promise<chrome.tabs.Tab & { id: number; url: string }> {
@@ -69,8 +71,8 @@ async function applyRemembered(tabId: number, url: string): Promise<void> {
   await page(tabId, { action: "speed", value: normalizeSpeed(setting.speed), playerId: "all" });
 }
 
-async function capture(tab: chrome.tabs.Tab & { id: number; url: string }, mode: "full" | "visible" | "area", id: string): Promise<void> {
-  const job = captureJob = { id, tabId: tab.id, windowId: tab.windowId, cancelled: false };
+async function capture(tab: chrome.tabs.Tab & { id: number; url: string }, mode: "full" | "visible" | "area", job: CaptureJob): Promise<void> {
+  const { id } = job;
   let record: CaptureRecord | undefined;
   let documentId: string | undefined;
   try {
@@ -83,13 +85,14 @@ async function capture(tab: chrome.tabs.Tab & { id: number; url: string }, mode:
     const full = initial.result!.geometry!;
     const geometry: CaptureGeometry = mode === "full" ? full : { ...full, width: full.viewportWidth, height: full.viewportHeight };
     const positions = mode === "full" ? capturePositions(geometry) : [{ x: -1, y: -1 }];
-    record = { id, title: tab.title || "Screenshot", created: Date.now(), status: "capturing", progress: 0, total: positions.length, geometry, rect };
+    record = { id, title: tab.title || "Screenshot", created: Date.now(), status: "capturing", progress: 0, total: mode === "full" ? captureTileCount(geometry) : 1, geometry, rect };
     await saveCapture(record);
-    for (const [index, position] of positions.entries()) {
+    let index = 0;
+    for (const position of positions) {
       const [active] = await chrome.tabs.query({ active: true, windowId: tab.windowId });
       const current = await chrome.tabs.get(tab.id);
       if (job.cancelled || active?.id !== tab.id || current.url !== tab.url || current.status === "loading") throw new Error("Screenshot dibatalkan karena tab atau halaman berubah.");
-      const moved = await page(tab.id, { action: "captureMove", x: position.x, y: position.y, progress: `Screenshot ${index + 1}/${positions.length}` }, documentId);
+      const moved = await page(tab.id, { action: "captureMove", x: position.x, y: position.y, progress: `Screenshot ${index + 1}/${record.total} · ${Math.round(index / record.total * 100)}%` }, documentId);
       const wait = Math.max(0, 600 - (Date.now() - lastCapture));
       if (wait) await new Promise(resolve => setTimeout(resolve, wait));
       if (job.cancelled) throw new Error("Screenshot dibatalkan.");
@@ -99,9 +102,9 @@ async function capture(tab: chrome.tabs.Tab & { id: number; url: string }, mode:
       lastCapture = Date.now();
       const image = await chrome.tabs.captureVisibleTab(tab.windowId, { format: "png" });
       if (job.cancelled) throw new Error("Screenshot dibatalkan.");
-      const blob = await (await fetch(image)).blob();
+      const blob = await scaleCaptureTile(await (await fetch(image)).blob(), geometry, rect);
       await saveCaptureTile({ id: `${id}/${index}`, captureId: id, index, x: mode === "full" ? moved.result!.x! : 0, y: mode === "full" ? moved.result!.y! : 0, image: blob });
-      record.progress = index + 1;
+      record.progress = ++index;
       await saveCapture(record);
     }
     record.status = "ready";
@@ -111,15 +114,26 @@ async function capture(tab: chrome.tabs.Tab & { id: number; url: string }, mode:
     record.status = "error"; record.error = error instanceof Error ? error.message : "Screenshot gagal.";
     await saveCapture(record).catch(() => undefined);
   } finally {
-    await page(tab.id, { action: "captureEnd" }, documentId).catch(() => undefined);
+    await page(tab.id, { action: "captureEnd", progress: !job.cancelled && record?.status === "error" ? record.error : undefined }, documentId).catch(() => undefined);
     if (captureJob === job) captureJob = undefined;
   }
   // Open only after capture ends: focusing the editor must not interrupt capture.
-  if (job.cancelled) return;
+  if (job.cancelled || record?.status !== "ready") return;
   await chrome.tabs.create({ url: chrome.runtime.getURL(`src/pages/tools/capture.html?id=${encodeURIComponent(id)}`) });
 }
 
 async function handle(message: ToolsMessage): Promise<ToolReply> {
+  if (message.type === "tools:captureStatus") {
+    if (typeof message.captureId !== "string") throw new Error("Screenshot tidak valid.");
+    const record = await loadCapture(message.captureId);
+    if (!record) throw new Error("Screenshot tidak ditemukan atau sudah dihapus.");
+    if (record.status === "capturing" && captureJob?.id !== record.id) {
+      record.status = "error";
+      record.error = "Proses screenshot terputus. Coba ambil ulang dari tab asal.";
+      await saveCapture(record);
+    }
+    return { ok: true, capture: record };
+  }
   const tab = await currentWebTab(message.tabId);
   if (message.type === "tools:status") {
     const [data, volume, settings] = await Promise.all([getPageStatus(tab.id), audioStatus(tab.id), sites()]);
@@ -146,8 +160,11 @@ async function handle(message: ToolsMessage): Promise<ToolReply> {
     if (!["full", "visible", "area"].includes(message.mode ?? "")) throw new Error("Mode screenshot tidak valid.");
     const id = crypto.randomUUID();
     // Reserve synchronously before the first asynchronous operation.
-    captureJob = { id, tabId: tab.id, windowId: tab.windowId, cancelled: false };
-    void capture(tab, message.mode!, id).catch(console.error);
+    const job = captureJob = { id, tabId: tab.id, windowId: tab.windowId, cancelled: false };
+    try {
+      await saveCapture({ id, title: tab.title || "Screenshot", created: Date.now(), status: "capturing", progress: 0, total: 0, geometry: { width: 1, height: 1, viewportWidth: 1, viewportHeight: 1 } });
+    } catch (error) { captureJob = undefined; throw error; }
+    void capture(tab, message.mode!, job).catch(console.error);
     return { ok: true, captureId: id };
   }
   throw new Error("Perintah tools tidak dikenali.");

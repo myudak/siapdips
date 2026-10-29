@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.5.4",
+    date: "October 29, 2026",
+    type: "bugfix",
+    changes: [
+      "Full-page screenshot mendukung halaman panjang tanpa batas 120 potongan",
+      "Progres capture dan penyusunan gambar ditampilkan; editor hanya terbuka setelah capture berhasil",
+      "Potongan gambar disesuaikan sebelum disimpan agar penggunaan memori lebih stabil",
+    ],
+  },
+  {
     version: "v1.5.3",
     date: "October 29, 2026",
     type: "bugfix",

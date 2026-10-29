@@ -290,12 +290,17 @@ export async function runPageTool(request: PageToolRequest): Promise<PageToolRes
     state.capture?.finish(); state.stopInspector?.(); state.stopRuler?.();
     const originalX = scrollX, originalY = scrollY;
     const { host, panel } = hostPanel();
-    panel.textContent = "Menyiapkan screenshot…";
+    const heading = document.createElement("strong");
+    heading.textContent = "◌ Mengambil screenshot…";
+    const hint = document.createElement("div");
+    hint.className = "muted";
+    hint.textContent = "Tetap di tab ini. Editor terbuka setelah selesai.";
+    panel.append(heading, hint);
     panel.append(button("Batal", () => {
       void chrome.runtime.sendMessage({ type: "tools:cancelCapture", captureId: request.captureId });
       state.capture?.finish();
     }));
-    const status = document.createElement("div"); panel.prepend(status);
+    const status = document.createElement("div"); status.textContent = "Menyiapkan halaman…"; panel.prepend(status);
     const freeze = document.createElement("style");
     freeze.textContent = "html,body,*{scroll-behavior:auto!important;scroll-snap-type:none!important;animation-play-state:paused!important;caret-color:transparent!important;}";
     document.documentElement.append(freeze);
@@ -333,6 +338,16 @@ export async function runPageTool(request: PageToolRequest): Promise<PageToolRes
     if (!state.capture) throw new Error("Sesi screenshot berakhir. Coba ulangi.");
     return await state.capture.move(request.x ?? 0, request.y ?? 0, request.progress ?? "Mengambil screenshot…");
   }
-  if (request.action === "captureEnd") { state.stopInspector?.(); state.capture?.finish(); return {}; }
+  if (request.action === "captureEnd") {
+    state.stopInspector?.(); state.capture?.finish();
+    if (request.progress) {
+      const { host, panel } = hostPanel();
+      panel.textContent = `Screenshot belum selesai: ${request.progress}`;
+      const dismiss = () => { host.remove(); state.stopInspector = undefined; };
+      panel.append(button("Tutup", dismiss));
+      state.stopInspector = dismiss;
+    }
+    return {};
+  }
   throw new Error("Tool tidak dikenali.");
 }

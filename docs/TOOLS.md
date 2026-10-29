@@ -46,7 +46,15 @@ can limit tools even when site access is enabled.
 Choose **Full page screenshot**, **Visible area**, or **Select area**. For area
 selection, drag on the page or press Esc to cancel. Keep the source tab active
 until capture finishes. Full-page capture stitches viewport images at a rate
-below Chrome's two-captures-per-second limit, with a limit of 120 tiles.
+below Chrome's two-captures-per-second limit. Long pages are processed in
+viewport tiles without the former 120-tile rejection. The popup stays open with
+a spinner, progress bar, completed/total tiles, and cancellation. Keep the source
+tab active; capture continues if the popup is closed. The editor opens only when
+capture succeeds, and shows loading while the image is assembled. Real errors
+stay in the popup/source-page notice instead of navigating to a failed editor.
+Tiles are downscaled to the final output budget before storage to reduce memory
+use. A full-page capture covers the page dimensions measured at its start;
+it does not chase an endlessly growing feed.
 
 The capture restores scroll position and temporary styles on completion/error.
 A watchdog restores the page if the background process stops responding. Fixed
@@ -124,3 +132,9 @@ disposable extension copy pregrants optional permissions, and Chromium's
 It verifies gain/mute/reuse, popup closure, rapid stop/restart, and cleanup after
 an injected AudioContext constructor failure. It does not test the real optional
 permission prompt, user toolbar invocation, or perceived output loudness.
+
+Run `python tests/tools-capture-native-check.py` after building Chrome for the
+long-page regression. It serves a local 78,000 px page and verifies more than
+120 real capture tiles, popup progress, the actual editor URL, first/last pixels,
+PNG download, scroll restoration, and cancellation without opening another page.
+Only its isolated extension copy pregrants host access; allow roughly 90 seconds.
