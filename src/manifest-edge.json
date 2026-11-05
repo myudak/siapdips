@@ -91,6 +91,17 @@
   "content_scripts": [
     {
       "matches": [
+        "http://localhost/quiz*",
+        "http://127.0.0.1/quiz*"
+      ],
+      "js": [
+        "./content-cybergym.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
         "*://*.undip.ac.id/*",
         "https://undip.learnsocial.online/*"
       ],
