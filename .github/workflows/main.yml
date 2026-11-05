@@ -23,12 +23,17 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Dependencies & Build
-        run: |
-          echo "Installing dependencies..."
-          npm install --legacy-peer-deps
-          echo "Building extension..."
-          NODE_ENV=production npm run build
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Validate Release Version
+        run: npm run version:check
+
+      - name: Run Tests
+        run: npm test
+
+      - name: Build Chrome Extension
+        run: NODE_ENV=production npm run build
 
       - name: Setup Chrome
         id: setup-chrome

@@ -8,6 +8,15 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.5.5",
+    date: "November 5, 2026",
+    type: "patch",
+    changes: [
+      "Helper pengujian quiz lokal CyberGym untuk Chrome dan Edge",
+      "Validasi versi dan seluruh unit test dijalankan sebelum deployment extension",
+    ],
+  },
+  {
     version: "v1.5.4",
     date: "October 29, 2026",
     type: "bugfix",
