@@ -17,6 +17,7 @@ const ENTRY_FILE_BY_NAME = {
   "content-job": "content-job.js",
   "content-edulangua": "content-edulangua.js",
   "content-bridge": "content-bridge.js",
+  "content-cybergym": "content-cybergym.js",
   background: "background.js",
 } as const;
 
@@ -206,6 +207,7 @@ export default defineConfig(({ mode }) => {
             "src/content-edulangua.ts"
           ),
           "content-bridge": path.resolve(__dirname, "src/content-bridge.ts"),
+          "content-cybergym": path.resolve(__dirname, "src/content-cybergym.js"),
         },
         output: {
           entryFileNames: "assets/[name]-[hash].js",
