@@ -6,10 +6,13 @@ const code = fs.readFileSync('src/content-cybergym.js', 'utf8');
 function setup(pathname) {
   const listeners = {};
   const win = { addEventListener: (type, fn) => { listeners['window:' + type] = fn; } };
-  const doc = { addEventListener: (type, fn) => { listeners['document:' + type] = fn; } };
+  const notices = [];
+  const doc = { readyState: 'loading', addEventListener: (type, fn) => { listeners['document:' + type] = fn; }, createElement: () => ({ style: {}, setAttribute() {}, remove() { this.removed = true; } }), body: { appendChild: node => notices.push(node) } };
   class Textarea { constructor(isEssay) { this.classList = { contains: name => isEssay && name === 'essay-textarea' }; } }
-  vm.runInNewContext(code, { window: win, document: doc, location: { pathname }, HTMLTextAreaElement: Textarea });
-  return { listeners, win, Textarea };
+  const timers = [];
+  const logs = [];
+  vm.runInNewContext(code, { window: win, document: doc, location: { pathname }, HTMLTextAreaElement: Textarea, console: { info: message => logs.push(message) }, setTimeout: (callback, delay) => timers.push({ callback, delay }) });
+  return { listeners, win, Textarea, notices, timers, logs };
 }
 function event(target) { return { target, stopped: false, immediate: false, stopPropagation() { this.stopped = true; }, stopImmediatePropagation() { this.immediate = true; } }; }
 test('registers only on quiz routes', () => { assert.deepEqual(Object.keys(setup('/other').listeners), []); });
@@ -36,4 +39,15 @@ test('Chromium manifests inject on the configured quiz domain at document start'
     assert.equal(script.run_at, 'document_start');
     assert.equal(script.world, 'MAIN');
   }
+});
+
+test('announces script loading after the document is ready and removes the notice', () => {
+  const { listeners, notices, timers, logs } = setup('/quiz');
+  assert.match(logs[0], /Quiz helper loaded/);
+  assert.equal(notices.length, 0);
+  listeners['document:DOMContentLoaded']();
+  assert.equal(notices[0].textContent, 'SiapDips: quiz helper loaded');
+  assert.equal(timers[0].delay, 5000);
+  timers[0].callback();
+  assert.equal(notices[0].removed, true);
 });
