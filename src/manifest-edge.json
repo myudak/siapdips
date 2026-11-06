@@ -92,7 +92,8 @@
     {
       "matches": [
         "http://localhost/quiz*",
-        "http://127.0.0.1/quiz*"
+        "http://127.0.0.1/quiz*",
+        "https://quiz-tracker-seven.vercel.app/quiz*"
       ],
       "js": [
         "./content-cybergym.js"

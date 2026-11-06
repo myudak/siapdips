@@ -26,3 +26,14 @@ test('suppresses clipboard propagation only for essay fields', () => {
     const other = event(new Textarea(false)); listeners['document:' + type](other); assert.equal(other.stopped, false);
   }
 });
+
+test('Chromium manifests inject on the configured quiz domain at document start', () => {
+  for (const browser of ['chrome', 'edge']) {
+    const manifest = JSON.parse(fs.readFileSync('src/manifest-' + browser + '.json', 'utf8'));
+    const script = manifest.content_scripts.find(entry => entry.js?.includes('./content-cybergym.js'));
+    assert.ok(script);
+    assert.ok(script.matches.includes('https://quiz-tracker-seven.vercel.app/quiz*'));
+    assert.equal(script.run_at, 'document_start');
+    assert.equal(script.world, 'MAIN');
+  }
+});
