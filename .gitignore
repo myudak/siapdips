@@ -34,3 +34,5 @@ scratch/tools-card-*.png
 image.png
 image copy*.png
 
+# Keep extension signing keys out of the repository
+dist.pem

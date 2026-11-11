@@ -70,7 +70,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         run: npm install -g chrome-webstore-upload-cli@4.0.1
 
-      - name: Upload to Chrome Web Store
+      - name: Upload and Publish to Chrome Web Store
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
@@ -85,8 +85,8 @@ jobs:
           : "${CLIENT_SECRET:?Missing CLIENT_SECRET GitHub Actions secret}"
           : "${REFRESH_TOKEN:?Missing REFRESH_TOKEN GitHub Actions secret}"
 
-          echo "Uploading extension..."
-          chrome-webstore-upload upload --source dist
+          echo "Uploading extension and submitting to Chrome Web Store review..."
+          chrome-webstore-upload --source dist
 
       - name: Build Firefox Package
         run: |
