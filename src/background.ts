@@ -16,6 +16,7 @@ import { initContextMenuListener } from "./background/listeners/context-menu-lis
 import { initMessageListener } from "./background/listeners/message-listener";
 import { restoreSebHeaderRuleFromStorage } from "./background/features/seb-header";
 import { initTools } from "./background/features/tools";
+import { initDevConsole } from "./background/features/dev-console";
 
 // Initialize SiapDips Suspender
 setupAlarmsFromStorage();
@@ -30,6 +31,7 @@ initAlarmListener();
 initContextMenuListener();
 initMessageListener();
 initTools();
+initDevConsole();
 
 // Restore persisted dynamic features that need runtime reattachment.
 void restoreSebHeaderRuleFromStorage();

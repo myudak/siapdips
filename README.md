@@ -43,6 +43,7 @@
 
 **⚡ Productivity & Automation**
 - **Tools etc:** Per-tab speed controls, a 0–500% tab-audio booster on Chrome/Edge, full-page/area screenshots with a local editor, FontWhat, element colors, privacy blur, reading ruler, PiP, A–B loop, and clean links. See [Tools guide](docs/TOOLS.md) for permissions and browser limits.
+- **Dev Console:** Run your JavaScript on a selected web tab, view logs/results/errors, expand the editor, and save snippets locally. Supports DOM and page-global modes with per-site access. The popup header shows the installed extension version. See [Dev Console guide](docs/DEV_CONSOLE.md) for browser setup.
 - **Custom New Tab Dashboard:** Replaces your new tab with cached Kulon assignments and quick local to-dos.
 - **Todoist Sync:** Optionally connects with your Todoist API token to keep your campus tasks synced.
 - **Form Helpers:** Auto-fills repetitive, high-friction forms (e.g., PBM, Food Truck, QR attendance).

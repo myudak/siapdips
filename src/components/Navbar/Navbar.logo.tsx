@@ -35,6 +35,7 @@ const NavbarLogo = () => {
         onClick={linkClickMyudak}
       />
       <span className="text-lg font-bold cursor-default">Siap Dipss</span>
+      <span className="shrink-0 rounded-md border border-border bg-muted px-2 py-0.5 font-mono text-xs font-semibold tabular-nums text-foreground" aria-label={`Versi ekstensi ${chrome.runtime.getManifest().version}`} title="Versi ekstensi yang terpasang">v{chrome.runtime.getManifest().version}</span>
     </div>
   );
 };

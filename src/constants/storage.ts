@@ -4,5 +4,5 @@ export const LOCAL_STORAGE_OPTION_ONBOARDING_SEEN_KEY = "optionOnboardingSeen";
 export const LOCAL_STORAGE_OPTION_ONBOARDING_COLLAPSED_KEY =
   "optionOnboardingCollapsed";
 
-export const VERSION = "1.5.6";
-export const LAST_UPDATE = "November 11, 2026";
+export const VERSION = "1.6.0";
+export const LAST_UPDATE = "November 12, 2026";

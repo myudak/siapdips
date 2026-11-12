@@ -8,6 +8,16 @@ export interface ChangelogEntry {
 // Shared by the options page changelog and the public landing page.
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: "v1.6.0",
+    date: "November 12, 2026",
+    type: "feature",
+    changes: [
+      "Dev Console: editor JavaScript per tab, log, hasil async, dan pesan error",
+      "Mode DOM dan Page, snippet lokal, serta izin situs saat menjalankan script",
+      "Versi ekstensi terpasang kini terlihat langsung di header popup",
+    ],
+  },
+  {
     version: "v1.5.6",
     date: "November 11, 2026",
     type: "patch",
