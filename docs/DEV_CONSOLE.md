@@ -78,3 +78,12 @@ native extension settings. It exercises DOM and MAIN execution on a CSP-restrict
 page, logs/async/errors, draft/snippet/result persistence, expand/collapse, and
 the installed-version badge. It does not test Chrome Web Store review or a
 user's existing browser profile.
+
+## Release artifacts
+
+CI publishes the signed CRX, Chrome ZIP, Firefox ZIP, and review source archive
+to GitHub Release before attempting store publication. A store rejection still
+fails the store-publication check, while the downloadable packages remain
+available. A `[release]` commit builds packages without submitting to stores;
+`[deploy]` additionally uploads/submits them. Chrome uploads use the preserved
+Chrome ZIP because the Firefox build replaces the shared `dist/` directory.

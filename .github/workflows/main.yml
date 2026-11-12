@@ -45,6 +45,7 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           TAG="v${VERSION}"
           ASSET_NAME="siapdips-${TAG}.crx"
+          CHROME_ZIP="siap-dips-chrome-${TAG}.zip"
           FIREFOX_ASSET_NAME="siap-dips-firefox-${TAG}.zip"
           SOURCE_ASSET_NAME="siap-dips-source-${TAG}.zip"
           FIREFOX_ADDON_GUID=$(node -p "require('./src/manifest-firefox.json').browser_specific_settings.gecko.id")
@@ -52,6 +53,7 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "asset_name=${ASSET_NAME}" >> "$GITHUB_OUTPUT"
+          echo "chrome_zip=${CHROME_ZIP}" >> "$GITHUB_OUTPUT"
           echo "firefox_asset_name=${FIREFOX_ASSET_NAME}" >> "$GITHUB_OUTPUT"
           echo "source_asset_name=${SOURCE_ASSET_NAME}" >> "$GITHUB_OUTPUT"
           echo "firefox_addon_guid=${FIREFOX_ADDON_GUID}" >> "$GITHUB_OUTPUT"
@@ -65,28 +67,9 @@ jobs:
 
           "${{ steps.setup-chrome.outputs.chrome-path }}" --no-sandbox --pack-extension=dist --pack-extension-key=dist.pem
           mv dist.crx "${{ steps.release.outputs.asset_name }}"
-
-      - name: Install Chrome Web Store CLI
-        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
-        run: npm install -g chrome-webstore-upload-cli@4.0.1
-
-      - name: Upload and Publish to Chrome Web Store
-        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
-        env:
-          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
-          PUBLISHER_ID: ${{ secrets.PUBLISHER_ID }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-        run: |
-          : "${EXTENSION_ID:?Missing EXTENSION_ID GitHub Actions secret}"
-          : "${PUBLISHER_ID:?Missing PUBLISHER_ID GitHub Actions secret}"
-          : "${CLIENT_ID:?Missing CLIENT_ID GitHub Actions secret}"
-          : "${CLIENT_SECRET:?Missing CLIENT_SECRET GitHub Actions secret}"
-          : "${REFRESH_TOKEN:?Missing REFRESH_TOKEN GitHub Actions secret}"
-
-          echo "Uploading extension and submitting to Chrome Web Store review..."
-          chrome-webstore-upload --source dist
+          node scripts/package-extension.mjs chrome --no-build
+          mv "release/siap-dips-chrome-v${{ steps.release.outputs.version }}.zip" \
+            "${{ steps.release.outputs.chrome_zip }}"
 
       - name: Build Firefox Package
         run: |
@@ -106,7 +89,51 @@ jobs:
             ":(exclude)dist.pem" \
             ":(exclude)dist.zip"
 
+      - name: Upload Browser Packages to GitHub Release
+        id: github_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          name: ${{ steps.release.outputs.tag }}
+          files: |
+            ${{ steps.release.outputs.asset_name }}
+            ${{ steps.release.outputs.chrome_zip }}
+            ${{ steps.release.outputs.firefox_asset_name }}
+            ${{ steps.release.outputs.source_asset_name }}
+          fail_on_unmatched_files: true
+          overwrite_files: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Chrome Web Store CLI
+        continue-on-error: true
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
+        run: npm install -g chrome-webstore-upload-cli@4.0.1
+
+      - name: Upload and Publish to Chrome Web Store
+        id: chrome_publish
+        continue-on-error: true
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
+        env:
+          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: |
+          : "${EXTENSION_ID:?Missing EXTENSION_ID GitHub Actions secret}"
+          : "${PUBLISHER_ID:?Missing PUBLISHER_ID GitHub Actions secret}"
+          : "${CLIENT_ID:?Missing CLIENT_ID GitHub Actions secret}"
+          : "${CLIENT_SECRET:?Missing CLIENT_SECRET GitHub Actions secret}"
+          : "${REFRESH_TOKEN:?Missing REFRESH_TOKEN GitHub Actions secret}"
+
+          echo "Uploading extension and submitting to Chrome Web Store review..."
+          chrome-webstore-upload --source "${{ steps.release.outputs.chrome_zip }}"
+
       - name: Publish to Firefox Add-ons
+        id: firefox_publish
+        continue-on-error: true
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
         uses: wdzeng/firefox-addon@v1.2.1
         with:
@@ -120,17 +147,12 @@ jobs:
             Run `npm install --legacy-peer-deps`, then `npm run build:firefox`.
             The generated extension is written to `dist/`.
 
-      - name: Upload Browser Packages to GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.release.outputs.tag }}
-          name: ${{ steps.release.outputs.tag }}
-          files: |
-            ${{ steps.release.outputs.asset_name }}
-            ${{ steps.release.outputs.firefox_asset_name }}
-            ${{ steps.release.outputs.source_asset_name }}
-          fail_on_unmatched_files: true
-          overwrite_files: true
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check Store Publication Results
+        if: always() && steps.github_release.outcome == 'success' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]'))
+        run: |
+          echo "Chrome Web Store: ${{ steps.chrome_publish.outcome }}"
+          echo "Firefox Add-ons: ${{ steps.firefox_publish.outcome }}"
+          if [ "${{ steps.chrome_publish.outcome }}" != "success" ] || [ "${{ steps.firefox_publish.outcome }}" != "success" ]; then
+            echo "::error::Packages are available in GitHub Release, but store publication needs attention. See the preceding publication steps."
+            exit 1
+          fi
